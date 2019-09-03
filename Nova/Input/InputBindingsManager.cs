@@ -17,99 +17,43 @@ namespace Project.Input {
 		public static Bindings CurrentBindings;
 		public static readonly Bindings DefaultBindings = new Bindings();
 
-		static InputBindingsManager() {
-			CreateDefaultBindings();
-		}
-
 		public static event Action LoadBindings;
 		public static event Action SaveBindings;
 
-		public static void Test() {
-			CurrentBindings = new Bindings(DefaultBindings);
-			SaveLoad.Save(Path, CurrentBindings);
-			CurrentBindings = SaveLoad.Load<Bindings>(Path);
-			Console.WriteLine(CurrentBindings.ToString());
+		public static void Load() {
+			try {
+				CurrentBindings = SaveLoad.Load<Bindings>(Path);
+			} catch (FileNotFoundException) {
+				Console.WriteLine("No saved bindings. Loading default");
+				CurrentBindings = DefaultBindings;
+			}
+			LoadBindings?.Invoke();
+			Console.WriteLine(CurrentBindings);
+			Console.WriteLine("Loaded bindings");
 		}
 
-		public static void Load() {
+		public static void LoadDefault() {
+			CurrentBindings = DefaultBindings;
 			LoadBindings?.Invoke();
+			Console.WriteLine(CurrentBindings);
+			Console.WriteLine("Loaded default bindings");
 		}
 
 		public static void Save() {
+			CurrentBindings = new Bindings();
 			SaveBindings?.Invoke();
+			SaveLoad.Save(Path, CurrentBindings);
+			Console.WriteLine(CurrentBindings);
+			Console.WriteLine("Saved bindings");
 		}
 
-		private static void CreateDefaultBindings() {
-			DefaultBindings["horz-pos"] = new BindingData() {
-				Keyboard = Keys.L,
-			};
-			DefaultBindings["horz-neg"] = new BindingData() {
-				Keyboard = Keys.J,
-			};
-			DefaultBindings["vert-pos"] = new BindingData() {
-				Keyboard = Keys.I
-			};
-			DefaultBindings["vert-neg"] = new BindingData() {
-				Keyboard = Keys.K
-			};
-			DefaultBindings["jump"] = new BindingData() {
-				Keyboard = Keys.Space,
-				Gamepad = new List<Buttons>() { Buttons.A }
-			};
-			DefaultBindings["attack"] = new BindingData() {
-				Keyboard = Keys.F,
-				Gamepad = new List<Buttons>() { Buttons.X, Buttons.RightShoulder }
-			};
+		public static void CreateDefaultBindings() {
+			DefaultBindings[InputManager.Enter.Name] = new BindingData(Keys.F);
+			DefaultBindings[InputManager.Jump.Name] = new BindingData(Keys.Space, Buttons.A);
+			DefaultBindings[InputManager.Attack.Name] = new BindingData(Keys.F, Buttons.X);
+			DefaultBindings[InputManager.Unleash.Name] = new BindingData(Keys.D, Buttons.RightTrigger, Buttons.LeftTrigger);
 		}
 
-	}
-
-	/// <summary>
-	/// Stores the mapping between virtual inputs and their bindings
-	/// </summary>
-	[Serializable]
-	public class Bindings {
-		public readonly Dictionary<string, BindingData> Map;
-
-		public BindingData this[string key] {
-			get {
-				return Map[key];
-			}
-			set {
-				if (Map.ContainsKey(key)) {
-					Map[key] = value;
-				} else {
-					Map.Add(key, value);
-				}
-			}
-		}
-
-		public Bindings() {
-			Map = new Dictionary<string, BindingData>();
-		}
-
-		public Bindings(Bindings toCopy) {
-			Map = new Dictionary<string, BindingData>(toCopy.Map);
-		}
-
-		public override string ToString() {
-			StringBuilder sb = new StringBuilder();
-			sb.AppendLine("== Bindings ==\n");
-			foreach (var item in Map) {
-				sb.AppendLine(item.Key);
-				sb.AppendLine("   " + item.Value.Keyboard);
-				sb.AppendLine("   " + PrintFormatter.ListToString(item.Value.Gamepad));
-				sb.AppendLine();
-			}
-			return sb.ToString();
-		}
-
-	}
-
-	[Serializable]
-	public struct BindingData {
-		public Keys Keyboard;
-		public List<Buttons> Gamepad;
 	}
 
 }

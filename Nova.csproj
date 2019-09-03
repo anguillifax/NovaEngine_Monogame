@@ -61,6 +61,9 @@
   <ItemGroup>
     <Compile Include="Nova\Components\AnimatedSprite.cs" />
     <Compile Include="Nova\Components\Component.cs" />
+    <Compile Include="Nova\Input\BindingsDatatype.cs" />
+    <Compile Include="Nova\Input\DebugButton.cs" />
+    <Compile Include="Nova\Input\RebindingManager.cs" />
     <Compile Include="Nova\Util\Camera.cs" />
     <Compile Include="Nova\Util\DrawManager.cs" />
     <Compile Include="Nova\Util\Print.cs" />

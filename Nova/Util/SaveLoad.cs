@@ -3,6 +3,9 @@ using System.IO;
 
 namespace Project {
 
+	/// <summary>
+	/// Serialize and Deserialize files to the disk
+	/// </summary>
 	public static class SaveLoad {
 
 		public static void Save<T>(string path, T obj) {

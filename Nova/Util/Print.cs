@@ -3,9 +3,13 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Project {
 
+	/// <summary>
+	/// Pretty ToString for various types
+	/// </summary>
 	public static class PrintFormatter {
 
 		public static string ArrayToString<T>(T[] arr) {

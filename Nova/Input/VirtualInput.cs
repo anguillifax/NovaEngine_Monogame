@@ -8,14 +8,16 @@ namespace Project.Input {
 
 	public abstract class VirtualInput {
 
-		protected readonly bool GamepadReconfigurable;
+		public readonly bool GamepadRebindable;
 
-		protected VirtualInput(bool gamepadReconfigurable) {
-			GamepadReconfigurable = gamepadReconfigurable;
+		protected VirtualInput(bool gamepadRebindable) {
+			GamepadRebindable = gamepadRebindable;
+			InputManager.InputUpdate += Update;
 			InputBindingsManager.LoadBindings += OnLoadBindings;
 			InputBindingsManager.SaveBindings += OnSaveBindings;
 		}
 
+		protected abstract void Update();
 		protected abstract void OnSaveBindings();
 		protected abstract void OnLoadBindings();
 

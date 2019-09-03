@@ -7,7 +7,7 @@ namespace Project {
 	public class Engine : Game {
 
 		public static Scene CurrentScene { get; private set; }
-		public static bool PauseGame;
+		public static bool IsPaused { get; set; }
 
 		GraphicsDeviceManager graphics;
 
@@ -22,7 +22,7 @@ namespace Project {
 
 			Content.RootDirectory = "Content";
 
-			PauseGame = false;
+			IsPaused = false;
 
 		}
 
@@ -40,7 +40,7 @@ namespace Project {
 
 			CurrentScene = new Scene();
 
-			Input.InputBindingsManager.Test();
+			InputManager.LoadBindings();
 
 			base.Initialize();
 		}
@@ -78,16 +78,26 @@ namespace Project {
 			Screen.Update(graphics.GraphicsDevice.Viewport.Bounds);
 			InputManager.Update();
 
-			//if (InputManager.Pause.JustPressed) {
-			//	PauseGame = !PauseGame;
-			//	Console.WriteLine(PauseGame ? "Paused" : "Unpaused");
-			//}
+			if (InputManager.Pause.JustPressed) {
+				IsPaused = !IsPaused;
+				Console.WriteLine(IsPaused ? "Paused" : "Unpaused");
+			}
 
-			//if (InputManager.Quit.JustPressed) {
-			//	Exit();
-			//}
+			if (InputManager.Quit.JustPressed) {
+				Exit();
+			}
 
-			if (PauseGame) {
+			if (InputManager.TestLoadBindings.JustPressed) {
+				InputManager.LoadBindings();
+			}
+			if (InputManager.TestLoadBindingsDef.JustPressed) {
+				InputManager.LoadDefaultBindings();
+			}
+			if (InputManager.TestSaveBindings.JustPressed) {
+				InputManager.SaveBindings();
+			}
+
+			if (IsPaused) {
 				base.Update(time);
 				return;
 			}
