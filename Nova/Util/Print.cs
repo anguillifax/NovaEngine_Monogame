@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Project {
+namespace Nova {
 
 	/// <summary>
 	/// Pretty ToString for various types

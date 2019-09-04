@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Project {
+namespace Nova {
 #if WINDOWS || LINUX
 	/// <summary>
 	/// The main class.

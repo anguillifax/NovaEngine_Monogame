@@ -4,7 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Project.Input {
+namespace Nova.Input {
 
 	public abstract class VirtualInput {
 

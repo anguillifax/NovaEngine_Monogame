@@ -8,7 +8,7 @@ using System.IO;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace Project.Input {
+namespace Nova.Input {
 
 	public static class InputBindingsManager {
 

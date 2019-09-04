@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.IO;
 
-namespace Project {
+namespace Nova {
 
 	/// <summary>
 	/// Serialize and Deserialize files to the disk

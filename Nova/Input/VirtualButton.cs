@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Project.Input {
+namespace Nova.Input {
 
 	public enum RebindResult {
 		Added, Removed, NoOp

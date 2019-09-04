@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework.Input;
-using Project.Input;
+using Nova.Input;
 using System;
 
-namespace Project {
+namespace Nova {
 
 	public static class InputManager {
 

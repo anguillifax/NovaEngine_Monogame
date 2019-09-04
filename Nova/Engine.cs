@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 
-namespace Project {
+namespace Nova {
 
 	public class Engine : Game {
 

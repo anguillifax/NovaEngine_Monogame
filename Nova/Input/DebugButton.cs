@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Input;
-using Project.Input;
+using Nova.Input;
 
-namespace Project {
+namespace Nova {
 
 	/// <summary>
 	/// A simplified button that only accepts keyboard presses.

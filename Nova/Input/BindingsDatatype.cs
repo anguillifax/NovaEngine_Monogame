@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Project.Input {
+namespace Nova.Input {
 
 	[Serializable]
 	public class BindingData {

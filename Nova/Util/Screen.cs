@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Project {
+namespace Nova {
 
 	public static class Screen {
 
