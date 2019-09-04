@@ -29,6 +29,50 @@ namespace Nova {
 			return value;
 		}
 
+		/// <summary>
+		/// Loops between [min, max]
+		/// </summary>
+		public static float Loop(float current, float min, float max) {
+			if (min >= max) throw new ArgumentException("Min is not less than Max");
+
+			float range = max - min;
+			while (current > max) {
+				current -= range;
+			}
+			while (current < min) {
+				current += range;
+			}
+			return current;
+		}
+
+		/// <summary>
+		/// Loops between [min, max)
+		/// </summary>
+		public static int Loop(int current, int min, int max) {
+			if (min >= max) throw new ArgumentException("Min is not less than Max");
+
+			int range = max - min;
+			while (current >= max) {
+				current -= range;
+			}
+			while (current < min) {
+				current += range;
+			}
+			return current;
+		}
+
+	}
+
+	public static class CustomExtensions {
+
+		public static Vector2 Copy(this Vector2 vec) {
+			return new Vector2(vec.X, vec.Y);
+		}
+
+		public static Vector3 Copy(this Vector3 vec) {
+			return new Vector3(vec.X, vec.Y, vec.Z);
+		}
+
 	}
 
 }

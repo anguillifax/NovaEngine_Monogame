@@ -9,39 +9,55 @@ namespace Nova.Input {
 		Added, Removed, NoOp
 	}
 
-	public class VirtualButton : VirtualInput {
+	public class VirtualButton {
 
 		public readonly string Name;
+		public readonly bool GamepadRebindable;
 
-		private readonly VirtualKeyboardButton keyboard;
-		private readonly VirtualKeyboardButton keyboardDefault;
-		private readonly VirtualGamepadButton gamepad;
+		public bool IsVirtualAxisMovementKey;
+
+		public readonly VirtualKeyboardButton keyboard;
+		public readonly VirtualKeyboardButton keyboardDefault;
+		public readonly VirtualGamepadButton gamepad;
 
 		private bool value, previousValue;
 
 		/// <summary>
 		/// Create a new VirtualButton and set hardcoded inputs.
 		/// </summary>
-		public VirtualButton(string name, Keys kb, params Buttons[] gp) :
-			base(false) {
+		public VirtualButton(string name, Keys kb, params Buttons[] gp) {
 			Name = name;
 			keyboard = new VirtualKeyboardButton();
 			keyboardDefault = new VirtualKeyboardButton(kb);
 			gamepad = new VirtualGamepadButton(gp);
+			GamepadRebindable = false;
+
+			InputManager.InputUpdate += Update;
+			InputBindingsManager.LoadBindings += OnLoadBindings;
+			InputBindingsManager.SaveBindings += OnSaveBindings;
+
+			InputManager.AllButtons.Add(this);
 		}
 
 		/// <summary>
 		/// Create a virtual button with no hardcoded inputs.
 		/// </summary>
-		public VirtualButton(string name) :
-			base(true) {
+		public VirtualButton(string name) {
 			Name = name;
 			keyboard = new VirtualKeyboardButton();
 			keyboardDefault = new VirtualKeyboardButton();
 			gamepad = new VirtualGamepadButton();
+			GamepadRebindable = true;
+
+			InputManager.InputUpdate += Update;
+			InputBindingsManager.LoadBindings += OnLoadBindings;
+			InputBindingsManager.SaveBindings += OnSaveBindings;
+
+
+			InputManager.AllButtons.Add(this);
 		}
 
-		protected override void Update() {
+		protected void Update() {
 			keyboard.Update();
 			keyboardDefault.Update();
 			gamepad.Update();
@@ -50,7 +66,7 @@ namespace Nova.Input {
 			value = keyboard.Value || keyboardDefault.Value || gamepad.Value;
 		}
 
-		protected override void OnSaveBindings() {
+		protected void OnSaveBindings() {
 			BindingData data;
 			if (GamepadRebindable) {
 				data = new BindingData(keyboard.Key, gamepad.buttons);
@@ -60,7 +76,7 @@ namespace Nova.Input {
 			InputBindingsManager.CurrentBindings[Name] = data;
 		}
 
-		protected override void OnLoadBindings() {
+		protected void OnLoadBindings() {
 			var data = InputBindingsManager.CurrentBindings[Name];
 			if (data == null) { // There is no saved data. Unbind rebindable inputs.
 				keyboard.Unbind();
@@ -68,15 +84,24 @@ namespace Nova.Input {
 					gamepad.UnbindAll();
 				}
 			} else { // Found data. Attempt to rebind current inputs.
-				keyboard.Rebind(data.Keyboard);
+				keyboard.Set(data.Keyboard);
 				if (GamepadRebindable) {
-					gamepad.RebindAll(data.Gamepad);
+					gamepad.Set(data.Gamepad);
 				}
 			}
 		}
 
 		public RebindResult RebindKeyboard(Keys newKey) {
-			return keyboard.Rebind(newKey);
+			if (newKey == keyboardDefault.Key) {
+				if (keyboard.HasKey) {
+					keyboard.Unbind();
+					return RebindResult.Removed;
+				} else {
+					return RebindResult.NoOp;
+				}
+			} else {
+				return keyboard.Rebind(newKey);
+			}
 		}
 
 		public RebindResult RebindGamepad(Buttons newButton) {
@@ -122,42 +147,58 @@ namespace Nova.Input {
 
 	public class VirtualKeyboardButton {
 
-		public Keys Key { get; private set; }
+		public Keys? Key { get; private set; }
 
 		public bool Value { get; private set; }
 
 		public bool HasKey {
-			get { return Key != Keys.None; }
+			get { return Key != null; }
 		}
 
-		public VirtualKeyboardButton() : this(Keys.None) {
+		public VirtualKeyboardButton() : this(null) {
 		}
 
-		public VirtualKeyboardButton(Keys key) {
+		public VirtualKeyboardButton(Keys? key) {
 			Key = key;
 		}
 
 		public void Update() {
-			Value = Keyboard.GetState().IsKeyDown(Key);
+			if (Key == null) {
+				Value = false;
+			} else {
+				Value = Keyboard.GetState().IsKeyDown((Keys)Key);
+			}
 		}
 
 		/// <summary>
 		/// Sets the new key if key is allowed. Returns true if successful.
 		/// </summary>
-		public RebindResult Rebind(Keys newKey) {
+		public RebindResult Rebind(Keys? newKey) {
+			if (newKey == null) return RebindResult.NoOp;
+
 			if (Key == newKey) {
-				Key = Keys.None;
+				Key = null;
 				return RebindResult.Removed;
 			}
-			if (!InputProperties.BlacklistedKeys.Contains(newKey)) {
+
+			if (!InputProperties.BlacklistedKeys.Contains((Keys)newKey)) {
 				Key = newKey;
 				return RebindResult.Added;
 			}
+
 			return RebindResult.NoOp;
 		}
 
+		/// <summary>
+		/// Overrides binding without checking blacklist.
+		/// </summary>
+		/// <param name="newKey"></param>
+		public void Set(Keys? newKey) {
+			Key = newKey;
+		}
+
 		public void Unbind() {
-			Key = Keys.None;
+			Key = null;
 		}
 
 	}
@@ -187,6 +228,9 @@ namespace Nova.Input {
 			}
 		}
 
+		/// <summary>
+		/// Attempts to add a new button.
+		/// </summary>
 		public RebindResult Rebind(Buttons newButton) {
 			if (buttons.Contains(newButton)) {
 				buttons.Remove(newButton);
@@ -195,15 +239,24 @@ namespace Nova.Input {
 
 			if (InputProperties.WhitelistedButtons.Contains(newButton)) {
 				buttons.Add(newButton);
+				if (buttons.Count > InputProperties.MaxGamepadButtons) {
+					buttons.RemoveAt(0);
+				}
 				return RebindResult.Added;
 			}
 
 			return RebindResult.NoOp;
 		}
 
-		public void RebindAll(List<Buttons> newButtons) {
+		/// <summary>
+		/// Overrides any preexisting keys without checking whitelist.
+		/// </summary>
+		public void Set(List<Buttons> newButtons) {
 			buttons.Clear();
 			buttons.AddRange(newButtons);
+			if (buttons.Count > InputProperties.MaxGamepadButtons) {
+				buttons.RemoveRange(InputProperties.MaxGamepadButtons, buttons.Count - InputProperties.MaxGamepadButtons);
+			}
 		}
 
 		public void UnbindAll() {

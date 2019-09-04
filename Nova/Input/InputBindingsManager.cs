@@ -1,12 +1,6 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using System.Xml.Serialization;
 
 namespace Nova.Input {
 
@@ -28,14 +22,12 @@ namespace Nova.Input {
 				CurrentBindings = DefaultBindings;
 			}
 			LoadBindings?.Invoke();
-			Console.WriteLine(CurrentBindings);
 			Console.WriteLine("Loaded bindings");
 		}
 
 		public static void LoadDefault() {
 			CurrentBindings = DefaultBindings;
 			LoadBindings?.Invoke();
-			Console.WriteLine(CurrentBindings);
 			Console.WriteLine("Loaded default bindings");
 		}
 
@@ -43,7 +35,6 @@ namespace Nova.Input {
 			CurrentBindings = new Bindings();
 			SaveBindings?.Invoke();
 			SaveLoad.Save(Path, CurrentBindings);
-			Console.WriteLine(CurrentBindings);
 			Console.WriteLine("Saved bindings");
 		}
 
@@ -52,6 +43,11 @@ namespace Nova.Input {
 			DefaultBindings[InputManager.Jump.Name] = new BindingData(Keys.Space, Buttons.A);
 			DefaultBindings[InputManager.Attack.Name] = new BindingData(Keys.F, Buttons.X);
 			DefaultBindings[InputManager.Unleash.Name] = new BindingData(Keys.D, Buttons.RightTrigger, Buttons.LeftTrigger);
+			DefaultBindings[InputManager.Restart.Name] = new BindingData(Keys.Y);
+			DefaultBindings[InputManager.Horizontal.NamePos] = new BindingData(Keys.L);
+			DefaultBindings[InputManager.Horizontal.NameNeg] = new BindingData(Keys.J);
+			DefaultBindings[InputManager.Vertical.NamePos] = new BindingData(Keys.I);
+			DefaultBindings[InputManager.Vertical.NameNeg] = new BindingData(Keys.K);
 		}
 
 	}

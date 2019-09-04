@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using Nova.Input;
 using System;
+using System.Collections.Generic;
 
 namespace Nova {
 
@@ -13,11 +14,7 @@ namespace Nova {
 		public static DebugButton TestLoadBindingsDef = new DebugButton(Keys.F3);
 		public static DebugButton TestSaveBindings = new DebugButton(Keys.F2);
 
-		public static DebugButton OpenPanel = new DebugButton(Keys.F10);
-		public static DebugButton Cycle = new DebugButton(Keys.F11);
-		public static DebugButton ClosePanel = new DebugButton(Keys.F12);
-		private static bool isRebindPanelOpen;
-		private static int rebindPointer = 0;
+		public static DebugButton RebindingPanel = new DebugButton(Keys.F10);
 
 		public static VirtualButton Pause;
 		public static VirtualButton Enter;
@@ -26,41 +23,18 @@ namespace Nova {
 		public static VirtualButton Unleash;
 		public static VirtualButton Restart;
 
-		private static VirtualButton[] AllButtons;
+		public static VirtualAxis Horizontal;
+		public static VirtualAxis Vertical;
+
+		public static List<VirtualButton> AllButtons = new List<VirtualButton>();
 
 		static InputManager() {
 			CreateVirtualInputs();
-			InputBindingsManager.CreateDefaultBindings();
-			AllButtons = new VirtualButton[] {
-				Pause, Enter, Jump, Attack, Unleash, Restart
-			};
+			InputBindingsManager.CreateDefaultBindings(); // needs button names
 		}
 
 		public static void Update() {
 			InputUpdate?.Invoke();
-
-			if (OpenPanel.JustPressed) {
-				isRebindPanelOpen = !isRebindPanelOpen;
-				if (isRebindPanelOpen) {
-					rebindPointer = 0;
-				}
-				Console.WriteLine("Now binding: " + AllButtons[rebindPointer].Name);
-			}
-
-			if (isRebindPanelOpen) {
-				if (Cycle.JustPressed) {
-					if (rebindPointer >= AllButtons.Length - 1) {
-						rebindPointer = 0;
-					} else {
-						rebindPointer++;
-					}
-					Console.WriteLine("Now binding: " + AllButtons[rebindPointer].Name);
-				}
-				RebindingManager.Target = AllButtons[rebindPointer];
-				RebindingManager.Update();
-			}
-
-			if (Enter.JustPressed) Console.WriteLine("Enter");
 		}
 
 		public static void LoadBindings() {
@@ -82,6 +56,17 @@ namespace Nova {
 			Attack = new VirtualButton("attack");
 			Unleash = new VirtualButton("unleash");
 			Restart = new VirtualButton("restart");
+
+			Horizontal = new VirtualAxis("horz", Keys.Right, Keys.Left,
+				new VirtualAxisInput.StickLeftHorz(),
+				new VirtualAxisInput.DPadHorz()
+				);
+
+			Vertical = new VirtualAxis("vert", Keys.Up, Keys.Down,
+				new VirtualAxisInput.StickLeftVert(),
+				new VirtualAxisInput.DPadVert()
+				);
+
 		}
 
 	}

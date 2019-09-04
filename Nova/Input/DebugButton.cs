@@ -1,31 +1,23 @@
 ﻿using Microsoft.Xna.Framework.Input;
-using Nova.Input;
 
 namespace Nova {
 
 	/// <summary>
-	/// A simplified button that only accepts keyboard presses.
+	/// A simplified button that only supports keyboard presses.
 	/// </summary>
-	public class DebugButton : VirtualInput {
+	public class DebugButton {
 
-		VirtualKeyboardButton btn;
-		private bool value, previousValue;
+		readonly Keys key;
+		bool value, previousValue;
 
-		public DebugButton(Keys key) :
-			base(false) {
-			btn = new VirtualKeyboardButton(key);
+		public DebugButton(Keys key) {
+			this.key = key;
+			InputManager.InputUpdate += Update;
 		}
 
-		protected override void Update() {
-			btn.Update();
+		void Update() {
 			previousValue = value;
-			value = btn.Value;
-		}
-
-		protected override void OnLoadBindings() {
-		}
-
-		protected override void OnSaveBindings() {
+			value = Keyboard.GetState().IsKeyDown(key);
 		}
 
 		#region Accessors

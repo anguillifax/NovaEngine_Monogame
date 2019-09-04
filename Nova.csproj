@@ -63,7 +63,11 @@
     <Compile Include="Nova\Components\Component.cs" />
     <Compile Include="Nova\Input\BindingsDatatype.cs" />
     <Compile Include="Nova\Input\DebugButton.cs" />
+    <Compile Include="Nova\Input\DebugInputGUI.cs" />
+    <Compile Include="Nova\Input\VirtualAxisHelpers.cs" />
     <Compile Include="Nova\Input\RebindingManager.cs" />
+    <Compile Include="Nova\Input\VirtualAxis.cs" />
+    <Compile Include="Nova\Testing\QuickTest.cs" />
     <Compile Include="Nova\Util\Camera.cs" />
     <Compile Include="Nova\Util\DrawManager.cs" />
     <Compile Include="Nova\Util\Print.cs" />
@@ -75,13 +79,13 @@
     <Compile Include="Nova\Hierarchy\Scene.cs" />
     <Compile Include="Nova\Util\Screen.cs" />
     <Compile Include="Nova\Components\ScrollingBackground.cs" />
+    <Compile Include="Nova\Util\SimpleTimer.cs" />
     <Compile Include="Nova\Util\Time.cs" />
     <Compile Include="Nova\Util\Calc.cs" />
     <Compile Include="Nova\Input\InputBindingsManager.cs" />
     <Compile Include="Nova\Input\InputProperties.cs" />
     <Compile Include="Nova\Input\InputManager.cs" />
     <Compile Include="Nova\Input\VirtualButton.cs" />
-    <Compile Include="Nova\Input\VirtualInput.cs" />
     <Compile Include="Nova\Program.cs" />
     <Compile Include="Nova\Testing\TestEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

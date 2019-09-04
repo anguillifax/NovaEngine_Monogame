@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 
 namespace Nova {
 
@@ -8,6 +9,8 @@ namespace Nova {
 
 		public static Scene CurrentScene { get; private set; }
 		public static bool IsPaused { get; set; }
+
+		public static SpriteFont DefaultFont { get; private set; }
 
 		GraphicsDeviceManager graphics;
 
@@ -54,8 +57,12 @@ namespace Nova {
 			var tex = Content.Load<Texture2D>("Images/bullet");
 			//CurrentScene.Add(new TestEntity(tex));
 
+			DefaultFont = Content.Load<SpriteFont>("Font1");
+
 			Camera.Position = Screen.Center;
 			Camera.Scale = 1;
+
+			new QuickTest().Test();
 
 		}
 
@@ -77,6 +84,7 @@ namespace Nova {
 			Time.Update(time);
 			Screen.Update(graphics.GraphicsDevice.Viewport.Bounds);
 			InputManager.Update();
+			Input.DebugInputGUI.Update();
 
 			if (InputManager.Pause.JustPressed) {
 				IsPaused = !IsPaused;
@@ -116,6 +124,7 @@ namespace Nova {
 		/// </summary>
 		/// <param name="time">Provides a snapshot of timing values.</param>
 		protected override void Draw(GameTime time) {
+			Time.UpdateDraw(time);
 			GraphicsDevice.Clear(Color.Black);
 
 			DrawManager.Begin();
@@ -123,6 +132,8 @@ namespace Nova {
 				CurrentScene.Draw();
 			}
 			DrawManager.End();
+
+			Input.DebugInputGUI.Draw();
 
 			base.Draw(time);
 		}

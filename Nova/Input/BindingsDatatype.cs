@@ -7,20 +7,20 @@ namespace Nova.Input {
 
 	[Serializable]
 	public class BindingData {
-		public Keys Keyboard;
+		public Keys? Keyboard;
 		public List<Buttons> Gamepad; // this list is never null
 
 		public BindingData() {
-			Keyboard = Keys.None;
+			Keyboard = null;
 			Gamepad = new List<Buttons>();
 		}
 
-		public BindingData(Keys keyboard, params Buttons[] gamepad) {
+		public BindingData(Keys? keyboard, params Buttons[] gamepad) {
 			Keyboard = keyboard;
 			Gamepad = new List<Buttons>(gamepad);
 		}
 
-		public BindingData(Keys keyboard, List<Buttons> gamepad) {
+		public BindingData(Keys? keyboard, List<Buttons> gamepad) {
 			Keyboard = keyboard;
 			if (gamepad == null) {
 				Gamepad = new List<Buttons>();
@@ -29,7 +29,7 @@ namespace Nova.Input {
 			}
 		}
 
-		public BindingData(Keys keyboard) {
+		public BindingData(Keys? keyboard) {
 			Keyboard = keyboard;
 			Gamepad = new List<Buttons>();
 		}
