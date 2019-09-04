@@ -20,14 +20,8 @@ namespace Nova.Input {
 		public float Value { get; private set; }
 		public static implicit operator float(VirtualAxis v) => v.Value;
 
-		public bool PressedPositive { get; private set; }
-		public bool PressedNegative { get; private set; }
-		private float lastValue;
-		public bool PressedPositiveDefaultOnly { get; private set; }
-		public bool PressedNegativeDefaultOnly { get; private set; }
-
-		private readonly SimpleTimer DelayUntilRepeat = new SimpleTimer(InputProperties.DelayUntilRepeat);
-		private readonly SimpleTimer RepeatDelay = new SimpleTimer(InputProperties.RepeatDelay);
+		public readonly InputRepeater RepeaterPos;
+		public readonly InputRepeater RepeaterNeg;
 
 		public readonly VirtualButton keyboardPos;
 		public readonly VirtualButton keyboardNeg;
@@ -38,20 +32,20 @@ namespace Nova.Input {
 		public VirtualAxis(string name, Keys kbPos, Keys kbNeg, IVirtualAxisInput gamepad1, IVirtualAxisInput gamepad2) {
 			Name = name;
 			keyboardPos = new VirtualButton(NamePos, kbPos) {
-				IsVirtualAxisMovementKey = true
 			};
 			keyboardNeg = new VirtualButton(NameNeg, kbNeg) {
-				IsVirtualAxisMovementKey = true
 			};
 			this.gamepad1 = gamepad1;
 			this.gamepad2 = gamepad2;
+
+			RepeaterPos = new InputRepeater(() => Value > 0);
+			RepeaterNeg = new InputRepeater(() => Value < 0);
 
 			InputManager.InputUpdate += Update;
 		}
 
 		protected void Update() {
-			lastValue = Value;
-
+			// Retrieve aggregate value
 			Value = 0f;
 			Value += Convert(keyboardPos.Pressed, true);
 			Value += Convert(keyboardNeg.Pressed, false);
@@ -62,6 +56,7 @@ namespace Nova.Input {
 				Value += gamepad2.Value();
 			}
 
+			// Clean up output value
 			float sign = Math.Sign(Value);
 			Value = Math.Abs(Value);
 
@@ -73,23 +68,14 @@ namespace Nova.Input {
 				Value = 1f * sign;
 			}
 
-			UpdateRepeat();
+			RepeaterPos.Update();
+			RepeaterNeg.Update();
 
 		}
 
-		private void UpdateRepeat() {
-			if (Value > 0 && lastValue <= 0) {
-				PressedPositive = true;
-			} else if (Value < 0 && lastValue >= 0) {
-				PressedNegative = true;
-			} else {
-				PressedPositive = PressedNegative = false;
-			}
-
-			DelayUntilRepeat.Update();
-			RepeatDelay.Update();
-		}
-
+		/// <summary>
+		/// Turn a keyboard boolean output into an axis
+		/// </summary>
 		private float Convert(bool btn, bool positive) {
 			return btn ? (positive ? 1f : -1f) : 0f;
 		}

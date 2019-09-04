@@ -16,20 +16,38 @@ namespace Nova {
 
 		public static DebugButton RebindingPanel = new DebugButton(Keys.F10);
 
-		public static VirtualButton Pause;
-		public static VirtualButton Enter;
-		public static VirtualButton Jump;
-		public static VirtualButton Attack;
-		public static VirtualButton Unleash;
-		public static VirtualButton Restart;
+		public static readonly VirtualButton Pause;
+		public static readonly VirtualButton Enter;
+		public static readonly VirtualButton Clear;
+		public static readonly VirtualButton Jump;
+		public static readonly VirtualButton Attack;
+		public static readonly VirtualButton Unleash;
+		public static readonly VirtualButton Restart;
 
-		public static VirtualAxis Horizontal;
-		public static VirtualAxis Vertical;
+		public static readonly VirtualAxis Horizontal;
+		public static readonly VirtualAxis Vertical;
 
-		public static List<VirtualButton> AllButtons = new List<VirtualButton>();
+		public static readonly List<VirtualButton> AllButtons = new List<VirtualButton>();
 
 		static InputManager() {
-			CreateVirtualInputs();
+			Pause = new VirtualButton("pause", Keys.Escape, Buttons.Start);
+			Enter = new VirtualButton("enter", Keys.Enter, Buttons.A);
+			Clear = new VirtualButton("clear", Keys.Back, Buttons.Back);
+			Jump = new VirtualButton("jump");
+			Attack = new VirtualButton("attack");
+			Unleash = new VirtualButton("unleash");
+			Restart = new VirtualButton("restart");
+
+			Horizontal = new VirtualAxis("horz", Keys.Right, Keys.Left,
+				new VirtualAxisInput.StickLeftHorz(),
+				new VirtualAxisInput.DPadHorz()
+				);
+
+			Vertical = new VirtualAxis("vert", Keys.Up, Keys.Down,
+				new VirtualAxisInput.StickLeftVert(),
+				new VirtualAxisInput.DPadVert()
+				);
+
 			InputBindingsManager.CreateDefaultBindings(); // needs button names
 		}
 
@@ -47,26 +65,6 @@ namespace Nova {
 
 		public static void SaveBindings() {
 			InputBindingsManager.Save();
-		}
-
-		private static void CreateVirtualInputs() {
-			Pause = new VirtualButton("pause", Keys.Escape, Buttons.Start);
-			Enter = new VirtualButton("enter", Keys.Enter, Buttons.A);
-			Jump = new VirtualButton("jump");
-			Attack = new VirtualButton("attack");
-			Unleash = new VirtualButton("unleash");
-			Restart = new VirtualButton("restart");
-
-			Horizontal = new VirtualAxis("horz", Keys.Right, Keys.Left,
-				new VirtualAxisInput.StickLeftHorz(),
-				new VirtualAxisInput.DPadHorz()
-				);
-
-			Vertical = new VirtualAxis("vert", Keys.Up, Keys.Down,
-				new VirtualAxisInput.StickLeftVert(),
-				new VirtualAxisInput.DPadVert()
-				);
-
 		}
 
 	}

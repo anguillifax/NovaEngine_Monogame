@@ -24,19 +24,9 @@ namespace Nova.Input {
 		}
 		private static VirtualButton target;
 
-		public static void Update() {
+		public static void SearchKeyboard() {
 
 			if (Target == null) return;
-
-			SearchKeyboard();
-
-			if (Target.GamepadRebindable) {
-				SearchGamepad();
-			}
-
-		}
-
-		private static void SearchKeyboard() {
 
 			var s = Keyboard.GetState();
 
@@ -50,7 +40,7 @@ namespace Nova.Input {
 			Keys[] currentKeys = Keyboard.GetState().GetPressedKeys();
 
 			foreach (var key in currentKeys) {
-				if (!lastKeys.Contains(key) && IsAllowedInMenu(key)) {
+				if (!lastKeys.Contains(key)) {
 					var result = Target.RebindKeyboard(key);
 					lastKeys.Add(key);
 					Console.WriteLine("{2} {0} key {1}", Target.Name, key, result.ToString());
@@ -59,11 +49,9 @@ namespace Nova.Input {
 
 		}
 
-		private static bool IsAllowedInMenu(Keys key) {
-			return !(key == Keys.Left || key == Keys.Right || key == Keys.Up || key == Keys.Down);
-		}
+		public static void SearchGamepad() {
 
-		private static void SearchGamepad() {
+			if (Target == null || !Target.GamepadRebindable) return;
 
 			GamePadState s = GamePad.GetState(PlayerIndex.One);
 
@@ -82,6 +70,10 @@ namespace Nova.Input {
 				}
 			}
 
+		}
+
+		public static void RegisterAlreadyPressedKeys(Keys[] keys) {
+			lastKeys.AddRange(keys);
 		}
 
 

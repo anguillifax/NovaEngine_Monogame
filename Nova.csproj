@@ -64,6 +64,7 @@
     <Compile Include="Nova\Input\BindingsDatatype.cs" />
     <Compile Include="Nova\Input\DebugButton.cs" />
     <Compile Include="Nova\Input\DebugInputGUI.cs" />
+    <Compile Include="Nova\Input\InputRepeater.cs" />
     <Compile Include="Nova\Input\VirtualAxisHelpers.cs" />
     <Compile Include="Nova\Input\RebindingManager.cs" />
     <Compile Include="Nova\Input\VirtualAxis.cs" />

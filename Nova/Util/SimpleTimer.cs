@@ -11,6 +11,8 @@ namespace Nova {
 		public float Duration { get; set; }
 		public float Current { get; private set; }
 
+		private bool previousDone;
+
 		/// <summary>
 		/// The timer has reached 0.
 		/// </summary>
@@ -27,6 +29,20 @@ namespace Nova {
 			get {
 				return Current > 0;
 			}
+		}
+
+		/// <summary>
+		/// Returns true if timer reached 0 this frame.
+		/// </summary>
+		public bool JustFinished {
+			get { return !previousDone && Done; }
+		}
+
+		/// <summary>
+		/// Returns true if timer was reset this frame after completing.
+		/// </summary>
+		public bool JustStarted {
+			get { return previousDone && !Done; }
 		}
 
 		/// <summary>
@@ -55,7 +71,7 @@ namespace Nova {
 		/// <summary>
 		/// Prepares timer to begin counting down
 		/// </summary>
-		public void Set() {
+		public void Reset() {
 			Current = Duration;
 		}
 
@@ -71,6 +87,7 @@ namespace Nova {
 		}
 
 		public void Update(float delta) {
+			previousDone = Done;
 			if (Current >= 0) Current -= delta;
 		}
 
