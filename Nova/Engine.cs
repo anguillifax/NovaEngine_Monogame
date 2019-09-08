@@ -1,11 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 
 namespace Nova {
 
 	public class Engine : Game {
+
+		public static Engine Instance { get; private set; }
 
 		public static Scene CurrentScene { get; private set; }
 		public static bool IsPaused { get; set; }
@@ -15,6 +18,8 @@ namespace Nova {
 		GraphicsDeviceManager graphics;
 
 		public Engine() {
+			Instance = this;
+
 			graphics = new GraphicsDeviceManager(this);
 			graphics.PreferredBackBufferWidth = 1280;
 			graphics.PreferredBackBufferHeight = 720;
@@ -43,7 +48,10 @@ namespace Nova {
 
 			CurrentScene = new Scene();
 
-			InputManager.LoadBindings();
+			//InputManager.LoadBindings();
+			Console.WriteLine(GamePad.MaximumGamePadCount);
+			Console.WriteLine("Gamepad 1 connected: {0}", GamePad.GetState(PlayerIndex.One).IsConnected);
+			Console.WriteLine("Gamepad 2 connected: {0}", GamePad.GetState(PlayerIndex.Two).IsConnected);
 
 			base.Initialize();
 		}
@@ -84,12 +92,6 @@ namespace Nova {
 			Time.Update(time);
 			Screen.Update(graphics.GraphicsDevice.Viewport.Bounds);
 			InputManager.Update();
-			Input.DebugInputGUI.Update();
-
-			if (InputManager.Pause.JustPressed) {
-				IsPaused = !IsPaused;
-				Console.WriteLine(IsPaused ? "Paused" : "Unpaused");
-			}
 
 			if (InputManager.Quit.JustPressed) {
 				Exit();
@@ -103,6 +105,11 @@ namespace Nova {
 			}
 			if (InputManager.TestSaveBindings.JustPressed) {
 				InputManager.SaveBindings();
+			}
+
+			if (InputManager.Any.Back.JustPressed) {
+				IsPaused = !IsPaused;
+				Console.WriteLine(IsPaused ? "Paused" : "Unpaused");
 			}
 
 			if (IsPaused) {
@@ -132,8 +139,6 @@ namespace Nova {
 				CurrentScene.Draw();
 			}
 			DrawManager.End();
-
-			Input.DebugInputGUI.Draw();
 
 			base.Draw(time);
 		}

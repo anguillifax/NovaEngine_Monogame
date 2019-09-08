@@ -29,8 +29,8 @@ namespace Nova.Input {
 
 		public InputRepeater(Func<bool> inputSource) {
 			InputSource = inputSource;
-			DelayUntilRepeat = new SimpleTimer(InputProperties.DelayUntilRepeat);
-			RepeatDelay = new SimpleTimer(InputProperties.RepeatDelay);
+			DelayUntilRepeat = new SimpleTimer(GlobalInputProperties.DelayUntilRepeat);
+			RepeatDelay = new SimpleTimer(GlobalInputProperties.RepeatDelay);
 		}
 
 		public void Update() {

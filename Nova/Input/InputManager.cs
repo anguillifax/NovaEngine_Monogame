@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Nova.Input;
 using System;
 using System.Collections.Generic;
@@ -16,55 +17,32 @@ namespace Nova {
 
 		public static DebugButton RebindingPanel = new DebugButton(Keys.F10);
 
-		public static readonly VirtualButton Pause;
-		public static readonly VirtualButton Enter;
-		public static readonly VirtualButton Clear;
-		public static readonly VirtualButton Jump;
-		public static readonly VirtualButton Attack;
-		public static readonly VirtualButton Unleash;
-		public static readonly VirtualButton Restart;
+		public static readonly InputSource SourceKeyboard = new InputSourceKeyboard();
+		public static readonly InputSource SourceGamepad1 = new InputSourceGamepad(PlayerIndex.One);
+		public static readonly InputSource SourceGamepad2 = new InputSourceGamepad(PlayerIndex.Two);
 
-		public static readonly VirtualAxis Horizontal;
-		public static readonly VirtualAxis Vertical;
-
-		public static readonly List<VirtualButton> AllButtons = new List<VirtualButton>();
-
-		static InputManager() {
-			Pause = new VirtualButton("pause", Keys.Escape, Buttons.Start);
-			Enter = new VirtualButton("enter", Keys.Enter, Buttons.A);
-			Clear = new VirtualButton("clear", Keys.Back, Buttons.Back);
-			Jump = new VirtualButton("jump");
-			Attack = new VirtualButton("attack");
-			Unleash = new VirtualButton("unleash");
-			Restart = new VirtualButton("restart");
-
-			Horizontal = new VirtualAxis("horz", Keys.Right, Keys.Left,
-				new VirtualAxisInput.StickLeftHorz(),
-				new VirtualAxisInput.DPadHorz()
-				);
-
-			Vertical = new VirtualAxis("vert", Keys.Up, Keys.Down,
-				new VirtualAxisInput.StickLeftVert(),
-				new VirtualAxisInput.DPadVert()
-				);
-
-			InputBindingsManager.CreateDefaultBindings(); // needs button names
-		}
+		public static readonly CompoundInputSource Player1 = new CompoundInputSource();
+		public static readonly CompoundInputSource Player2 = new CompoundInputSource();
+		public static readonly CompoundInputSource Any = new CompoundInputSource(SourceKeyboard, SourceGamepad1, SourceGamepad2);
 
 		public static void Update() {
 			InputUpdate?.Invoke();
+
+			if (Any.Enter.JustPressed) {
+				Console.WriteLine("enter");
+			}
 		}
 
 		public static void LoadBindings() {
-			InputBindingsManager.Load();
+			BindingsManager.Load();
 		}
 
 		public static void LoadDefaultBindings() {
-			InputBindingsManager.LoadDefault();
+			BindingsManager.LoadDefault();
 		}
 
 		public static void SaveBindings() {
-			InputBindingsManager.Save();
+			BindingsManager.Save();
 		}
 
 	}

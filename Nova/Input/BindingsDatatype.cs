@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,79 +7,101 @@ using System.Text;
 namespace Nova.Input {
 
 	[Serializable]
-	public class BindingData {
-		public Keys? Keyboard;
-		public List<Buttons> Gamepad; // this list is never null
+	public struct CombinedBindingData {
+		public KeyboardBindingData Keyboard;
+		public GamepadBindingData Gamepad1;
+		public GamepadBindingData Gamepad2;
 
-		public BindingData() {
-			Keyboard = null;
-			Gamepad = new List<Buttons>();
+		public CombinedBindingData(KeyboardBindingData keyboard, GamepadBindingData gamepad1, GamepadBindingData gamepad2) {
+			Keyboard = keyboard;
+			Gamepad1 = gamepad1;
+			Gamepad2 = gamepad2;
 		}
 
-		public BindingData(Keys? keyboard, params Buttons[] gamepad) {
-			Keyboard = keyboard;
-			Gamepad = new List<Buttons>(gamepad);
+		public CombinedBindingData(CombinedBindingData other) {
+			Keyboard = new KeyboardBindingData(other.Keyboard);
+			Gamepad1 = new GamepadBindingData(other.Gamepad1);
+			Gamepad2 = new GamepadBindingData(other.Gamepad2);
 		}
 
-		public BindingData(Keys? keyboard, List<Buttons> gamepad) {
-			Keyboard = keyboard;
-			if (gamepad == null) {
-				Gamepad = new List<Buttons>();
-			} else {
-				Gamepad = gamepad;
+	}
+
+	[Serializable]
+	public class KeyboardBindingData {
+		protected Dictionary<string, Keys?> Mapping;
+
+		public Keys? this[string key] {
+			get {
+				return Mapping.GetDefault(key, null);
+			}
+			set {
+				Mapping.AddUpdate(key, value);
 			}
 		}
 
-		public BindingData(Keys? keyboard) {
-			Keyboard = keyboard;
-			Gamepad = new List<Buttons>();
+		/// <summary>
+		/// Bypasses checks and directly adds a new key to the mapping. Use only during initialization.
+		/// </summary>
+		public void Add(string key, Keys value) {
+			Mapping.Add(key, value);
+		}
+
+		public KeyboardBindingData() {
+			Mapping = new Dictionary<string, Keys?>();
+		}
+
+		public KeyboardBindingData(KeyboardBindingData other) {
+			Mapping = new Dictionary<string, Keys?>(other.Mapping);
 		}
 	}
 
-	/// <summary>
-	/// Stores the mapping between virtual inputs and their bindings
-	/// </summary>
 	[Serializable]
-	public class Bindings {
-		public readonly Dictionary<string, BindingData> Map;
+	public class GamepadBindingData {
+		protected Dictionary<string, List<Buttons>> Mapping; // List is never null.
+		public PlayerIndex Index;
+		public bool RumbleEnabled;
 
-		public BindingData this[string key] {
+		public List<Buttons> this[string key] {
 			get {
-				if (Map.ContainsKey(key)) {
-					return Map[key];
-				} else {
-					// Saved binding configuration did not contain key.
-					// Upon receiving null, VirtualInput will unbind currently bound keys.
-					return null;
-				}
+				return Mapping.GetDefault(key, new List<Buttons>());
 			}
 			set {
-				if (Map.ContainsKey(key)) {
-					Map[key] = value;
+				if (Mapping.ContainsKey(key)) {
+					if (Mapping[key] == null) {
+						Mapping[key] = new List<Buttons>(value);
+					} else {
+						Mapping[key].Clear();
+						Mapping[key].AddRange(value);
+					}
 				} else {
-					Map.Add(key, value);
+					if (value == null) {
+						Mapping.Add(key, new List<Buttons>());
+					} else {
+						Mapping.Add(key, new List<Buttons>(value));
+					}
 				}
 			}
 		}
 
-		public Bindings() {
-			Map = new Dictionary<string, BindingData>();
+		/// <summary>
+		/// Bypasses checks and directly adds a new button to the mapping. Use only during initialization.
+		/// </summary>
+		public void Add(string key, params Buttons[] btns) {
+			Mapping.Add(key, new List<Buttons>(btns));
 		}
 
-		public Bindings(Bindings toCopy) {
-			Map = new Dictionary<string, BindingData>(toCopy.Map);
+		public GamepadBindingData(PlayerIndex index) {
+			Mapping = new Dictionary<string, List<Buttons>>();
+			Index = index;
 		}
 
-		public override string ToString() {
-			StringBuilder sb = new StringBuilder();
-			sb.AppendLine("== Editable Bindings ==\n");
-			foreach (var item in Map) {
-				sb.AppendLine(item.Key);
-				sb.AppendLine("   " + item.Value.Keyboard);
-				sb.AppendLine("   " + PrintFormatter.ListToString(item.Value.Gamepad));
-				sb.AppendLine();
-			}
-			return sb.ToString();
+		public GamepadBindingData(GamepadBindingData other) {
+			Mapping = new Dictionary<string, List<Buttons>>(other.Mapping);
+		}
+
+		public GamepadBindingData(GamepadBindingData other, PlayerIndex newIndex) {
+			Mapping = new Dictionary<string, List<Buttons>>(other.Mapping);
+			Index = newIndex;
 		}
 
 	}
