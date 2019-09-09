@@ -41,16 +41,18 @@ namespace Nova {
 		/// and initialize them as well.
 		/// </summary>
 		protected override void Initialize() {
-			DrawManager.Initialize(GraphicsDevice);
+			MDraw.Initialize(GraphicsDevice);
 			Screen.Update(GraphicsDevice.Viewport.Bounds);
 
 			IsMouseVisible = true;
 
 			CurrentScene = new Scene();
 
-			InputManager.LoadBindings();
+			MInput.LoadBindings();
 			Console.WriteLine("Gamepad 1 connected: {0}", GamePad.GetState(PlayerIndex.One).IsConnected);
 			Console.WriteLine("Gamepad 2 connected: {0}", GamePad.GetState(PlayerIndex.Two).IsConnected);
+
+			Components.Add(new Gui.PanelRebindKeyboard(this));
 
 			base.Initialize();
 		}
@@ -68,8 +70,6 @@ namespace Nova {
 
 			Camera.Position = Screen.Center;
 			Camera.Scale = 1;
-
-			new QuickTest().Test();
 
 		}
 
@@ -90,28 +90,29 @@ namespace Nova {
 
 			Time.Update(time);
 			Screen.Update(graphics.GraphicsDevice.Viewport.Bounds);
-			InputManager.Update();
-			Input.DebugGUI_Rebind.Update();
-			Input.DebugGUI_Inputs.Update();
+			MInput.Update();
+			Gui.DebugGUI_Inputs.Update();
 
-			if (InputManager.Quit.JustPressed) {
+			if (MInput.Quit.JustPressed) {
 				Exit();
 			}
 
-			if (InputManager.TestLoadBindings.JustPressed) {
-				InputManager.LoadBindings();
+			if (MInput.TestLoadBindings.JustPressed) {
+				MInput.LoadBindings();
 			}
-			if (InputManager.TestLoadBindingsDef.JustPressed) {
-				InputManager.LoadDefaultBindings();
+			if (MInput.TestLoadBindingsDef.JustPressed) {
+				MInput.LoadDefaultBindings();
 			}
-			if (InputManager.TestSaveBindings.JustPressed) {
-				InputManager.SaveBindings();
+			if (MInput.TestSaveBindings.JustPressed) {
+				MInput.SaveBindings();
 			}
 
-			if (InputManager.Any.Back.JustPressed) {
-				IsPaused = !IsPaused;
-				Console.WriteLine(IsPaused ? "Paused" : "Unpaused");
-			}
+			QuickTest.Update();
+
+			//if (InputManager.Any.Back.JustPressed) {
+			//	IsPaused = !IsPaused;
+			//	Console.WriteLine(IsPaused ? "Paused" : "Unpaused");
+			//}
 
 			if (IsPaused) {
 				base.Update(time);
@@ -135,14 +136,13 @@ namespace Nova {
 			Time.UpdateDraw(time);
 			GraphicsDevice.Clear(Color.Black);
 
-			DrawManager.Begin();
+			MDraw.Begin();
 			if (CurrentScene != null) {
 				CurrentScene.Draw();
 			}
-			DrawManager.End();
+			MDraw.End();
 
-			Input.DebugGUI_Rebind.Draw();
-			Input.DebugGUI_Inputs.Draw();
+			Gui.DebugGUI_Inputs.Draw();
 
 			base.Draw(time);
 		}

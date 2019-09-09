@@ -11,6 +11,9 @@
 
 		public VirtualButton Jump;
 
+		public VirtualAxis Horizontal;
+		public VirtualAxis Vertical;
+
 	}
 
 }

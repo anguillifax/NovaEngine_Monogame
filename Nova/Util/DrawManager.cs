@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Nova {
 
-	public static class DrawManager {
+	public static class MDraw {
 
 		public static SpriteBatch SpriteBatch { get; private set; }
 
@@ -26,6 +26,11 @@ namespace Nova {
 			Console.WriteLine("{0} at {1} scale {2}", texture.Name, position, scale);
 			SpriteBatch.Draw(texture, Camera.Position + position, null, Color.White, rotation, origin, Camera.Scale * scale, SpriteEffects.None, 0);
 		}
+
+		public static void Write(string text, Vector2 pos, Color color) {
+			SpriteBatch.DrawString(Engine.DefaultFont, text, pos, color);
+		}
+
 	}
 
 }

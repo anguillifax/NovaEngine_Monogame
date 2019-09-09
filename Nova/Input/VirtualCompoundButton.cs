@@ -23,8 +23,7 @@ namespace Nova.Input {
 		/// Clears all previous buttons and sets new buttons.
 		/// </summary>
 		public void SetNew(IEnumerable<VirtualButton> buttons) {
-			SubButtons.Clear();
-			SubButtons.AddRange(buttons);
+			SubButtons.ClearAdd(buttons);
 		}
 
 		/// <summary>
@@ -82,7 +81,7 @@ namespace Nova.Input {
 	public class AutoVirtualCompoundButton : VirtualCompoundButton {
 
 		/// <summary>
-		/// Defines what VirtualButtons to retrieve from an InputSource.
+		/// Defines what VirtualButton to retrieve from an InputSource.
 		/// </summary>
 		private readonly Func<InputSource, VirtualButton> selector;
 

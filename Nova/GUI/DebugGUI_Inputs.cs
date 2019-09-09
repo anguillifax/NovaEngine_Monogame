@@ -1,10 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Nova.Input;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Nova.Input {
+namespace Nova.Gui {
 
 	public static class DebugGUI_Inputs {
 
@@ -12,7 +13,7 @@ namespace Nova.Input {
 		static SpriteBatch b;
 
 		public static void Update() {
-			if (InputManager.InputsPanel.JustPressed) {
+			if (MInput.InputsPanel.JustPressed) {
 				IsOpen = !IsOpen;
 			}
 		}
@@ -26,7 +27,7 @@ namespace Nova.Input {
 
 			if (!IsOpen) return;
 
-			b = DrawManager.SpriteBatch;
+			b = MDraw.SpriteBatch;
 			b.Begin();
 
 			p = TopLeft.Copy();
@@ -42,10 +43,10 @@ namespace Nova.Input {
 
 			p.Y += 70f;
 
-			WriteInput(InputManager.Player1.Enter, InputManager.Player2.Enter);
-			WriteInput(InputManager.Player1.Back, InputManager.Player2.Back);
-			WriteInput(InputManager.Player1.Clear, InputManager.Player2.Clear);
-			WriteInput(InputManager.Player1.Jump, InputManager.Player2.Jump);
+			WriteInput(MInput.Player1.Enter, MInput.Player2.Enter);
+			WriteInput(MInput.Player1.Back, MInput.Player2.Back);
+			WriteInput(MInput.Player1.Clear, MInput.Player2.Clear);
+			WriteInput(MInput.Player1.Jump, MInput.Player2.Jump);
 
 			b.End();
 

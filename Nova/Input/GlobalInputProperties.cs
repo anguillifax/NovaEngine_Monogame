@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using System;
 using System.Linq;
 
 namespace Nova.Input {
@@ -7,6 +8,9 @@ namespace Nova.Input {
 		public static readonly string Enter = "enter";
 		public static readonly string Back = "back";
 		public static readonly string Clear = "clear";
+
+		public static readonly string Horz = "horz";
+		public static readonly string Vert = "vert";
 
 		public static readonly string Jump = "jump";
 	}
@@ -37,7 +41,7 @@ namespace Nova.Input {
 		/// <summary>
 		/// Gamepad buttons that allow remapping
 		/// </summary>
-		private static readonly Buttons[] WhitelistedButtons = new Buttons[] {
+		public static readonly Buttons[] WhitelistedButtons = new Buttons[] {
 			Buttons.A, Buttons.B, Buttons.X, Buttons.Y,
 			Buttons.LeftShoulder, Buttons.RightShoulder,
 			Buttons.LeftTrigger, Buttons.RightTrigger,
@@ -48,6 +52,19 @@ namespace Nova.Input {
 			return WhitelistedButtons.Contains(button);
 		}
 
+		public static float CleanAxisInput(float v) {
+			float sign = Math.Sign(v);
+			v = Math.Abs(v);
+
+			if (v < AxisDeadzone) {
+				v = 0f;
+			} else if (v < AxisLowPowerThreshold) {
+				v = sign * AxisLowPowerAmount;
+			} else {
+				v = 1f * sign;
+			}
+			return v;
+		}
 	}
 
 }

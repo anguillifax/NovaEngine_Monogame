@@ -14,7 +14,7 @@ namespace Nova.Input {
 		private readonly SimpleTimer DelayUntilRepeat;
 		private readonly SimpleTimer RepeatDelay;
 
-		private readonly Func<bool> InputSource;
+		private readonly Func<bool> InputValue;
 
 		private bool value, previousValue, pulse;
 
@@ -28,19 +28,22 @@ namespace Nova.Input {
 		public static implicit operator bool(InputRepeater r) => r.Pressed;
 
 		public InputRepeater(Func<bool> inputSource) {
-			InputSource = inputSource;
+			InputValue = inputSource;
 			DelayUntilRepeat = new SimpleTimer(GlobalInputProperties.DelayUntilRepeat);
 			RepeatDelay = new SimpleTimer(GlobalInputProperties.RepeatDelay);
+			DelayUntilRepeat.Reset();
+			RepeatDelay.Reset();
 		}
 
 		public void Update() {
-			if (InputSource == null) {
+			if (InputValue == null) {
 				value = previousValue = false;
 				return;
 			}
 
+			pulse = false;
 			previousValue = value;
-			value = InputSource();
+			value = InputValue();
 
 			if (value) {
 
@@ -50,7 +53,6 @@ namespace Nova.Input {
 
 				} else { // Pulse the repeat timer
 					RepeatDelay.Update();
-					pulse = false;
 					if (RepeatDelay.Done) {
 						RepeatDelay.Reset();
 						pulse = true;

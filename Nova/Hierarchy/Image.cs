@@ -16,7 +16,7 @@ namespace Nova {
 		}
 
 		public override void Draw() {
-			DrawManager.Draw(texture, Position, Rotation, Origin, Scale);
+			MDraw.Draw(texture, Position, Rotation, Origin, Scale);
 			base.Draw();
 		}
 

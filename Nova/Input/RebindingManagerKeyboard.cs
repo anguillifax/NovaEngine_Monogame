@@ -5,13 +5,17 @@ using System.Collections.Generic;
 
 namespace Nova.Input {
 
-	public static class RebindingManagerKeyboard {
+	public static class KeyboardRebindingManager {
 
 		private readonly static List<Keys> lastKeys = new List<Keys>();
 
-		public static VirtualKeyboardButton Target { get; set; }
+		public static VirtualKeyboardButton Target { get; private set; }
+
+		static Keys? prevKey;
 
 		public static void Update() {
+			if (Target == null) return;
+
 			var s = Keyboard.GetState();
 
 			for (int i = 0; i < lastKeys.Count; i++) {
@@ -30,12 +34,19 @@ namespace Nova.Input {
 
 		}
 
-		public static void Unbind() {
-			Target.Unbind();
+		public static void BeginRebinding(VirtualKeyboardButton target) {
+			Target = target;
+			lastKeys.ClearAdd(Keyboard.GetState().GetPressedKeys());
+			prevKey = Target.UserKey;
 		}
 
-		public static void RegisterAlreadyPressedKeys(Keys[] keys) {
-			lastKeys.AddRange(keys);
+		public static void Unbind() {
+			Target?.Unbind();
+		}
+
+		public static void CancelOperation() {
+			Target.UserKey = prevKey;
+			Target = null;
 		}
 
 	}

@@ -7,11 +7,17 @@ namespace Nova.Input {
 		public Keys? UserKey;
 		public readonly Keys? HardcodedKey;
 
+		/// <summary>
+		/// Creates a new button and sets the hardcoded key to null (none).
+		/// </summary>
 		public VirtualKeyboardButton(string name) :
 			base(name) {
 			HardcodedKey = null;
 		}
 
+		/// <summary>
+		/// Creates a new button and sets the hardcoded key.
+		/// </summary>
 		public VirtualKeyboardButton(string name, Keys? hardcodedKey) :
 			base (name) {
 			HardcodedKey = hardcodedKey;

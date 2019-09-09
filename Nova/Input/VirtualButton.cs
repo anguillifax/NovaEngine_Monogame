@@ -33,7 +33,7 @@ namespace Nova.Input {
 
 		public VirtualButtonBaseLogic(string name) :
 			base(name) {
-			InputManager.InputUpdate += Update;
+			MInput.InputUpdate += Update;
 			BindingManager.SaveBindings += OnSaveBinding;
 			BindingManager.LoadBindings += OnLoadBinding;
 		}

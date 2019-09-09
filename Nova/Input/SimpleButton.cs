@@ -1,18 +1,18 @@
 ﻿using Microsoft.Xna.Framework.Input;
 
-namespace Nova {
+namespace Nova.Input {
 
 	/// <summary>
 	/// A simplified button that only supports keyboard presses.
 	/// </summary>
-	public class DebugButton {
+	public class SimpleButton {
 
-		readonly Keys key;
-		bool value, previousValue;
+		private readonly Keys key;
+		private bool value, previousValue;
 
-		public DebugButton(Keys key) {
+		public SimpleButton(Keys key) {
 			this.key = key;
-			InputManager.InputUpdate += Update;
+			MInput.InputUpdate += Update;
 		}
 
 		void Update() {
