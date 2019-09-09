@@ -18,63 +18,93 @@ namespace Nova.Input {
 
 			if (InputManager.RebindingPanel.JustPressed) {
 				IsOpen = !IsOpen;
-				MaxButtons = InputManager.SourceKeyboard.AllButtons.Count;
 				IsEditingKeyboard = false;
+				enterReleased = true;
 
 				if (!IsOpen) {
 					InputManager.SaveBindings();
 				}
 			}
 
-			//if (IsOpen) {
-			//	if (!IsEditingKeyboard && (InputManager.SourceKeyboard.Enter.JustPressed)) {
-			//		IsEditingKeyboard = true;
-			//		RebindingManager.RegisterAlreadyPressedKeys(Keyboard.GetState().GetPressedKeys());
+			if (IsOpen) {
+				MaxButtons = InputManager.SourceKeyboard.AllButtons.Count;
+				if (Keyboard.GetState().IsKeyUp(Keys.Enter)) enterReleased = true;
 
-			//	} else if (IsEditingKeyboard && InputManager.Enter.SourceKeyboardDefault.JustPressed) {
-			//		IsEditingKeyboard = false;
-			//	}
-			//}
+				if (IsOpen) {
+					if (!IsEditingKeyboard && InputManager.Any.Enter.JustPressed) {
+						Console.WriteLine("edit");
+						IsEditingKeyboard = true;
+						enterReleased = false;
+						RebindingManagerKeyboard.RegisterAlreadyPressedKeys(Keyboard.GetState().GetPressedKeys());
+					} else if (IsEditingKeyboard && GetHardcodedEnter()) {
+						Console.WriteLine("stop");
+						IsEditingKeyboard = false;
+					}
+				}
 
+				if (!IsEditingKeyboard) {
+					int delta = 0;
+					//if (InputManager.Vertical.RepeaterPos) {
+					//	delta = -1;
+					//}
+					if (InputManager.Cycle.JustPressed) {
+						delta = +1;
+					}
+					if (delta != 0) {
+						SelectionIndex = Calc.Loop(SelectionIndex + delta, 0, MaxButtons);
+					}
+				}
+
+				RebindingManagerKeyboard.Target = InputManager.SourceKeyboard.AllButtons[SelectionIndex];
+
+				if (IsEditingKeyboard) {
+
+					RebindingManagerKeyboard.Update();
+					if (InputManager.Any.Clear.JustPressed) {
+						RebindingManagerKeyboard.Unbind();
+					}
+
+				}
+
+				//	if (IsOpen) {
+
+				//		
+
+				//		if (!IsEditingKeyboard) {
+				//			
+				//		}
+
+				//		RebindingManager.Target = InputManager.AllButtons[SelectionIndex];
+				//		if (IsEditingKeyboard) {
+				//			RebindingManager.SearchKeyboard();
+				//			if (InputManager.Clear.SourceKeyboardDefault.JustPressed) {
+				//				RebindingManager.Target.SourceKeyboard.Unbind();
+				//			}
+				//		} else {
+				//			if (InputManager.Clear.SourceKeyboard.JustPressed || InputManager.Clear.SourceKeyboardDefault.JustPressed) {
+				//				RebindingManager.Target.SourceKeyboard.Unbind();
+				//			}
+				//		}
+
+				//		RebindingManager.SearchGamepad();
+				//		if (InputManager.Clear.SourceGamepad.JustPressed && RebindingManager.Target.GamepadRebindable) {
+				//			RebindingManager.Target.SourceGamepad.UnbindAll();
+				//		}
+
+				//	}
+
+				//}
+			}
 		}
 
-		//	if (IsOpen) {
-
-		//		
-
-		//		if (!IsEditingKeyboard) {
-		//			int delta = 0;
-		//			if (InputManager.Vertical.RepeaterPos) {
-		//				delta = -1;
-		//			}
-		//			if (InputManager.Vertical.RepeaterNeg) {
-		//				delta = +1;
-		//			}
-		//			if (delta != 0) {
-		//				SelectionIndex = Calc.Loop(SelectionIndex + delta, 0, InputManager.AllButtons.Count);
-		//			}
-		//		}
-
-		//		RebindingManager.Target = InputManager.AllButtons[SelectionIndex];
-		//		if (IsEditingKeyboard) {
-		//			RebindingManager.SearchKeyboard();
-		//			if (InputManager.Clear.SourceKeyboardDefault.JustPressed) {
-		//				RebindingManager.Target.SourceKeyboard.Unbind();
-		//			}
-		//		} else {
-		//			if (InputManager.Clear.SourceKeyboard.JustPressed || InputManager.Clear.SourceKeyboardDefault.JustPressed) {
-		//				RebindingManager.Target.SourceKeyboard.Unbind();
-		//			}
-		//		}
-
-		//		RebindingManager.SearchGamepad();
-		//		if (InputManager.Clear.SourceGamepad.JustPressed && RebindingManager.Target.GamepadRebindable) {
-		//			RebindingManager.Target.SourceGamepad.UnbindAll();
-		//		}
-
-		//	}
-
-		//}
+		static bool enterReleased;
+		static bool GetHardcodedEnter() {
+			if (enterReleased) {
+				var s = Keyboard.GetState();
+				return s.IsKeyDown((Keys)InputManager.SourceKeyboard.Enter.HardcodedKey);
+			}
+			return false;
+		}
 
 		static SpriteBatch b;
 
@@ -101,16 +131,14 @@ namespace Nova.Input {
 
 			for (int i = 0; i < MaxButtons; i++) {
 
-				//bool active = SelectionIndex == i;
-				//Color color = active ? (IsEditingKeyboard ? Color.Lime : Color.Yellow) : (IsEditingKeyboard ? Color.Gray : Color.White);
-
-				Color color = Color.White;
+				bool active = SelectionIndex == i;
+				Color color = active ? (IsEditingKeyboard ? Color.Lime : Color.Yellow) : (IsEditingKeyboard ? Color.Gray : Color.White);
 
 				Vector2 rowPos = pos.Copy();
 
-				//if (active) {
-				//	rowPos.X += 5f;
-				//}
+				if (active) {
+					rowPos.X += 5f;
+				}
 
 				Write(InputManager.SourceKeyboard.AllButtons[i].Name, rowPos, color);
 

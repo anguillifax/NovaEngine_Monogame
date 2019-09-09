@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Nova.Input {
 
-	public static class RebindingManager {
+	public static class RebindingManagerGamepad {
 
 		private readonly static List<Keys> lastKeys = new List<Keys>();
 		private readonly static List<Buttons> lastButtons = new List<Buttons>();

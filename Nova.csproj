@@ -71,8 +71,9 @@
     <Compile Include="Nova\Input\InputSource.cs" />
     <Compile Include="Nova\Input\InputSourceGamepad.cs" />
     <Compile Include="Nova\Input\InputSourceKeyboard.cs" />
+    <Compile Include="Nova\Input\RebindingManagerGamepad.cs" />
     <Compile Include="Nova\Input\VirtualAxisHelpers.cs" />
-    <Compile Include="Nova\Input\RebindingManager.cs" />
+    <Compile Include="Nova\Input\RebindingManagerKeyboard.cs" />
     <Compile Include="Nova\Input\VirtualAxis.cs" />
     <Compile Include="Nova\Input\VirtualCompoundButton.cs" />
     <Compile Include="Nova\Input\VirtualGamepadButton.cs" />

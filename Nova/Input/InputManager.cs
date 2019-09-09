@@ -14,7 +14,9 @@ namespace Nova {
 		public static readonly DebugButton TestLoadBindings = new DebugButton(Keys.F1);
 		public static readonly DebugButton TestLoadBindingsDef = new DebugButton(Keys.F3);
 		public static readonly DebugButton TestSaveBindings = new DebugButton(Keys.F2);
-					   
+
+		public static readonly DebugButton Cycle = new DebugButton(Keys.F8);
+
 		public static readonly DebugButton RebindingPanel = new DebugButton(Keys.F10);
 		public static readonly DebugButton InputsPanel = new DebugButton(Keys.F11);
 

@@ -45,8 +45,6 @@ namespace Nova.Input {
 
 			SaveBindings?.Invoke();
 
-			Console.WriteLine("jump key: " + CurrentBindings.Keyboard["jump"]);
-
 			SaveLoad.Save(SavePath, CurrentBindings);
 			Console.WriteLine("Saved bindings");
 		}
