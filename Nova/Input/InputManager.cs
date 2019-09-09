@@ -10,39 +10,36 @@ namespace Nova {
 
 		public static event Action InputUpdate;
 
-		public static DebugButton Quit = new DebugButton(Keys.F4);
-		public static DebugButton TestLoadBindings = new DebugButton(Keys.F1);
-		public static DebugButton TestLoadBindingsDef = new DebugButton(Keys.F3);
-		public static DebugButton TestSaveBindings = new DebugButton(Keys.F2);
+		public static readonly DebugButton Quit = new DebugButton(Keys.F4);
+		public static readonly DebugButton TestLoadBindings = new DebugButton(Keys.F1);
+		public static readonly DebugButton TestLoadBindingsDef = new DebugButton(Keys.F3);
+		public static readonly DebugButton TestSaveBindings = new DebugButton(Keys.F2);
+					   
+		public static readonly DebugButton RebindingPanel = new DebugButton(Keys.F10);
+		public static readonly DebugButton InputsPanel = new DebugButton(Keys.F11);
 
-		public static DebugButton RebindingPanel = new DebugButton(Keys.F10);
+		public static readonly InputSourceKeyboard SourceKeyboard = new InputSourceKeyboard();
+		public static readonly InputSourceGamepad SourceGamepad1 = new InputSourceGamepad(PlayerIndex.One);
+		public static readonly InputSourceGamepad SourceGamepad2 = new InputSourceGamepad(PlayerIndex.Two);
 
-		public static readonly InputSource SourceKeyboard = new InputSourceKeyboard();
-		public static readonly InputSource SourceGamepad1 = new InputSourceGamepad(PlayerIndex.One);
-		public static readonly InputSource SourceGamepad2 = new InputSourceGamepad(PlayerIndex.Two);
-
-		public static readonly CompoundInputSource Player1 = new CompoundInputSource();
-		public static readonly CompoundInputSource Player2 = new CompoundInputSource();
+		public static readonly CompoundInputSource Player1 = new CompoundInputSource(SourceKeyboard, SourceGamepad1);
+		public static readonly CompoundInputSource Player2 = new CompoundInputSource(SourceGamepad1, SourceGamepad2);
 		public static readonly CompoundInputSource Any = new CompoundInputSource(SourceKeyboard, SourceGamepad1, SourceGamepad2);
 
 		public static void Update() {
 			InputUpdate?.Invoke();
-
-			if (Any.Enter.JustPressed) {
-				Console.WriteLine("enter");
-			}
 		}
 
 		public static void LoadBindings() {
-			BindingsManager.Load();
+			BindingManager.Load();
 		}
 
 		public static void LoadDefaultBindings() {
-			BindingsManager.LoadDefault();
+			BindingManager.LoadDefault();
 		}
 
 		public static void SaveBindings() {
-			BindingsManager.Save();
+			BindingManager.Save();
 		}
 
 	}

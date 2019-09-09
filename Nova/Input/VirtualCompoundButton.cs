@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Nova.Input {
 
@@ -72,6 +73,27 @@ namespace Nova.Input {
 		}
 
 		#endregion
+
+	}
+
+	/// <summary>
+	/// Uses a Linq query to automatically retrieve new buttons.
+	/// </summary>
+	public class AutoVirtualCompoundButton : VirtualCompoundButton {
+
+		/// <summary>
+		/// Defines what VirtualButtons to retrieve from an InputSource.
+		/// </summary>
+		private readonly Func<InputSource, VirtualButton> selector;
+
+		public AutoVirtualCompoundButton(string name, Func<InputSource, VirtualButton> func, params VirtualButton[] buttons) :
+			base(name, buttons) {
+			selector = func;
+		}
+
+		public void UpdateButtons(ref List<InputSource> sources) {
+			SetNew(sources.Select(selector));
+		}
 
 	}
 

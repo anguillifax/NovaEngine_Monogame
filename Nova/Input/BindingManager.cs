@@ -5,15 +5,18 @@ using System.IO;
 
 namespace Nova.Input {
 
-	public static class BindingsManager {
+	public static class BindingManager {
 
 		public static readonly string SavePath = Path.Combine(
 			Environment.GetFolderPath(Environment.SpecialFolder.Desktop), @"controls.json");
 
 		public static CombinedBindingData CurrentBindings;
-		public static KeyboardBindingData DefaultKeyboardBindings;
-		public static GamepadBindingData DefaultGamepadBindings;
-		public static CombinedBindingData DefaultBindings;
+		public readonly static KeyboardBindingData DefaultKeyboardBindings;
+		public readonly static GamepadBindingData DefaultGamepadBindings;
+		public readonly static CombinedBindingData DefaultBindings;
+
+		public static event Action LoadBindings;
+		public static event Action SaveBindings;
 
 		public static void Load() {
 			try {
@@ -23,7 +26,7 @@ namespace Nova.Input {
 				CurrentBindings = DefaultBindings;
 			}
 
-			// TODO: load bindings
+			LoadBindings?.Invoke();
 
 			Console.WriteLine("Loaded bindings");
 		}
@@ -31,7 +34,7 @@ namespace Nova.Input {
 		public static void LoadDefault() {
 			CurrentBindings = DefaultBindings;
 
-			// TODO: load bindings
+			LoadBindings?.Invoke();
 
 			Console.WriteLine("Loaded default bindings");
 		}
@@ -40,13 +43,15 @@ namespace Nova.Input {
 			CurrentBindings = new CombinedBindingData(
 				new KeyboardBindingData(), new GamepadBindingData(PlayerIndex.One), new GamepadBindingData(PlayerIndex.Two));
 
-			// TODO: retrieve bindings
+			SaveBindings?.Invoke();
+
+			Console.WriteLine("jump key: " + CurrentBindings.Keyboard["jump"]);
 
 			SaveLoad.Save(SavePath, CurrentBindings);
 			Console.WriteLine("Saved bindings");
 		}
 
-		public static void CreateDefaultBindings() {
+		static BindingManager() {
 
 			// Keyboard
 			DefaultKeyboardBindings = new KeyboardBindingData();
@@ -64,14 +69,6 @@ namespace Nova.Input {
 			// Combination
 			DefaultBindings = new CombinedBindingData(DefaultKeyboardBindings,
 				DefaultGamepadBindings, new GamepadBindingData(DefaultGamepadBindings, PlayerIndex.Two));
-
-			//DefaultBindings[InputManager.Attack.Name] = new BindingData(Keys.F, Buttons.X);
-			//DefaultBindings[InputManager.Unleash.Name] = new BindingData(Keys.D, Buttons.RightTrigger, Buttons.LeftTrigger);
-			//DefaultBindings[InputManager.Restart.Name] = new BindingData(Keys.Y);
-			//DefaultBindings[InputManager.Horizontal.NamePos] = new BindingData(Keys.L);
-			//DefaultBindings[InputManager.Horizontal.NameNeg] = new BindingData(Keys.J);
-			//DefaultBindings[InputManager.Vertical.NamePos] = new BindingData(Keys.I);
-			//DefaultBindings[InputManager.Vertical.NameNeg] = new BindingData(Keys.K);
 		}
 
 	}

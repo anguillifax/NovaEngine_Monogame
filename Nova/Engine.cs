@@ -48,8 +48,7 @@ namespace Nova {
 
 			CurrentScene = new Scene();
 
-			//InputManager.LoadBindings();
-			Console.WriteLine(GamePad.MaximumGamePadCount);
+			InputManager.LoadBindings();
 			Console.WriteLine("Gamepad 1 connected: {0}", GamePad.GetState(PlayerIndex.One).IsConnected);
 			Console.WriteLine("Gamepad 2 connected: {0}", GamePad.GetState(PlayerIndex.Two).IsConnected);
 
@@ -92,6 +91,8 @@ namespace Nova {
 			Time.Update(time);
 			Screen.Update(graphics.GraphicsDevice.Viewport.Bounds);
 			InputManager.Update();
+			Input.DebugGUI_Rebind.Update();
+			Input.DebugGUI_Inputs.Update();
 
 			if (InputManager.Quit.JustPressed) {
 				Exit();
@@ -139,6 +140,9 @@ namespace Nova {
 				CurrentScene.Draw();
 			}
 			DrawManager.End();
+
+			Input.DebugGUI_Rebind.Draw();
+			Input.DebugGUI_Inputs.Draw();
 
 			base.Draw(time);
 		}

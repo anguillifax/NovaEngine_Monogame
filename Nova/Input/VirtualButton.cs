@@ -21,6 +21,7 @@ namespace Nova.Input {
 		protected VirtualButton(string name) {
 			Name = name;
 		}
+
 	}
 
 	/// <summary>
@@ -33,9 +34,14 @@ namespace Nova.Input {
 		public VirtualButtonBaseLogic(string name) :
 			base(name) {
 			InputManager.InputUpdate += Update;
+			BindingManager.SaveBindings += OnSaveBinding;
+			BindingManager.LoadBindings += OnLoadBinding;
 		}
 
 		protected abstract void Update();
+
+		protected abstract void OnLoadBinding();
+		protected abstract void OnSaveBinding();
 
 		/// <summary>
 		/// Returns true if button is pressed

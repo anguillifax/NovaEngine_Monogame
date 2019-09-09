@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using System;
 using System.Collections.Generic;
 
 namespace Nova.Input {
@@ -9,20 +10,39 @@ namespace Nova.Input {
 		public readonly PlayerIndex Index;
 		public bool Rebindable { get; private set; }
 
-		public readonly List<Buttons> buttons;
+		public readonly List<Buttons> ButtonList;
 
+		private GamepadBindingData CurrentBindingData {
+			get {
+				switch (Index) {
+					case PlayerIndex.One:
+						return BindingManager.CurrentBindings.Gamepad1;
+					case PlayerIndex.Two:
+						return BindingManager.CurrentBindings.Gamepad2;
+					default:
+						throw new Exception("Player index is not set to 1 or 2!");
+				}
+			}
+		}
+
+		/// <summary>
+		/// Creates a new VirtualGamepadButton that can be rebound.
+		/// </summary>
 		public VirtualGamepadButton(string name, PlayerIndex index) :
 			base (name) {
 			Index = index;
 			Rebindable = true;
-			buttons = new List<Buttons>();
+			ButtonList = new List<Buttons>();
 		}
 
+		/// <summary>
+		/// Creates a new VirtualGamepadButton with hardcoded controls.
+		/// </summary>
 		public VirtualGamepadButton(string name, PlayerIndex index, params Buttons[] defaultButtons) :
 			base(name) {
 			Index = index;
 			Rebindable = false;
-			buttons = new List<Buttons>(defaultButtons);
+			ButtonList = new List<Buttons>(defaultButtons);
 		}
 
 		protected override void Update() {
@@ -32,13 +52,24 @@ namespace Nova.Input {
 			value = false;
 
 			var s = GamePad.GetState(Index);
-			foreach (var button in buttons) {
+			foreach (var button in ButtonList) {
 				if (s.IsButtonDown(button)) {
 					value = true;
 					break;
 				}
 			}
 
+		}
+
+		protected override void OnLoadBinding() {
+			if (Rebindable) {
+				ButtonList.Clear();
+				ButtonList.AddRange(CurrentBindingData[Name]);
+			}
+		}
+
+		protected override void OnSaveBinding() {
+			CurrentBindingData[Name] = ButtonList;
 		}
 
 		public RebindResult Rebind(Buttons newButton) {
@@ -49,16 +80,16 @@ namespace Nova.Input {
 
 			if (GlobalInputProperties.IsButtonAllowed(newButton)) {
 
-				if (buttons.Contains(newButton)) {
-					buttons.Remove(newButton);
+				if (ButtonList.Contains(newButton)) {
+					ButtonList.Remove(newButton);
 					return RebindResult.Removed;
 
 				} else {
-					if (buttons.Count >= GlobalInputProperties.MaxGamepadButtons) {
+					if (ButtonList.Count >= GlobalInputProperties.MaxGamepadButtons) {
 						// if too many buttons, remove from head
-						buttons.RemoveRange(0, buttons.Count - GlobalInputProperties.MaxGamepadButtons + 1);
+						ButtonList.RemoveRange(0, ButtonList.Count - GlobalInputProperties.MaxGamepadButtons + 1);
 					}
-					buttons.Add(newButton);
+					ButtonList.Add(newButton);
 					return RebindResult.Added;
 				}
 
@@ -70,7 +101,7 @@ namespace Nova.Input {
 
 		public void Unbind() {
 			if (Rebindable) {
-				buttons.Clear();
+				ButtonList.Clear();
 			}
 		}
 

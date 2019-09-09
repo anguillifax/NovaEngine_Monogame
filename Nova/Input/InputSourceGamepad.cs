@@ -1,9 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Nova.Input {
 
@@ -12,24 +11,25 @@ namespace Nova.Input {
 		public PlayerIndex Index { get; set; }
 		public bool RumbleEnabled { get; set; }
 
+		public readonly List<VirtualGamepadButton> AllButtons;
+
 		public InputSourceGamepad(PlayerIndex playerIndex) {
 			Index = playerIndex;
 
 			Engine.Instance.Exiting += (s, e) => StopRumbling();
 
-			Enter = new VirtualGamepadButton("enter", Index, Buttons.A);
-			Back = new VirtualGamepadButton("back", Index, Buttons.Start);
-			Clear = new VirtualGamepadButton("clear", Index, Buttons.Back);
+			AllButtons = new List<VirtualGamepadButton>();
 
-			Jump = new VirtualGamepadButton("jump", Index);
+			CreateButton(ref Enter, new VirtualGamepadButton(BindingNames.Enter, Index, Buttons.A));
+			CreateButton(ref Back, new VirtualGamepadButton(BindingNames.Back, Index, Buttons.Start));
+			CreateButton(ref Clear, new VirtualGamepadButton(BindingNames.Clear, Index, Buttons.Back));
+
+			CreateButton(ref Jump, new VirtualGamepadButton(BindingNames.Jump, Index));
 		}
 
-		public override void LoadBindings() {
-			throw new NotImplementedException();
-		}
-
-		public override void SaveBindings() {
-			throw new NotImplementedException();
+		private void CreateButton(ref VirtualButton vb, VirtualGamepadButton vgb) {
+			AllButtons.Add(vgb);
+			vb = vgb;
 		}
 
 		public void SetRumble(float left, float right) {

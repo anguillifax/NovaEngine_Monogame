@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -28,7 +29,7 @@ namespace Nova.Input {
 
 	[Serializable]
 	public class KeyboardBindingData {
-		protected Dictionary<string, Keys?> Mapping;
+		[JsonProperty] protected Dictionary<string, Keys?> Mapping;
 
 		public Keys? this[string key] {
 			get {
@@ -57,7 +58,7 @@ namespace Nova.Input {
 
 	[Serializable]
 	public class GamepadBindingData {
-		protected Dictionary<string, List<Buttons>> Mapping; // List is never null.
+		[JsonProperty] protected Dictionary<string, List<Buttons>> Mapping; // List is never null.
 		public PlayerIndex Index;
 		public bool RumbleEnabled;
 
@@ -88,6 +89,9 @@ namespace Nova.Input {
 		/// </summary>
 		public void Add(string key, params Buttons[] btns) {
 			Mapping.Add(key, new List<Buttons>(btns));
+		}
+
+		private GamepadBindingData() { // exists purely for JSON deserializer
 		}
 
 		public GamepadBindingData(PlayerIndex index) {

@@ -36,6 +36,14 @@ namespace Nova.Input {
 
 		}
 
+		protected override void OnLoadBinding() {
+			UserKey = BindingManager.CurrentBindings.Keyboard[Name];
+		}
+
+		protected override void OnSaveBinding() {
+			BindingManager.CurrentBindings.Keyboard[Name] = UserKey;
+		}
+
 		public RebindResult Rebind(Keys newKey) {
 
 			if (GlobalInputProperties.IsKeyAllowed(newKey)) {

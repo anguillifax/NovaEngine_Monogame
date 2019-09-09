@@ -63,7 +63,8 @@
     <Compile Include="Nova\Components\Component.cs" />
     <Compile Include="Nova\Input\BindingsDatatype.cs" />
     <Compile Include="Nova\Input\DebugButton.cs" />
-    <Compile Include="Nova\Input\DebugInputGUI.cs" />
+    <Compile Include="Nova\Input\DebugGUI_Rebind.cs" />
+    <Compile Include="Nova\Input\DebugGUI_Inputs.cs" />
     <Compile Include="Nova\Input\GameControls.cs" />
     <Compile Include="Nova\Input\GamepadManager.cs" />
     <Compile Include="Nova\Input\InputRepeater.cs" />
@@ -91,7 +92,7 @@
     <Compile Include="Nova\Util\SimpleTimer.cs" />
     <Compile Include="Nova\Util\Time.cs" />
     <Compile Include="Nova\Util\Calc.cs" />
-    <Compile Include="Nova\Input\BindingsManager.cs" />
+    <Compile Include="Nova\Input\BindingManager.cs" />
     <Compile Include="Nova\Input\GlobalInputProperties.cs" />
     <Compile Include="Nova\Input\InputManager.cs" />
     <Compile Include="Nova\Input\VirtualButton.cs" />

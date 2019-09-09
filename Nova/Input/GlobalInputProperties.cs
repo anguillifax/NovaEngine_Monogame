@@ -3,6 +3,14 @@ using System.Linq;
 
 namespace Nova.Input {
 
+	public static class BindingNames {
+		public static readonly string Enter = "enter";
+		public static readonly string Back = "back";
+		public static readonly string Clear = "clear";
+
+		public static readonly string Jump = "jump";
+	}
+
 	public static class GlobalInputProperties {
 
 		public static readonly int MaxGamepadButtons = 4;

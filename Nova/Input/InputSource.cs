@@ -8,10 +8,6 @@ using System.Linq;
 namespace Nova.Input {
 
 	public abstract class InputSource : GameControls {
-
-		public abstract void LoadBindings();
-		public abstract void SaveBindings();
-
 	}
 
 	/// <summary>
@@ -19,26 +15,36 @@ namespace Nova.Input {
 	/// </summary>
 	public class CompoundInputSource : GameControls {
 
-		public readonly List<InputSource> Sources;
+		public List<InputSource> Sources;
+
+		private readonly List<AutoVirtualCompoundButton> AllButtons;
 
 		public CompoundInputSource(params InputSource[] sources) {
 			Sources = new List<InputSource>(sources);
 
-			Enter = new VirtualCompoundButton("enter");
-			Back = new VirtualCompoundButton("back");
-			Clear = new VirtualCompoundButton("clear");
+			AllButtons = new List<AutoVirtualCompoundButton>();
 
-			Jump = new VirtualCompoundButton("jump");
+			CreateButton(ref Enter, new AutoVirtualCompoundButton(BindingNames.Enter, (x) => x.Enter));
+			CreateButton(ref Back, new AutoVirtualCompoundButton(BindingNames.Back, (x) => x.Back));
+			CreateButton(ref Clear, new AutoVirtualCompoundButton(BindingNames.Clear, (x) => x.Clear));
 
-			UpdateVirtualButtons();
+			CreateButton(ref Jump, new AutoVirtualCompoundButton(BindingNames.Jump, (x) => x.Jump));
+
+			UpdateButtons();
+			BindingManager.SaveBindings += UpdateButtons;
 		}
 
-		private void UpdateVirtualButtons() {
-			((VirtualCompoundButton)Enter).SetNew(Sources.Select((x) => x.Enter));
-			((VirtualCompoundButton)Back).SetNew(Sources.Select((x) => x.Back));
-			((VirtualCompoundButton)Clear).SetNew(Sources.Select((x) => x.Clear));
+		private void CreateButton(ref VirtualButton vb, AutoVirtualCompoundButton vcb) {
+			AllButtons.Add(vcb);
+			vb = vcb;
+		}
 
-			((VirtualCompoundButton)Jump).SetNew(Sources.Select((x) => x.Jump));
+		private void UpdateButtons() {
+			if (Sources.Count > 0) {
+				foreach (var item in AllButtons) {
+					item.UpdateButtons(ref Sources);
+				}
+			}
 		}
 
 	}
