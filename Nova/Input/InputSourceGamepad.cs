@@ -86,6 +86,10 @@ namespace Nova.Input {
 			GamePad.SetVibration(Index, 0, 0);
 		}
 
+		public override string ToString() {
+			return "InputSource Gamepad" + ((int)Index + 1);
+		}
+
 	}
 
 }

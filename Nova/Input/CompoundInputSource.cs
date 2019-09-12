@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Nova.Input {
 
+	public abstract class InputSource : GameControls {
+	}
+
 	/// <summary>
 	/// Packs multiple input sources into one source.
 	/// </summary>
@@ -31,7 +34,7 @@ namespace Nova.Input {
 			CreateButton(ref Unleash, new AutoVirtualCompoundButton(BindingNames.Unleash, (x) => x.Unleash));
 			CreateButton(ref Retry, new AutoVirtualCompoundButton(BindingNames.Retry, (x) => x.Retry));
 
-			RetrieveNewVirtualInputs();
+			if (Sources.Count > 0) RetrieveNewVirtualInputs();
 		}
 
 		private void CreateButton(ref VirtualButton vb, AutoVirtualCompoundButton vcb) {
@@ -46,11 +49,10 @@ namespace Nova.Input {
 
 		public void SetNewSources(params InputSource[] newSources) {
 			Sources.ClearAdd(newSources);
-			RetrieveNewVirtualInputs();
 		}
 
-		private void RetrieveNewVirtualInputs() {
-			Console.WriteLine("Retrieving new virtual buttons and axes...");
+		public void RetrieveNewVirtualInputs() {
+			Console.WriteLine("Retrieving new virtual buttons and axes... {0}", Sources.ToPrettyString());
 			foreach (var item in AllButtons) {
 				item.UpdateButtons(Sources);
 			}

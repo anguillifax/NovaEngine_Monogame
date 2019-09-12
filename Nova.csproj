@@ -62,8 +62,9 @@
     <Compile Include="Nova\Components\AnimatedSprite.cs" />
     <Compile Include="Nova\Components\Component.cs" />
     <Compile Include="Nova\GUI\PanelRebindGamepad.cs" />
+    <Compile Include="Nova\GUI\PanelRebindInputSources.cs" />
     <Compile Include="Nova\Input\BindingsDatatype.cs" />
-    <Compile Include="Nova\Input\InputSource.cs" />
+    <Compile Include="Nova\Input\InputSourceLayoutManager.cs" />
     <Compile Include="Nova\Input\SimpleButton.cs" />
     <Compile Include="Nova\GUI\PanelRebindKeyboard.cs" />
     <Compile Include="Nova\GUI\DebugGUI_Inputs.cs" />

@@ -12,17 +12,20 @@ namespace Nova.Input {
 		public KeyboardBindingData Keyboard;
 		public GamepadBindingData Gamepad1;
 		public GamepadBindingData Gamepad2;
+		public InputSourceLayoutData InputSourceLayout;
 
 		public CombinedBindingData(KeyboardBindingData keyboard, GamepadBindingData gamepad1, GamepadBindingData gamepad2) {
 			Keyboard = keyboard;
 			Gamepad1 = gamepad1;
 			Gamepad2 = gamepad2;
+			InputSourceLayout = new InputSourceLayoutData();
 		}
 
 		public CombinedBindingData(CombinedBindingData other) {
 			Keyboard = new KeyboardBindingData(other.Keyboard);
 			Gamepad1 = new GamepadBindingData(other.Gamepad1);
 			Gamepad2 = new GamepadBindingData(other.Gamepad2);
+			InputSourceLayout = new InputSourceLayoutData(other.InputSourceLayout);
 		}
 
 		public GamepadBindingData GetGamepad(PlayerIndex index) {
@@ -37,6 +40,22 @@ namespace Nova.Input {
 		}
 
 	}
+
+	[Serializable]
+	public struct InputSourceLayoutData {
+		public bool keyboardIsPlayer2;
+		public bool gamepad1IsPlayer2;
+
+		public InputSourceLayoutData(bool kbIsP2, bool gp1IsP2) {
+			keyboardIsPlayer2 = kbIsP2;
+			gamepad1IsPlayer2 = gp1IsP2;
+		}
+
+		public InputSourceLayoutData(InputSourceLayoutData other) {
+			keyboardIsPlayer2 = other.keyboardIsPlayer2;
+			gamepad1IsPlayer2 = other.gamepad1IsPlayer2;
+		}
+	} 
 
 	[Serializable]
 	public class KeyboardBindingData {

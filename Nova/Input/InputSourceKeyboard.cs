@@ -41,6 +41,10 @@ namespace Nova.Input {
 			v = axis;
 		}
 
+		public override string ToString() {
+			return "InputSource Keyboard";
+		}
+
 	}
 
 }

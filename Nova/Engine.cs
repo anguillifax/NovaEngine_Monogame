@@ -52,13 +52,12 @@ namespace Nova {
 
 			CurrentScene = new Scene();
 
-			InputManager.LoadBindings();
-			Console.WriteLine("Gamepad 1 connected: {0}", GamePad.GetState(PlayerIndex.One).IsConnected);
-			Console.WriteLine("Gamepad 2 connected: {0}", GamePad.GetState(PlayerIndex.Two).IsConnected);
+			InputManager.Init();
 
 			Components.Add(new Gui.PanelRebindKeyboard(this));
 			Components.Add(new Gui.PanelRebindGamepad(this, PlayerIndex.One));
 			Components.Add(new Gui.PanelRebindGamepad(this, PlayerIndex.Two));
+			Components.Add(new Gui.PanelRebindInputSources(this));
 
 			quickTest.Init();
 

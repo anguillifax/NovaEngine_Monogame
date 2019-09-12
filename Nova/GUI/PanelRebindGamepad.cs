@@ -7,7 +7,7 @@ namespace Nova.Gui {
 
 	public class PanelRebindGamepad : DrawableGameComponent {
 
-		private readonly static SimpleButton ButtonRumbleToggle = new SimpleButton(Keys.F8);
+		private readonly static SimpleButton ButtonRumbleToggle = new SimpleButton(Keys.F7);
 
 		public PlayerIndex Index { get; }
 		private InputSourceGamepad Source {
@@ -103,9 +103,10 @@ namespace Nova.Gui {
 						Target.Unbind();
 					}
 
-					if (InputManager.Any.Back.JustPressed) {
-						Target.ButtonList.ClearAdd(prevBoundButtons);
-					}
+					// Press back to set to previous state
+					//if (InputManager.Any.Back.JustPressed) {
+					//	Target.ButtonList.ClearAdd(prevBoundButtons);
+					//}
 
 				}
 
@@ -150,7 +151,7 @@ namespace Nova.Gui {
 
 			}
 
-			MDraw.Write(string.Format("Rumble: {0} (press F8)", Source.RumbleEnabled ? "ON" : "OFF"), new Vector2(20f, Screen.Height - 40f), Color.DimGray);
+			MDraw.Write(string.Format("Rumble: {0} (press F7)", Source.RumbleEnabled ? "ON" : "OFF"), new Vector2(20f, Screen.Height - 40f), Color.DimGray);
 
 			MDraw.SpriteBatch.End();
 
