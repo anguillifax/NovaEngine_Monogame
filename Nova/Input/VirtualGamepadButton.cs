@@ -7,21 +7,14 @@ namespace Nova.Input {
 
 	public class VirtualGamepadButton : VirtualButtonBaseLogic {
 
-		public readonly PlayerIndex Index;
-		public bool Rebindable { get; private set; }
+		public PlayerIndex Index { get; }
+		public bool IsRebindable { get; }
 
 		public readonly List<Buttons> ButtonList;
 
 		private GamepadBindingData CurrentBindingData {
 			get {
-				switch (Index) {
-					case PlayerIndex.One:
-						return BindingManager.CurrentBindings.Gamepad1;
-					case PlayerIndex.Two:
-						return BindingManager.CurrentBindings.Gamepad2;
-					default:
-						throw new Exception("Player index is not set to 1 or 2!");
-				}
+				return BindingManager.CurrentBindings.GetGamepad(Index);
 			}
 		}
 
@@ -29,9 +22,9 @@ namespace Nova.Input {
 		/// Creates a new VirtualGamepadButton that can be rebound.
 		/// </summary>
 		public VirtualGamepadButton(string name, PlayerIndex index) :
-			base (name) {
+			base(name) {
 			Index = index;
-			Rebindable = true;
+			IsRebindable = true;
 			ButtonList = new List<Buttons>();
 		}
 
@@ -41,12 +34,12 @@ namespace Nova.Input {
 		public VirtualGamepadButton(string name, PlayerIndex index, params Buttons[] defaultButtons) :
 			base(name) {
 			Index = index;
-			Rebindable = false;
+			IsRebindable = false;
 			ButtonList = new List<Buttons>(defaultButtons);
 		}
 
 		protected override void Update() {
-
+			
 			lastValue = value;
 
 			value = false;
@@ -62,20 +55,21 @@ namespace Nova.Input {
 		}
 
 		protected override void OnLoadBinding() {
-			if (Rebindable) {
-				ButtonList.Clear();
-				ButtonList.AddRange(CurrentBindingData[Name]);
+			if (IsRebindable) {
+				ButtonList.ClearAdd(CurrentBindingData[Name]);
 			}
 		}
 
 		protected override void OnSaveBinding() {
-			CurrentBindingData[Name] = ButtonList;
+			if (IsRebindable) {
+				CurrentBindingData[Name] = ButtonList;
+			}
 		}
 
 		public RebindResult Rebind(Buttons newButton) {
 
-			if (!Rebindable) {
-				return RebindResult.NoOp;
+			if (!IsRebindable) {
+				return RebindResult.NotAllowed;
 			}
 
 			if (GlobalInputProperties.IsButtonAllowed(newButton)) {
@@ -94,13 +88,13 @@ namespace Nova.Input {
 				}
 
 			} else {
-				return RebindResult.NoOp;
+				return RebindResult.NotAllowed;
 			}
 
 		}
 
 		public void Unbind() {
-			if (Rebindable) {
+			if (IsRebindable) {
 				ButtonList.Clear();
 			}
 		}

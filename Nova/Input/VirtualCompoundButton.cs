@@ -37,28 +37,25 @@ namespace Nova.Input {
 
 		public override bool Pressed {
 			get {
-				foreach (var item in SubButtons) {
-					if (item.Pressed) return true;
-				}
-				return false;
+				return SubButtons.Any((x) => x.Pressed);
 			}
 		}
 
 		public override bool JustPressed {
 			get {
-				foreach (var item in SubButtons) {
-					if (item.JustPressed) return true;
+				int jpCount = SubButtons.Count((x) => x.JustPressed);
+				if (jpCount == 0) {
+					return false;
+				} else {
+					int pCount = SubButtons.Count((x) => x.Pressed);
+					return pCount == jpCount;
 				}
-				return false;
 			}
 		}
 
 		public override bool Released {
 			get {
-				foreach (var item in SubButtons) {
-					if (item.Pressed) return false;
-				}
-				return true;
+				return SubButtons.All((x) => x.Released);
 			}
 		}
 
@@ -90,7 +87,7 @@ namespace Nova.Input {
 			selector = func;
 		}
 
-		public void UpdateButtons(ref List<InputSource> sources) {
+		public void UpdateButtons(List<InputSource> sources) {
 			SetNew(sources.Select(selector));
 		}
 

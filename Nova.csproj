@@ -61,19 +61,19 @@
   <ItemGroup>
     <Compile Include="Nova\Components\AnimatedSprite.cs" />
     <Compile Include="Nova\Components\Component.cs" />
+    <Compile Include="Nova\GUI\PanelRebindGamepad.cs" />
     <Compile Include="Nova\Input\BindingsDatatype.cs" />
+    <Compile Include="Nova\Input\InputSource.cs" />
     <Compile Include="Nova\Input\SimpleButton.cs" />
     <Compile Include="Nova\GUI\PanelRebindKeyboard.cs" />
     <Compile Include="Nova\GUI\DebugGUI_Inputs.cs" />
     <Compile Include="Nova\Input\GameControls.cs" />
     <Compile Include="Nova\Input\InputRepeater.cs" />
-    <Compile Include="Nova\Input\InputSource.cs" />
+    <Compile Include="Nova\Input\CompoundInputSource.cs" />
     <Compile Include="Nova\Input\InputSourceGamepad.cs" />
     <Compile Include="Nova\Input\InputSourceKeyboard.cs" />
-    <Compile Include="Nova\Input\RebindingManagerGamepad.cs" />
     <Compile Include="Nova\Input\VirtualCompoundAxis.cs" />
     <Compile Include="Nova\Input\VirtualGamepadAxisDefinitions.cs" />
-    <Compile Include="Nova\Input\RebindingManagerKeyboard.cs" />
     <Compile Include="Nova\Input\VirtualAxis.cs" />
     <Compile Include="Nova\Input\VirtualCompoundButton.cs" />
     <Compile Include="Nova\Input\VirtualGamepadAxis.cs" />
@@ -84,7 +84,7 @@
     <Compile Include="Nova\Util\Camera.cs" />
     <Compile Include="Nova\Util\CustomExtensions.cs" />
     <Compile Include="Nova\Util\DrawManager.cs" />
-    <Compile Include="Nova\Util\Print.cs" />
+    <Compile Include="Nova\Util\PrintFormatter.cs" />
     <Compile Include="Nova\Util\SaveLoad.cs" />
     <Compile Include="Nova\Engine.cs" />
     <Compile Include="Nova\Hierarchy\EntityDrawable.cs" />

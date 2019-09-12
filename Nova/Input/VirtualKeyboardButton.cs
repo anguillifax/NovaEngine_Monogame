@@ -4,8 +4,8 @@ namespace Nova.Input {
 
 	public class VirtualKeyboardButton : VirtualButtonBaseLogic {
 
-		public Keys? UserKey;
-		public readonly Keys? HardcodedKey;
+		public Keys? UserKey { get; set; }
+		public Keys? HardcodedKey { get; }
 
 		/// <summary>
 		/// Creates a new button and sets the hardcoded key to null (none).
@@ -55,9 +55,12 @@ namespace Nova.Input {
 			if (GlobalInputProperties.IsKeyAllowed(newKey)) {
 
 				if (newKey == HardcodedKey) {
-					UserKey = null;
-					return RebindResult.Removed;
-
+					if (UserKey == null) {
+						return RebindResult.NoOp;
+					} else {
+						UserKey = null;
+						return RebindResult.Removed;
+					}
 				} else if (newKey == UserKey) {
 					UserKey = null;
 					return RebindResult.Removed;
@@ -68,8 +71,9 @@ namespace Nova.Input {
 				}
 
 			} else {
-				return RebindResult.NoOp;
+				return RebindResult.NotAllowed;
 			}
+
 		}
 
 		public void Unbind() {

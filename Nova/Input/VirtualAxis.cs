@@ -13,12 +13,16 @@
 			Name = name;
 			RepeaterPos = new InputRepeater(() => Value > GlobalInputProperties.AxisDeadzone);
 			RepeaterNeg = new InputRepeater(() => Value < -GlobalInputProperties.AxisDeadzone);
-			MInput.InputUpdate += Update;
-			MInput.InputUpdate += RepeaterPos.Update;
-			MInput.InputUpdate += RepeaterNeg.Update;
+			InputManager.InputUpdate += Update;
+			InputManager.InputUpdate += RepeaterPos.Update;
+			InputManager.InputUpdate += RepeaterNeg.Update;
 		}
 
 		protected abstract void Update();
+
+		public override string ToString() {
+			return string.Format("VirtualAxis \"{0}\" : {1}", Name, Value);
+		}
 
 	}
 

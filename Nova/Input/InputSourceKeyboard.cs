@@ -24,7 +24,10 @@ namespace Nova.Input {
 			CreateAxis(ref Vertical, new VirtualKeyboardAxis(BindingNames.Vert, Keys.Up, Keys.Down));
 
 			CreateButton(ref Jump, new VirtualKeyboardButton(BindingNames.Jump));
-			
+			CreateButton(ref Attack, new VirtualKeyboardButton(BindingNames.Attack));
+			CreateButton(ref Unleash, new VirtualKeyboardButton(BindingNames.Unleash));
+			CreateButton(ref Retry, new VirtualKeyboardButton(BindingNames.Retry));
+
 		}
 
 		private void CreateButton(ref VirtualButton vb, VirtualKeyboardButton vkb) {

@@ -12,7 +12,7 @@ namespace Nova.Input {
 
 		public SimpleButton(Keys key) {
 			this.key = key;
-			MInput.InputUpdate += Update;
+			InputManager.InputUpdate += Update;
 		}
 
 		void Update() {

@@ -17,6 +17,8 @@ namespace Nova {
 
 		GraphicsDeviceManager graphics;
 
+		public QuickTest quickTest;
+
 		public Engine() {
 			Instance = this;
 
@@ -31,6 +33,8 @@ namespace Nova {
 			Content.RootDirectory = "Content";
 
 			IsPaused = false;
+
+			quickTest = new QuickTest();
 
 		}
 
@@ -48,11 +52,15 @@ namespace Nova {
 
 			CurrentScene = new Scene();
 
-			MInput.LoadBindings();
+			InputManager.LoadBindings();
 			Console.WriteLine("Gamepad 1 connected: {0}", GamePad.GetState(PlayerIndex.One).IsConnected);
 			Console.WriteLine("Gamepad 2 connected: {0}", GamePad.GetState(PlayerIndex.Two).IsConnected);
 
 			Components.Add(new Gui.PanelRebindKeyboard(this));
+			Components.Add(new Gui.PanelRebindGamepad(this, PlayerIndex.One));
+			Components.Add(new Gui.PanelRebindGamepad(this, PlayerIndex.Two));
+
+			quickTest.Init();
 
 			base.Initialize();
 		}
@@ -90,24 +98,24 @@ namespace Nova {
 
 			Time.Update(time);
 			Screen.Update(graphics.GraphicsDevice.Viewport.Bounds);
-			MInput.Update();
+			InputManager.Update();
 			Gui.DebugGUI_Inputs.Update();
 
-			if (MInput.Quit.JustPressed) {
+			if (InputManager.Quit.JustPressed) {
 				Exit();
 			}
 
-			if (MInput.TestLoadBindings.JustPressed) {
-				MInput.LoadBindings();
+			if (InputManager.TestLoadBindings.JustPressed) {
+				InputManager.LoadBindings();
 			}
-			if (MInput.TestLoadBindingsDef.JustPressed) {
-				MInput.LoadDefaultBindings();
+			if (InputManager.TestLoadBindingsDef.JustPressed) {
+				InputManager.LoadDefaultBindings();
 			}
-			if (MInput.TestSaveBindings.JustPressed) {
-				MInput.SaveBindings();
+			if (InputManager.TestSaveBindings.JustPressed) {
+				InputManager.SaveBindings();
 			}
 
-			QuickTest.Update();
+			quickTest.Update();
 
 			//if (InputManager.Any.Back.JustPressed) {
 			//	IsPaused = !IsPaused;
@@ -143,6 +151,8 @@ namespace Nova {
 			MDraw.End();
 
 			Gui.DebugGUI_Inputs.Draw();
+
+			quickTest.Draw();
 
 			base.Draw(time);
 		}

@@ -25,6 +25,17 @@ namespace Nova.Input {
 			Gamepad2 = new GamepadBindingData(other.Gamepad2);
 		}
 
+		public GamepadBindingData GetGamepad(PlayerIndex index) {
+			switch (index) {
+				case PlayerIndex.One:
+					return BindingManager.CurrentBindings.Gamepad1;
+				case PlayerIndex.Two:
+					return BindingManager.CurrentBindings.Gamepad2;
+				default:
+					throw new Exception("Player index is not set to 1 or 2!");
+			}
+		}
+
 	}
 
 	[Serializable]
@@ -59,7 +70,6 @@ namespace Nova.Input {
 	[Serializable]
 	public class GamepadBindingData {
 		[JsonProperty] protected Dictionary<string, List<Buttons>> Mapping; // List is never null.
-		public PlayerIndex Index;
 		public bool RumbleEnabled;
 
 		public List<Buttons> this[string key] {
@@ -84,28 +94,19 @@ namespace Nova.Input {
 			}
 		}
 
-		/// <summary>
-		/// Bypasses checks and directly adds a new button to the mapping. Use only during initialization.
-		/// </summary>
-		public void Add(string key, params Buttons[] btns) {
-			Mapping.Add(key, new List<Buttons>(btns));
-		}
-
-		private GamepadBindingData() { // exists purely for JSON deserializer
-		}
-
-		public GamepadBindingData(PlayerIndex index) {
+		public GamepadBindingData() {
 			Mapping = new Dictionary<string, List<Buttons>>();
-			Index = index;
 		}
 
 		public GamepadBindingData(GamepadBindingData other) {
 			Mapping = new Dictionary<string, List<Buttons>>(other.Mapping);
 		}
 
-		public GamepadBindingData(GamepadBindingData other, PlayerIndex newIndex) {
-			Mapping = new Dictionary<string, List<Buttons>>(other.Mapping);
-			Index = newIndex;
+		/// <summary>
+		/// Bypasses checks and directly adds a new button to the mapping. Use only during initialization.
+		/// </summary>
+		public void Add(string key, params Buttons[] btns) {
+			Mapping.Add(key, new List<Buttons>(btns));
 		}
 
 	}

@@ -41,7 +41,7 @@ namespace Nova.Input {
 
 		public static void Save() {
 			CurrentBindings = new CombinedBindingData(
-				new KeyboardBindingData(), new GamepadBindingData(PlayerIndex.One), new GamepadBindingData(PlayerIndex.Two));
+				new KeyboardBindingData(), new GamepadBindingData(), new GamepadBindingData());
 
 			SaveBindings?.Invoke();
 
@@ -54,19 +54,33 @@ namespace Nova.Input {
 			// Keyboard
 			DefaultKeyboardBindings = new KeyboardBindingData();
 
-			DefaultKeyboardBindings.Add("enter", Keys.F);
-			DefaultKeyboardBindings.Add("jump", Keys.Space);
+			DefaultKeyboardBindings.Add(BindingNames.Enter, Keys.F);
+			DefaultKeyboardBindings.Add(BindingNames.Jump, Keys.Space);
+			DefaultKeyboardBindings.Add(BindingNames.Attack, Keys.F);
+			DefaultKeyboardBindings.Add(BindingNames.Unleash, Keys.D);
+			DefaultKeyboardBindings.Add(BindingNames.Retry, Keys.T);
+
+			DefaultKeyboardBindings.Add(BindingNames.Horz + "-pos", Keys.L);
+			DefaultKeyboardBindings.Add(BindingNames.Horz + "-neg", Keys.J);
+			DefaultKeyboardBindings.Add(BindingNames.Vert + "-pos", Keys.I);
+			DefaultKeyboardBindings.Add(BindingNames.Vert + "-neg", Keys.K);
 
 
 			// Gamepad
-			DefaultGamepadBindings = new GamepadBindingData(PlayerIndex.One);
+			DefaultGamepadBindings = new GamepadBindingData();
 
-			DefaultGamepadBindings.Add("jump", Buttons.A);
+			DefaultGamepadBindings.Add(BindingNames.Jump, Buttons.A);
+			DefaultGamepadBindings.Add(BindingNames.Attack, Buttons.X);
+			DefaultGamepadBindings.Add(BindingNames.Unleash, Buttons.LeftTrigger, Buttons.RightTrigger);
+			DefaultGamepadBindings.Add(BindingNames.Retry, Buttons.RightStick);
 
 
 			// Combination
 			DefaultBindings = new CombinedBindingData(DefaultKeyboardBindings,
-				DefaultGamepadBindings, new GamepadBindingData(DefaultGamepadBindings, PlayerIndex.Two));
+				DefaultGamepadBindings, new GamepadBindingData(DefaultGamepadBindings));
+
+			DefaultBindings.Gamepad1.RumbleEnabled = true;
+			DefaultBindings.Gamepad2.RumbleEnabled = true;
 		}
 
 	}

@@ -48,7 +48,7 @@ namespace Nova.Input {
 			selector = func;
 		}
 
-		public void UpdateAxes(ref List<InputSource> sources) {
+		public void UpdateAxes(List<InputSource> sources) {
 			SetNew(sources.Select(selector));
 		}
 

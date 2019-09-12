@@ -13,7 +13,7 @@ namespace Nova.Gui {
 		static SpriteBatch b;
 
 		public static void Update() {
-			if (MInput.InputsPanel.JustPressed) {
+			if (InputManager.InputsPanel.JustPressed) {
 				IsOpen = !IsOpen;
 			}
 		}
@@ -43,10 +43,13 @@ namespace Nova.Gui {
 
 			p.Y += 70f;
 
-			WriteInput(MInput.Player1.Enter, MInput.Player2.Enter);
-			WriteInput(MInput.Player1.Back, MInput.Player2.Back);
-			WriteInput(MInput.Player1.Clear, MInput.Player2.Clear);
-			WriteInput(MInput.Player1.Jump, MInput.Player2.Jump);
+			WriteInput(InputManager.Player1.Enter, InputManager.Player2.Enter);
+			WriteInput(InputManager.Player1.Back, InputManager.Player2.Back);
+			WriteInput(InputManager.Player1.Clear, InputManager.Player2.Clear);
+			WriteInput(InputManager.Player1.Jump, InputManager.Player2.Jump);
+			WriteInput(InputManager.Player1.Attack, InputManager.Player2.Attack);
+			WriteInput(InputManager.Player1.Unleash, InputManager.Player2.Unleash);
+			WriteInput(InputManager.Player1.Retry, InputManager.Player2.Retry);
 
 			b.End();
 

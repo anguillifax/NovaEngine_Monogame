@@ -19,8 +19,17 @@ namespace Nova.Input {
 			this.input2 = input2;
 		}
 
+		public VirtualGamepadAxis(string name, PlayerIndex index, IAxisInput input) :
+			this(name, index, input, null) {
+
+		}
+
 		protected override void Update() {
-			Value = GlobalInputProperties.CleanAxisInput(input.Get(Index) + input2.Get(Index));
+			if (input2 == null) {
+				Value = GlobalInputProperties.CleanAxisInput(input.Get(Index));
+			} else {
+				Value = GlobalInputProperties.CleanAxisInput(input.Get(Index) + input2.Get(Index));
+			}
 		}
 
 	}

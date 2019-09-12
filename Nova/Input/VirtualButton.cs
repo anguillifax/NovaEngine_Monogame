@@ -1,12 +1,7 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Nova.Input {
+﻿namespace Nova.Input {
 
 	public enum RebindResult {
-		Added, Removed, NoOp
+		Added, Removed, NoOp, NotAllowed
 	}
 
 	public abstract class VirtualButton {
@@ -22,6 +17,11 @@ namespace Nova.Input {
 			Name = name;
 		}
 
+		public override string ToString() {
+			return string.Format("VirtualButton \"{0}\" ({1} {2} {3} {4})", Name, 
+				Pressed ? "P" : "", JustPressed ? "JP" : "", Released ? "R" : "", JustReleased ? "JP" : "");
+		}
+
 	}
 
 	/// <summary>
@@ -33,7 +33,7 @@ namespace Nova.Input {
 
 		public VirtualButtonBaseLogic(string name) :
 			base(name) {
-			MInput.InputUpdate += Update;
+			InputManager.InputUpdate += Update;
 			BindingManager.SaveBindings += OnSaveBinding;
 			BindingManager.LoadBindings += OnLoadBinding;
 		}

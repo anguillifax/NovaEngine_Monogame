@@ -4,17 +4,6 @@ using System.Linq;
 
 namespace Nova.Input {
 
-	public static class BindingNames {
-		public static readonly string Enter = "enter";
-		public static readonly string Back = "back";
-		public static readonly string Clear = "clear";
-
-		public static readonly string Horz = "horz";
-		public static readonly string Vert = "vert";
-
-		public static readonly string Jump = "jump";
-	}
-
 	public static class GlobalInputProperties {
 
 		public static readonly int MaxGamepadButtons = 4;
@@ -45,7 +34,7 @@ namespace Nova.Input {
 			Buttons.A, Buttons.B, Buttons.X, Buttons.Y,
 			Buttons.LeftShoulder, Buttons.RightShoulder,
 			Buttons.LeftTrigger, Buttons.RightTrigger,
-			Buttons.LeftStick, Buttons.RightStick
+			Buttons.LeftStick, Buttons.RightStick,
 		};
 
 		public static bool IsButtonAllowed(Buttons button) {
