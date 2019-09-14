@@ -15,7 +15,7 @@ namespace Nova {
 
 		public static SpriteFont DefaultFont { get; private set; }
 
-		GraphicsDeviceManager graphics;
+		readonly GraphicsDeviceManager graphics;
 
 		public QuickTest quickTest;
 
@@ -34,8 +34,6 @@ namespace Nova {
 
 			IsPaused = false;
 
-			quickTest = new QuickTest();
-
 		}
 
 		/// <summary>
@@ -45,23 +43,25 @@ namespace Nova {
 		/// and initialize them as well.
 		/// </summary>
 		protected override void Initialize() {
-			MDraw.Initialize(GraphicsDevice);
-			Screen.Update(GraphicsDevice.Viewport.Bounds);
+
+			Screen.Update();
+			MDraw.Initialize();
+			InputManager.Init();
 
 			IsMouseVisible = true;
 
-			CurrentScene = new Scene();
-
-			InputManager.Init();
+			CurrentScene = new Scene("MainScene");
 
 			Components.Add(new Gui.PanelRebindKeyboard(this));
 			Components.Add(new Gui.PanelRebindGamepad(this, PlayerIndex.One));
 			Components.Add(new Gui.PanelRebindGamepad(this, PlayerIndex.Two));
 			Components.Add(new Gui.PanelRebindInputSources(this));
 
+			quickTest = new QuickTest();
 			quickTest.Init();
 
 			base.Initialize();
+
 		}
 
 		/// <summary>
@@ -70,13 +70,10 @@ namespace Nova {
 		/// </summary>
 		protected override void LoadContent() {
 
+			MDraw.LoadContent();
+
 			var tex = Content.Load<Texture2D>("Images/bullet");
-			//CurrentScene.Add(new TestEntity(tex));
-
-			DefaultFont = Content.Load<SpriteFont>("Font1");
-
-			Camera.Position = Screen.Center;
-			Camera.Scale = 1;
+			CurrentScene.Add(new TestEntity(CurrentScene, tex));
 
 		}
 
@@ -96,7 +93,7 @@ namespace Nova {
 		protected override void Update(GameTime time) {
 
 			Time.Update(time);
-			Screen.Update(graphics.GraphicsDevice.Viewport.Bounds);
+			Screen.Update();
 			InputManager.Update();
 			Gui.DebugGUI_Inputs.Update();
 
@@ -140,14 +137,14 @@ namespace Nova {
 		/// </summary>
 		/// <param name="time">Provides a snapshot of timing values.</param>
 		protected override void Draw(GameTime time) {
+
 			Time.UpdateDraw(time);
+			Screen.Update();
 			GraphicsDevice.Clear(Color.Black);
 
-			MDraw.Begin();
 			if (CurrentScene != null) {
 				CurrentScene.Draw();
 			}
-			MDraw.End();
 
 			Gui.DebugGUI_Inputs.Draw();
 

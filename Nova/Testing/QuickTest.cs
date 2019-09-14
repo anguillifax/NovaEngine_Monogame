@@ -18,9 +18,11 @@ namespace Nova {
 
 		public void Update() {
 			if (ButtonF5.Pressed) {
-				InputManager.Player1.SetRumble(0.5f);
-			} else {
-				InputManager.Player1.StopRumbling();
+				MDraw.Camera.Zoom += 0.05f * (InputManager.Any.Horizontal.Value + InputManager.Any.Vertical.Value);
+			}
+			if (ButtonF6.Pressed) {
+				MDraw.Camera.WorldPosition.X += 5f * InputManager.Any.Horizontal.Value;
+				MDraw.Camera.WorldPosition.Y += 5f * InputManager.Any.Vertical.Value;
 			}
 		}
 

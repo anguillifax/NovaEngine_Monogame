@@ -1,17 +1,15 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Nova {
 
 	public abstract class Entity {
 
+		public Scene Scene { get; set; }
 		public readonly List<Component> Components;
 
-		protected Entity(bool active = true) {
+		protected Entity(Scene scene, bool active = true) {
 			Active = active;
+			Scene = scene;
 			Components = new List<Component>();
 		}
 

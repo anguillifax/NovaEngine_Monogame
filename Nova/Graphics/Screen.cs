@@ -15,7 +15,8 @@ namespace Nova {
 			get { return 0.5f * Size; }
 		}
 
-		public static void Update(Rectangle viewport) {
+		public static void Update() {
+			var viewport = Engine.Instance.GraphicsDevice.Viewport.Bounds;
 			Width = viewport.Width;
 			Height = viewport.Height;
 		}

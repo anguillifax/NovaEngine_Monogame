@@ -6,15 +6,26 @@ using System.Collections.Generic;
 
 namespace Nova {
 
-	public class TestEntity : Image {
+	public class TestEntity : VisualEntity {
 
-		public TestEntity(Texture2D tex) : base(tex) {
+		SpriteRenderer spriteRenderer;
+
+		public TestEntity(Scene s, Texture2D tex) :
+			base(s) {
+			spriteRenderer = new SpriteRenderer(this, tex);
 		}
 
 		public override void Update() {
-			Position += new Vector2(0, 10 * Time.DeltaTime);
-			Console.WriteLine("Updated test entity " + Position);
+			var inputs = new Vector2(InputManager.Any.Horizontal.Value, InputManager.Any.Vertical.Value);
+			Position += Calc.ClampMagnitude(10 * inputs, 10);
 			base.Update();
+		}
+
+		public override void Draw() {
+			spriteRenderer.Render();
+			MDraw.Begin();
+			MDraw.Write("Henlo", Position + new Vector2(100f, 100f), Color.White);
+			MDraw.End();
 		}
 
 	}

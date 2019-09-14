@@ -1,18 +1,18 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Nova {
 
 	public class Scene {
 
+		public string Name { get; private set; }
+
 		public readonly List<Entity> entities;
 		private readonly List<Entity> toAdd;
 		private readonly List<Entity> toRemove;
 
-		public Scene() {
+		public Scene(string name) {
+			Name = name;
 			entities = new List<Entity>();
 			toAdd = new List<Entity>();
 			toRemove = new List<Entity>();
@@ -53,7 +53,7 @@ namespace Nova {
 		public void Draw() {
 			// Test if object is a drawable entity. Then draw if visible.
 			foreach (var item in entities) {
-				if (item is EntityDrawable i) {
+				if (item.Active && item is VisualEntity i) {
 					if (i.Visible) i.Draw();
 				}
 			}
@@ -62,13 +62,24 @@ namespace Nova {
 		public void Add(Entity entity) {
 			if (entity != null) {
 				toAdd.Add(entity);
+				entity.Scene = this;
 			}
 		}
 
 		public void Remove(Entity entity) {
 			if (entity != null) {
 				toRemove.Add(entity);
+				entity.Scene = null;
 			}
+		}
+
+		/// <summary>
+		/// Moves an entity from one scene to another
+		/// </summary>
+		public static void MoveEntity(Scene from, Scene to, Entity entity) {
+			if (from == null || to == null || entity == null) throw new ArgumentNullException();
+			from.Remove(entity);
+			to.Add(entity);
 		}
 
 	}
