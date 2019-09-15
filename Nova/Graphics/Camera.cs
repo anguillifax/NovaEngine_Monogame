@@ -28,7 +28,7 @@ namespace Nova {
 			}
 			set {
 				m_zoom = value;
-				m_zoom = Math.Max(m_zoom, 0.01f);
+				m_zoom = Calc.Clamp(m_zoom, 0.01f, 1000f);
 			}
 		}
 

@@ -61,6 +61,13 @@ namespace Nova {
 			return current;
 		}
 
+		/// <summary>
+		/// Returns a Vector2 on the perimeter of a circle. Angle is in radians from top with clockwise as positive.
+		/// </summary>
+		public static Vector2 ProjectPoint(float angle, float distance) {
+			return new Vector2(distance * (float)Math.Sin(angle), distance * (float)Math.Cos(angle));
+		}
+
 	}
 
 }

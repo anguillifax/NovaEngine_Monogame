@@ -12,13 +12,18 @@ namespace Nova {
 		SimpleButton ButtonF6 = new SimpleButton(Keys.F6);
 		SimpleButton ButtonF7 = new SimpleButton(Keys.F7);
 
+		float smoothZoom = 0;
+
 		public void Init() {
 
 		}
 
 		public void Update() {
 			if (ButtonF5.Pressed) {
-				MDraw.Camera.Zoom += 0.05f * (InputManager.Any.Horizontal.Value + InputManager.Any.Vertical.Value);
+				smoothZoom += 0.05f * (InputManager.Any.Horizontal.Value + InputManager.Any.Vertical.Value);
+				smoothZoom = Calc.Clamp(smoothZoom, -3f, 3f);
+				Console.WriteLine("{0} => {1}", smoothZoom, Math.Exp(smoothZoom));
+				MDraw.Camera.Zoom = (float)Math.Exp(smoothZoom);
 			}
 			if (ButtonF6.Pressed) {
 				MDraw.Camera.WorldPosition.X += 5f * InputManager.Any.Horizontal.Value;
