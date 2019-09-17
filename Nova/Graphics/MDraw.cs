@@ -17,27 +17,42 @@ namespace Nova {
 		public static SpriteFont DefaultFont { get; private set; }
 		public static Camera Camera { get; private set; }
 
-		private static readonly Color ShadowColor = new Color(0, 0, 0, 50);
+		private static readonly Color ShadowColor = new Color(0, 0, 0, 30);
+
+		private static Texture2D TexturePixel;
+		private static Texture2D TexturePoint;
 
 		public static void Initialize() {
 			SpriteBatch = new SpriteBatch(Engine.Instance.GraphicsDevice);
-			Camera = new Camera(Screen.Center);
+			Camera = new Camera(8);
 		}
 
 		public static void LoadContent() {
 			DefaultFont = Engine.Instance.Content.Load<SpriteFont>("Font1");
+
+			TexturePixel = new Texture2D(Engine.Instance.GraphicsDevice, 1, 1);
+			TexturePixel.SetData(new Color[] { Color.White });
+
+			TexturePoint = new Texture2D(Engine.Instance.GraphicsDevice, 3, 3);
+			var colors = new Color[3 * 3];
+			for (int i = 0; i < colors.Length; i++) {
+				colors[i] = Color.White;
+			}
+			TexturePoint.SetData(colors);
 		}
 
 		public static void Begin() {
-			SpriteBatch.Begin(SpriteSortMode.Deferred);
+			SpriteBatch.Begin(SpriteSortMode.Deferred, samplerState:SamplerState.PointClamp);
 		}
 
 		public static void End() {
 			SpriteBatch.End();
 		}
 
+		#region Draw Methods
+
 		public static void Draw(Texture2D texture, Vector2 position, float rotation, Vector2 origin, Vector2 scale) {
-			SpriteBatch.Draw(texture, Camera.PositionToGlobal(position), null, Color.White, rotation, origin, Camera.ScaleToGlobal(scale), SpriteEffects.None, 0);
+			SpriteBatch.Draw(texture, Camera.PositionToGlobal(position), null, Color.White, rotation, origin, Camera.ScaleTextureToGlobal(scale), SpriteEffects.None, 0);
 		}
 
 		public static void DrawGlobal(Texture2D texture, Vector2 position, float rotation, Vector2 origin, Vector2 scale) {
@@ -45,12 +60,14 @@ namespace Nova {
 		}
 
 		public static void Write(string text, Vector2 pos, Color color) {
-			SpriteBatch.DrawString(DefaultFont, text, Camera.PositionToGlobal(pos), color, 0f, Vector2.Zero, Camera.ScaleToGlobal(Vector2.One), SpriteEffects.None, 0f);
+			SpriteBatch.DrawString(DefaultFont, text, Camera.PositionToGlobal(pos), color, 0f, Vector2.Zero, Camera.ScaleTextureToGlobal(Vector2.One), SpriteEffects.None, 0f);
 		}
 
 		public static void WriteGlobal(string text, Vector2 pos, Color color) {
 			SpriteBatch.DrawString(DefaultFont, text, pos, color);
 		}
+
+		#endregion
 
 		#region Lines and Shapes
 
@@ -58,18 +75,21 @@ namespace Nova {
 			DrawLineGlobal(Camera.PositionToGlobal(point1), Camera.PositionToGlobal(point2), color);
 		}
 
-		public static void DrawLineGlobal(Vector2 point1, Vector2 point2, Color color) {
-			var d = point2 - point1;
+		public static void DrawLineGlobal(Vector2 origin, Vector2 point, Color color) {
+			var d = point - origin;
 			if (d.LengthSquared() < 1) return;
-			Texture2D line = new Texture2D(Engine.Instance.GraphicsDevice, 1, (int)d.Length());
-			//Console.WriteLine("w{0} x h{1}", line.Width, line.Height);
-			var colors = new Color[line.Width * line.Height];
-			for (int i = 0; i < colors.Length; i++) {
-				colors[i] = color;
-			}
-			line.SetData(colors);
-			SpriteBatch.Draw(line, point1, null, color, -(float)Math.Atan2(d.X, d.Y), Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
-			SpriteBatch.Draw(line, point1 + new Vector2(1, 1), null, ShadowColor, -(float)Math.Atan2(d.X, d.Y), Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
+			float angle = -MathHelper.PiOver2 + (float)Math.Atan2(d.Y, d.X);
+			Vector2 scale = new Vector2(1, (int)d.Length());
+			SpriteBatch.Draw(TexturePixel, origin, null, color, angle, new Vector2(0.5f, 0), scale, SpriteEffects.None, 0f);
+			SpriteBatch.Draw(TexturePixel, origin + Vector2.One, null, ShadowColor, angle, new Vector2(0.5f, 0), scale, SpriteEffects.None, 0f);
+		}
+
+		public static void DrawPointGlobal(Vector2 pos, Color color) {
+			SpriteBatch.Draw(TexturePoint, pos, null, color, 0, new Vector2(1.5f, 1.5f), Vector2.One, SpriteEffects.None, 0);
+		}
+
+		public static void DrawPoint(Vector2 pos, Color color) {
+			DrawPointGlobal(Camera.PositionToGlobal(pos), color);
 		}
 
 		public static void DrawShapeGlobal(Color color, params Vector2[] points) {
@@ -102,7 +122,7 @@ namespace Nova {
 		}
 
 		public static void DrawBox(Vector2 center, Vector2 extents, Color color) {
-			DrawBoxGlobal(Camera.PositionToGlobal(center), Camera.ScaleToGlobal(extents), color);
+			DrawBoxGlobal(Camera.PositionToGlobal(center), Camera.ScaleSizeToGlobal(extents), color);
 		}
 
 		public static void DrawNGonGlobal(Vector2 center, float radius, int sides, Color color, float angleOffset = 0f) {
@@ -118,7 +138,7 @@ namespace Nova {
 		}
 
 		public static void DrawNGon(Vector2 center, float radius, int sides, Color color, float angleOffset = 0f) {
-			DrawNGonGlobal(Camera.PositionToGlobal(center), Camera.ScaleToGlobal(radius), sides, color, angleOffset);
+			DrawNGonGlobal(Camera.PositionToGlobal(center), Camera.ScaleSizeToGlobal(radius), sides, color, angleOffset);
 		}
 
 		public static void DrawCircleGlobal(Vector2 center, float radius, Color color) {
@@ -126,7 +146,7 @@ namespace Nova {
 		}
 
 		public static void DrawCircle(Vector2 center, float radius, Color color) {
-			DrawCircleGlobal(Camera.PositionToGlobal(center), Camera.ScaleToGlobal(radius), color);
+			DrawCircleGlobal(Camera.PositionToGlobal(center), Camera.ScaleSizeToGlobal(radius), color);
 		}
 
 		#endregion

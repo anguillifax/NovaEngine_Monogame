@@ -2,7 +2,7 @@
 
 	public interface IRenderer {
 
-		VisualEntity Entity { get; set; }
+		Entity Entity { get; set; }
 
 		void Render();
 

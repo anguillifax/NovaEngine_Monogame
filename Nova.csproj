@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="Nova\Components\AnimatedSprite.cs" />
     <Compile Include="Nova\Graphics\IRenderer.cs" />
+    <Compile Include="Nova\Graphics\Screen.cs" />
     <Compile Include="Nova\Graphics\SpriteRenderer.cs" />
     <Compile Include="Nova\Hierarchy\Component.cs" />
     <Compile Include="Nova\GUI\PanelRebindGamepad.cs" />
@@ -83,17 +84,21 @@
     <Compile Include="Nova\Input\VirtualGamepadButton.cs" />
     <Compile Include="Nova\Input\VirtualKeyboardAxis.cs" />
     <Compile Include="Nova\Input\VirtualKeyboardButton.cs" />
+    <Compile Include="Nova\Physics\Collider.cs" />
+    <Compile Include="Nova\Physics\Physics.cs" />
+    <Compile Include="Nova\Physics\Rigidbody.cs" />
     <Compile Include="Nova\Testing\QuickTest.cs" />
     <Compile Include="Nova\Graphics\Camera.cs" />
+    <Compile Include="Nova\Testing\TestTiles.cs" />
+    <Compile Include="Nova\Testing\Tile.cs" />
     <Compile Include="Nova\Util\CustomExtensions.cs" />
     <Compile Include="Nova\Graphics\MDraw.cs" />
     <Compile Include="Nova\Util\PrintFormatter.cs" />
     <Compile Include="Nova\Util\SaveLoad.cs" />
     <Compile Include="Nova\Engine.cs" />
-    <Compile Include="Nova\Hierarchy\VisualEntity.cs" />
     <Compile Include="Nova\Hierarchy\Entity.cs" />
+    <Compile Include="Nova\Hierarchy\BaseEntity.cs" />
     <Compile Include="Nova\Hierarchy\Scene.cs" />
-    <Compile Include="Nova\Graphics\Screen.cs" />
     <Compile Include="Nova\Components\ScrollingBackground.cs" />
     <Compile Include="Nova\Util\SimpleTimer.cs" />
     <Compile Include="Nova\Util\Time.cs" />

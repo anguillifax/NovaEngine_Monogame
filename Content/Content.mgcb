@@ -20,7 +20,7 @@
 /processorParam:TextureFormat=Compressed
 /build:Font1.spritefont
 
-#begin Images/arrow.png
+#begin Images/Tiles/deep_dirt.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -30,9 +30,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/arrow.png
+/build:Images/Tiles/deep_dirt.png
 
-#begin Images/bg1.jpg
+#begin Images/Tiles/dirt.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -42,9 +42,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/bg1.jpg
+/build:Images/Tiles/dirt.png
 
-#begin Images/bullet.png
+#begin Images/Tiles/grass.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -54,9 +54,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/bullet.png
+/build:Images/Tiles/grass.png
 
-#begin Images/cat.png
+#begin Images/Tiles/player.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -66,7 +66,19 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Images/cat.png
+/build:Images/Tiles/player.png
+
+#begin Images/Tiles/temple.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Images/Tiles/temple.png
 
 #begin Images/walkingFigure.png
 /importer:TextureImporter

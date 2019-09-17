@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Nova.Tiles;
 using System;
 using System.Collections.Generic;
 
@@ -10,25 +11,29 @@ namespace Nova {
 
 		public static Engine Instance { get; private set; }
 
-		public static Scene CurrentScene { get; private set; }
-		public static bool IsPaused { get; set; }
+		public Scene CurrentScene { get; private set; }
+		public bool IsPaused { get; set; }
 
-		public static SpriteFont DefaultFont { get; private set; }
-
-		readonly GraphicsDeviceManager graphics;
+		public GraphicsDeviceManager GraphicsDeviceManager { get; private set; }
 
 		public QuickTest quickTest;
+
+		public static readonly int TileSize = 8;
 
 		public Engine() {
 			Instance = this;
 
-			graphics = new GraphicsDeviceManager(this);
-			graphics.PreferredBackBufferWidth = 1280;
-			graphics.PreferredBackBufferHeight = 720;
-			graphics.ApplyChanges();
+			GraphicsDeviceManager = new GraphicsDeviceManager(this);
+			GraphicsDeviceManager.PreferredBackBufferWidth = 1280;
+			GraphicsDeviceManager.PreferredBackBufferHeight = 720;
+			GraphicsDeviceManager.SynchronizeWithVerticalRetrace = true;
+			GraphicsDeviceManager.ApplyChanges();
+			
+			Window.ClientSizeChanged += (s,e) => UpdateViewport();
 
 			Window.AllowUserResizing = true;
 			Window.Title = "Nova Engine";
+			IsMouseVisible = true;
 
 			Content.RootDirectory = "Content";
 
@@ -44,11 +49,13 @@ namespace Nova {
 		/// </summary>
 		protected override void Initialize() {
 
+			lastWindowDimensions = GetDimensions(Window.ClientBounds);
+			Viewport = GraphicsDevice.Viewport;
+
 			Screen.Update();
 			MDraw.Initialize();
+			MDraw.Camera.ScaleFactor = Viewport.Height / 160f;
 			InputManager.Init();
-
-			IsMouseVisible = true;
 
 			CurrentScene = new Scene("MainScene");
 
@@ -72,8 +79,17 @@ namespace Nova {
 
 			MDraw.LoadContent();
 
-			var tex = Content.Load<Texture2D>("Images/bullet");
-			CurrentScene.Add(new TestEntity(CurrentScene, tex));
+			quickTest.LoadContent();
+
+			var grass = Content.Load<Texture2D>("Images/Tiles/grass");
+			var dirt = Content.Load<Texture2D>("Images/Tiles/dirt");
+			var deepDirt = Content.Load<Texture2D>("Images/Tiles/deep_dirt");
+			var temple = Content.Load<Texture2D>("Images/Tiles/temple");
+			var player = Content.Load<Texture2D>("Images/Tiles/player");
+			CurrentScene.Add(new Tile(CurrentScene, temple, new Vector2(0, 0)));
+			CurrentScene.Add(new Tile(CurrentScene, deepDirt, new Vector2(1, 0)));
+			CurrentScene.Add(new TestTiles(CurrentScene, grass, dirt, deepDirt));
+			CurrentScene.Add(new TestEntity(CurrentScene, player));
 
 		}
 
@@ -93,7 +109,6 @@ namespace Nova {
 		protected override void Update(GameTime time) {
 
 			Time.Update(time);
-			Screen.Update();
 			InputManager.Update();
 			Gui.DebugGUI_Inputs.Update();
 
@@ -110,6 +125,9 @@ namespace Nova {
 			if (InputManager.TestSaveBindings.JustPressed) {
 				InputManager.SaveBindings();
 			}
+
+			//Console.WriteLine("{0} x {1}", GraphicsDeviceManager.PreferredBackBufferWidth, GraphicsDeviceManager.PreferredBackBufferHeight);
+
 
 			quickTest.Update();
 
@@ -138,9 +156,12 @@ namespace Nova {
 		/// <param name="time">Provides a snapshot of timing values.</param>
 		protected override void Draw(GameTime time) {
 
-			Time.UpdateDraw(time);
+			GraphicsDevice.SetRenderTarget(null);
+			GraphicsDevice.Viewport = Viewport;
+			GraphicsDevice.Clear(new Color(5, 5, 5));
+
 			Screen.Update();
-			GraphicsDevice.Clear(Color.Black);
+			Time.UpdateDraw(time);
 
 			if (CurrentScene != null) {
 				CurrentScene.Draw();
@@ -150,7 +171,49 @@ namespace Nova {
 
 			quickTest.Draw();
 
+			// Draw debug points
+			MDraw.Begin();
+			MDraw.DrawPoint(Vector2.Zero, Color.White); // World Origin
+			MDraw.DrawPointGlobal(Screen.Center, Color.White); // Screen Center
+			MDraw.DrawBoxGlobal(Screen.Center, Screen.Center - new Vector2(0.5f), new Color(50, 50, 50)); // Screen extents
+			MDraw.End();
+
 			base.Draw(time);
+		}
+
+
+		private Point lastWindowDimensions;
+
+		private Point GetDimensions(Rectangle r) {
+			return new Point(r.Width, r.Height);
+		}
+
+		public static float WidescreenRatio { get { return 16f / 9; } }
+		public static Viewport Viewport { get; private set; }
+
+		private void UpdateViewport() {
+
+			var dimensions = GetDimensions(Window.ClientBounds);
+			if (lastWindowDimensions == dimensions) return;
+			lastWindowDimensions = dimensions;
+
+			float ratio = (float)dimensions.X / dimensions.Y;
+
+			if (ratio > WidescreenRatio) {
+				var optimalDimensions = new Point((int)(dimensions.Y * WidescreenRatio), dimensions.Y);
+				int leftEdge = (dimensions.X - optimalDimensions.X) / 2;
+				Viewport = new Viewport(leftEdge, 0, optimalDimensions.X, optimalDimensions.Y, 0, 1);
+
+			} else if (ratio < WidescreenRatio) {
+				var optimalDimensions = new Point(dimensions.X, (int)(dimensions.X / WidescreenRatio));
+				int topEdge = (dimensions.Y - optimalDimensions.Y) / 2;
+				Viewport = new Viewport(0, topEdge, optimalDimensions.X, optimalDimensions.Y, 0, 1);
+
+			} else {
+				Viewport = new Viewport(0, 0, dimensions.X, dimensions.Y, 0, 1);
+			}
+
+			MDraw.Camera.ScaleFactor = Viewport.Height / 160f;
 		}
 
 	}

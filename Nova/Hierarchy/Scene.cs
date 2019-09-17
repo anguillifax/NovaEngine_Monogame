@@ -7,15 +7,15 @@ namespace Nova {
 
 		public string Name { get; private set; }
 
-		public readonly List<Entity> entities;
-		private readonly List<Entity> toAdd;
-		private readonly List<Entity> toRemove;
+		public readonly List<BaseEntity> entities;
+		private readonly List<BaseEntity> toAdd;
+		private readonly List<BaseEntity> toRemove;
 
 		public Scene(string name) {
 			Name = name;
-			entities = new List<Entity>();
-			toAdd = new List<Entity>();
-			toRemove = new List<Entity>();
+			entities = new List<BaseEntity>();
+			toAdd = new List<BaseEntity>();
+			toRemove = new List<BaseEntity>();
 		}
 
 		public void PreUpdate() {
@@ -53,20 +53,20 @@ namespace Nova {
 		public void Draw() {
 			// Test if object is a drawable entity. Then draw if visible.
 			foreach (var item in entities) {
-				if (item.Active && item is VisualEntity i) {
+				if (item.Active && item is Entity i) {
 					if (i.Visible) i.Draw();
 				}
 			}
 		}
 
-		public void Add(Entity entity) {
+		public void Add(BaseEntity entity) {
 			if (entity != null) {
 				toAdd.Add(entity);
 				entity.Scene = this;
 			}
 		}
 
-		public void Remove(Entity entity) {
+		public void Remove(BaseEntity entity) {
 			if (entity != null) {
 				toRemove.Add(entity);
 				entity.Scene = null;
@@ -76,7 +76,7 @@ namespace Nova {
 		/// <summary>
 		/// Moves an entity from one scene to another
 		/// </summary>
-		public static void MoveEntity(Scene from, Scene to, Entity entity) {
+		public static void MoveEntity(Scene from, Scene to, BaseEntity entity) {
 			if (from == null || to == null || entity == null) throw new ArgumentNullException();
 			from.Remove(entity);
 			to.Add(entity);

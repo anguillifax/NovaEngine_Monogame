@@ -6,12 +6,12 @@ namespace Nova {
 
 	public class SpriteRenderer : IRenderer {
 
-		public VisualEntity Entity { get; set; }
+		public Entity Entity { get; set; }
 		public Texture2D Texture { get; set; }
 
 		public Vector2 Origin { get; set; }
 
-		public SpriteRenderer(VisualEntity parent, Texture2D texture) {
+		public SpriteRenderer(Entity parent, Texture2D texture) {
 			Entity = parent ?? throw new ArgumentNullException();
 			Texture = texture;
 			Origin = new Vector2();

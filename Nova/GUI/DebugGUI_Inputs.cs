@@ -81,7 +81,7 @@ namespace Nova.Gui {
 		}
 
 		private static void Write(string text, Vector2 pos, Color color) {
-			b.DrawString(Engine.DefaultFont, text, pos, color);
+			b.DrawString(MDraw.DefaultFont, text, pos, color);
 		}
 
 	}

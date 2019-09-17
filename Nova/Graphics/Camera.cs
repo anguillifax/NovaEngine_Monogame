@@ -9,14 +9,14 @@ namespace Nova {
 	public class Camera {
 
 		/// <summary>
-		/// Where the camera is located in global pixel coordinates.
-		/// </summary>
-		public Vector2 GlobalPosition;
-
-		/// <summary>
 		/// Where the camera is located in world space.
 		/// </summary>
 		public Vector2 WorldPosition;
+
+		public readonly int PixelsPerUnit;
+		public readonly float UnitsPerPixel;
+
+		public float ScaleFactor { get; set; }
 
 		private float m_zoom;
 		/// <summary>
@@ -32,25 +32,36 @@ namespace Nova {
 			}
 		}
 
-		public Camera(Vector2 globalPosition) {
-			GlobalPosition = globalPosition;
+		public Camera(int pixelsPerUnit) {
 			m_zoom = 1;
 			WorldPosition = Vector2.Zero;
+			PixelsPerUnit = pixelsPerUnit;
+			UnitsPerPixel = 1f / PixelsPerUnit;
 		}
 
 		/// <summary>
 		/// Transforms a position in world space into a position in global pixel space.
 		/// </summary>
 		public Vector2 PositionToGlobal(Vector2 pos) {
-			return new Vector2(GlobalPosition.X + Zoom * (pos.X - WorldPosition.X), GlobalPosition.Y - Zoom * (pos.Y - WorldPosition.Y));
+			return new Vector2(
+				Screen.Width / 2 + ScaleFactor * PixelsPerUnit * Zoom * (pos.X - WorldPosition.X),
+				Screen.Height / 2 - ScaleFactor * PixelsPerUnit * Zoom * (pos.Y - WorldPosition.Y));
 		}
 
-		public float ScaleToGlobal(float scale) {
-			return scale * Zoom;
+		public float ScaleTextureToGlobal(float scale) {
+			return scale * Zoom * ScaleFactor;
 		}
 
-		public Vector2 ScaleToGlobal(Vector2 scale) {
-			return scale * Zoom;
+		public Vector2 ScaleTextureToGlobal(Vector2 scale) {
+			return scale * Zoom * ScaleFactor;
+		}
+
+		public float ScaleSizeToGlobal(float scale) {
+			return Zoom * ScaleFactor * PixelsPerUnit * scale;
+		}
+
+		public Vector2 ScaleSizeToGlobal(Vector2 scale) {
+			return Zoom * ScaleFactor * PixelsPerUnit * scale;
 		}
 
 	}

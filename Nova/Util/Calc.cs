@@ -62,10 +62,37 @@ namespace Nova {
 		}
 
 		/// <summary>
+		/// Rotate a vector around the origin. Clockwise is positive.
+		/// </summary>
+		public static Vector2 RotateRadians(Vector2 vec, float radians) {
+			float cos = (float)Math.Cos(-radians);
+			float sin = (float)Math.Sin(-radians);
+			return new Vector2(
+				vec.X * cos - vec.Y * sin,
+				vec.X * cos + vec.Y * sin
+			);
+		}
+
+		/// <summary>
+		/// Rotate a vector around the origin. Clockwise is positive.
+		/// </summary>
+		public static Vector2 RotateDegrees(Vector2 vec, float degrees) {
+			return RotateRadians(vec, MathHelper.ToRadians(degrees));
+		}
+
+		/// <summary>
 		/// Returns a Vector2 on the perimeter of a circle. Angle is in radians from top with clockwise as positive.
 		/// </summary>
 		public static Vector2 ProjectPoint(float angle, float distance) {
 			return new Vector2(distance * (float)Math.Sin(angle), distance * (float)Math.Cos(angle));
+		}
+
+		public static float Round(float value, float boundary) {
+			return (float)Math.Round(value / boundary) * boundary;
+		}
+
+		public static Vector2 Round(Vector2 value, float boundary) {
+			return new Vector2(Round(value.X, boundary), Round(value.Y, boundary));
 		}
 
 	}
