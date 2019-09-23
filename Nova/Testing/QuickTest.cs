@@ -15,13 +15,17 @@ namespace Nova {
 
 		float smoothZoom = 0;
 
-		Texture2D bg;
+		Actor actor;
+		Action hitSomething = () => Console.WriteLine("Hit something!");
 
 		public void Init() {
-			Vector2 v = new Vector2(1f, 0f);
-			for (int i = 0; i < 8; i++) {
-				//Console.WriteLine("{0} deg: {1} => {2}", i * 45, v, Calc.RotateDegrees(v, i * 45));
-			}
+
+
+		}
+
+		void Test(float x, float y) {
+			actor.Move(new Vector2(x, y), hitSomething);
+			Console.WriteLine(actor.Position);
 		}
 
 		public void LoadContent() {

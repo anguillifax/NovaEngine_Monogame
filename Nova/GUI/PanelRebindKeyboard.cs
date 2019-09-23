@@ -150,7 +150,7 @@ namespace Nova.Gui {
 				bool active = SelectionIndex == i;
 				Color color = active ? (IsEditingKeyboard ? Color.Lime : Color.Yellow) : (IsEditingKeyboard ? Color.Gray : Color.White);
 
-				Vector2 rowPos = pos.Copy();
+				Vector2 rowPos = pos.Clone();
 
 				if (active) {
 					rowPos.X += 5f;

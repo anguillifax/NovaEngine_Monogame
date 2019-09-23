@@ -8,12 +8,16 @@ namespace Nova {
 
 	public static class CustomExtensions {
 
-		public static Vector2 Copy(this Vector2 vec) {
+		public static Vector2 Clone(this Vector2 vec) {
 			return new Vector2(vec.X, vec.Y);
 		}
 
-		public static Vector3 Copy(this Vector3 vec) {
+		public static Vector3 Clone(this Vector3 vec) {
 			return new Vector3(vec.X, vec.Y, vec.Z);
+		}
+
+		public static Point RoundToPoint(this Vector2 vec) {
+			return new Point(Calc.Round(vec.X), Calc.Round(vec.Y));
 		}
 
 		/// <summary>
@@ -45,6 +49,10 @@ namespace Nova {
 			if (list == null) throw new NullReferenceException();
 			list.Clear();
 			list.AddRange(toAdd);
+		}
+
+		public static Vector2 Center(this Texture2D texture) {
+			return new Vector2(texture.Width / 2f, texture.Height / 2f);
 		}
 
 	}

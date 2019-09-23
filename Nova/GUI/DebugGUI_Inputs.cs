@@ -30,7 +30,7 @@ namespace Nova.Gui {
 			b = MDraw.SpriteBatch;
 			b.Begin();
 
-			p = TopLeft.Copy();
+			p = TopLeft.Clone();
 
 			Write("Inputs Panel", p, Color.White);
 

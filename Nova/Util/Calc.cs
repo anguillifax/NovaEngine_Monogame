@@ -95,6 +95,14 @@ namespace Nova {
 			return new Vector2(Round(value.X, boundary), Round(value.Y, boundary));
 		}
 
+		public static int Round(float value) {
+			return (int)Math.Round(value);
+		}
+
+		public static Vector2 Round(Vector2 value) {
+			return new Vector2(Round(value.X), Round(value.Y));
+		}
+
 	}
 
 }

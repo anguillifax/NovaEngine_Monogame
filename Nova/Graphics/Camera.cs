@@ -20,7 +20,7 @@ namespace Nova {
 
 		private float m_zoom;
 		/// <summary>
-		/// How far the camera is zoomed in. The larger, the greater the zoom.
+		/// How far the camera is zoomed in. The object appears Size * Zoom units on screen.
 		/// </summary>
 		public float Zoom {
 			get {
@@ -34,9 +34,13 @@ namespace Nova {
 
 		public Camera(int pixelsPerUnit) {
 			m_zoom = 1;
-			WorldPosition = Vector2.Zero;
 			PixelsPerUnit = pixelsPerUnit;
 			UnitsPerPixel = 1f / PixelsPerUnit;
+			CalculateScale();
+		}
+
+		public void CalculateScale() {
+			ScaleFactor = Screen.Height / Engine.ScreenSizeInPixels.Y;
 		}
 
 		/// <summary>

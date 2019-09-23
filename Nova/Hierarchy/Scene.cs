@@ -7,15 +7,15 @@ namespace Nova {
 
 		public string Name { get; private set; }
 
-		public readonly List<BaseEntity> entities;
-		private readonly List<BaseEntity> toAdd;
-		private readonly List<BaseEntity> toRemove;
+		public readonly List<Entity> entities;
+		private readonly List<Entity> toAdd;
+		private readonly List<Entity> toRemove;
 
 		public Scene(string name) {
 			Name = name;
-			entities = new List<BaseEntity>();
-			toAdd = new List<BaseEntity>();
-			toRemove = new List<BaseEntity>();
+			entities = new List<Entity>();
+			toAdd = new List<Entity>();
+			toRemove = new List<Entity>();
 		}
 
 		public void PreUpdate() {
@@ -34,9 +34,7 @@ namespace Nova {
 
 		public void PostUpdate() {
 			// Add entities to scene list
-			foreach (var item in toAdd) {
-				entities.Add(item);
-			}
+			entities.AddRange(toAdd);
 			toAdd.Clear();
 			// Remove entities from scene list
 			foreach (var item in toRemove) {
@@ -51,22 +49,22 @@ namespace Nova {
 		}
 
 		public void Draw() {
-			// Test if object is a drawable entity. Then draw if visible.
+			// Draw active and visible entities.
 			foreach (var item in entities) {
-				if (item.Active && item is Entity i) {
-					if (i.Visible) i.Draw();
+				if (item.Active && item.Visible) {
+					item.Draw();
 				}
 			}
 		}
 
-		public void Add(BaseEntity entity) {
+		public void Add(Entity entity) {
 			if (entity != null) {
 				toAdd.Add(entity);
 				entity.Scene = this;
 			}
 		}
 
-		public void Remove(BaseEntity entity) {
+		public void Remove(Entity entity) {
 			if (entity != null) {
 				toRemove.Add(entity);
 				entity.Scene = null;
@@ -74,9 +72,9 @@ namespace Nova {
 		}
 
 		/// <summary>
-		/// Moves an entity from one scene to another
+		/// Move an entity from one scene to another
 		/// </summary>
-		public static void MoveEntity(Scene from, Scene to, BaseEntity entity) {
+		public static void MoveEntity(Scene from, Scene to, Entity entity) {
 			if (from == null || to == null || entity == null) throw new ArgumentNullException();
 			from.Remove(entity);
 			to.Add(entity);

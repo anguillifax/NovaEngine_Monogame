@@ -18,7 +18,9 @@ namespace Nova {
 
 		public QuickTest quickTest;
 
-		public static readonly int TileSize = 8;
+		public static readonly int TileSize = 7;
+		public static readonly Point ScreenSizeInTiles = new Point(36, 20);
+		public static readonly Point ScreenSizeInPixels = new Point(TileSize * ScreenSizeInTiles.X, TileSize * ScreenSizeInTiles.Y);
 
 		public Engine() {
 			Instance = this;
@@ -28,8 +30,8 @@ namespace Nova {
 			GraphicsDeviceManager.PreferredBackBufferHeight = 720;
 			GraphicsDeviceManager.SynchronizeWithVerticalRetrace = true;
 			GraphicsDeviceManager.ApplyChanges();
-			
-			Window.ClientSizeChanged += (s,e) => UpdateViewport();
+
+			Window.ClientSizeChanged += (s, e) => UpdateViewport();
 
 			Window.AllowUserResizing = true;
 			Window.Title = "Nova Engine";
@@ -54,7 +56,6 @@ namespace Nova {
 
 			Screen.Update();
 			MDraw.Initialize();
-			MDraw.Camera.ScaleFactor = Viewport.Height / 160f;
 			InputManager.Init();
 
 			CurrentScene = new Scene("MainScene");
@@ -86,10 +87,6 @@ namespace Nova {
 			var deepDirt = Content.Load<Texture2D>("Images/Tiles/deep_dirt");
 			var temple = Content.Load<Texture2D>("Images/Tiles/temple");
 			var player = Content.Load<Texture2D>("Images/Tiles/player");
-			CurrentScene.Add(new Tile(CurrentScene, temple, new Vector2(0, 0)));
-			CurrentScene.Add(new Tile(CurrentScene, deepDirt, new Vector2(1, 0)));
-			CurrentScene.Add(new TestTiles(CurrentScene, grass, dirt, deepDirt));
-			CurrentScene.Add(new TestEntity(CurrentScene, player));
 
 		}
 
@@ -213,7 +210,7 @@ namespace Nova {
 				Viewport = new Viewport(0, 0, dimensions.X, dimensions.Y, 0, 1);
 			}
 
-			MDraw.Camera.ScaleFactor = Viewport.Height / 160f;
+			MDraw.Camera.CalculateScale();
 		}
 
 	}

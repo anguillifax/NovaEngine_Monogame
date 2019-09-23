@@ -136,7 +136,7 @@ namespace Nova.Gui {
 				var rowTarget = Source.AllButtons[i];
 				Color color = rowTarget.IsRebindable ? (active ? Color.Yellow : Color.White) : (active ? new Color(150, 150, 80) : Color.Gray);
 
-				Vector2 rowPos = pos.Copy();
+				Vector2 rowPos = pos.Clone();
 
 				if (active) {
 					rowPos.X += 5f;

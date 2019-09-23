@@ -23,7 +23,7 @@ namespace Nova {
 		public void Render() {
 			if (Texture == null) return;
 			MDraw.Begin();
-			MDraw.Draw(Texture, Entity.Position, Entity.Rotation, Origin, Entity.Scale);
+			MDraw.Draw(Texture, Entity.Position.ToVector2(), Entity.Rotation, Origin, Entity.Scale);
 			MDraw.End();
 		}
 

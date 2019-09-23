@@ -9,7 +9,7 @@ namespace Nova {
 	public class Rigidbody : Component {
 
 		public Vector2 Velocity { get; set; }
-		public BoxCollider Collider { get; set; }
+		//public BoxCollider Collider { get; set; }
 
 		public bool ApplyGravity { get; set; }
 

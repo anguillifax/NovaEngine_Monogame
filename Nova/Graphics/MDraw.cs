@@ -7,10 +7,6 @@ using System.Collections.Generic;
 
 namespace Nova {
 
-	public enum CoordinateSpace {
-		Global, World, Gui
-	}
-
 	public static class MDraw {
 
 		public static SpriteBatch SpriteBatch { get; private set; }
@@ -24,6 +20,7 @@ namespace Nova {
 
 		public static void Initialize() {
 			SpriteBatch = new SpriteBatch(Engine.Instance.GraphicsDevice);
+			
 			Camera = new Camera(8);
 		}
 

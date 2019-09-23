@@ -12,22 +12,22 @@ namespace Nova {
 
 	}
 
-	public class BoxCollider : Component, ICollider {
+	//public class BoxCollider : Component, ICollider {
 
-		public Vector2 Origin { get; set; }
-		public Vector2 Size { get; set; }
+	//	public Vector2 Origin { get; set; }
+	//	public Vector2 Size { get; set; }
 
-		public BoxCollider(Entity parent, Vector2 origin, Vector2 size) :
-			base(parent) {
-			Origin = origin;
-			Size = size;
-		}
+	//	public BoxCollider(Entity parent, Vector2 origin, Vector2 size) :
+	//		base(parent) {
+	//		Origin = origin;
+	//		Size = size;
+	//	}
 
-		public void Draw() {
-			MDraw.Begin();
-			MDraw.DrawBox(Entity.Position + Origin, Size / 2, Physics.ColliderDrawColor);
-			MDraw.End();
-		}
-	}
+	//	public override void Draw() {
+	//		MDraw.Begin();
+	//		MDraw.DrawBox(Entity.Position + Origin, Size / 2 * Entity.Scale, Physics.ColliderDrawColor);
+	//		MDraw.End();
+	//	}
+	//}
 
 }
