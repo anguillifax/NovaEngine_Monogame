@@ -14,6 +14,9 @@ namespace Nova.PhysicsEngine {
 		public Vector2 LocalPosition { get; set; }
 		public Vector2 Position => LocalPosition + Entity.Position;
 
+		public Vector2 Min => Position - Extents;
+		public Vector2 Max => Position + Extents;
+
 		public Vector2 Extents { get; set; }
 
 		public Vector2 Size {
@@ -30,10 +33,10 @@ namespace Nova.PhysicsEngine {
 
 		public override bool Collide(Collider other) {
 			if (other is BoxCollider b) {
-				return PhysicsCollisions.BoxAgainstBox(this, b);
+				return PhysicsMath.OverlapBoxAgainstBox(this, b);
 			}
 			if (other is CircleCollider c) {
-				return PhysicsCollisions.BoxAgainstCircle(this, c);
+				return PhysicsMath.OverlapBoxAgainstCircle(this, c);
 			}
 			return false;
 		}

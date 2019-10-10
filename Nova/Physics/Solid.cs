@@ -7,10 +7,12 @@ using System.Linq;
 
 namespace Nova.PhysicsEngine {
 
-	public class Solid : PhysicsObject {
+	public class Solid : Rigidbody {
 
-		public void Move(Vector2 delta) {
+		public Solid(Entity parent, params Collider[] colliders) :
+			base(parent, colliders) {
 
+			Physics.AllSolids.Add(this);
 		}
 
 	}

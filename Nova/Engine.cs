@@ -123,8 +123,6 @@ namespace Nova {
 			Gui.DebugGUI_Inputs.Update();
 			DebugCameraController.Update();
 
-			Physics.Update();
-
 			if (InputManager.Quit.JustPressed) {
 				Exit();
 			}
@@ -160,6 +158,8 @@ namespace Nova {
 				CurrentScene.PostUpdate();
 			}
 
+			Physics.Update();
+
 			base.Update(time);
 		}
 
@@ -186,14 +186,17 @@ namespace Nova {
 
 			quickTest.Draw();
 
-			// Draw debug points
+			//DrawWindowDebugPoints()
+
+			base.Draw(time);
+		}
+
+		void DrawWindowDebugPoints() {
 			MDraw.Begin();
 			MDraw.DrawPoint(Vector2.Zero, Color.White); // World Origin
 			MDraw.DrawPointGlobal(Screen.Center, Color.White); // Screen Center
 			MDraw.DrawBoxGlobal(Screen.Center, Screen.Center - new Vector2(0.5f), new Color(50, 50, 50)); // Screen extents
 			MDraw.End();
-
-			base.Draw(time);
 		}
 
 

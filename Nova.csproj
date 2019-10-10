@@ -88,8 +88,7 @@
     <Compile Include="Nova\Physics\Colliders\CircleCollider.cs" />
     <Compile Include="Nova\Physics\Colliders\Collider.cs" />
     <Compile Include="Nova\Physics\Physics.cs" />
-    <Compile Include="Nova\Physics\PhysicsCollisions.cs" />
-    <Compile Include="Nova\Physics\PhysicsObject.cs" />
+    <Compile Include="Nova\Physics\PhysicsMath.cs" />
     <Compile Include="Nova\Physics\Rigidbody.cs" />
     <Compile Include="Nova\Physics\Actor.cs" />
     <Compile Include="Nova\Physics\Solid.cs" />

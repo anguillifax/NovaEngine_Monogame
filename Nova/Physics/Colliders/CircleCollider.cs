@@ -22,10 +22,10 @@ namespace Nova.PhysicsEngine {
 
 		public override bool Collide(Collider other) {
 			if (other is BoxCollider b) {
-				return PhysicsCollisions.BoxAgainstCircle(b, this);
+				return PhysicsMath.OverlapBoxAgainstCircle(b, this);
 			}
 			if (other is CircleCollider c) {
-				return PhysicsCollisions.CircleAgainstCircle(this, c);
+				return PhysicsMath.OverlapCircleAgainstCircle(this, c);
 			}
 
 			return false;

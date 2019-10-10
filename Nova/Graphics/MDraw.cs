@@ -85,12 +85,13 @@ namespace Nova {
 			if (d.LengthSquared() < 1) return;
 			float angle = -MathHelper.PiOver2 + (float)Math.Atan2(d.Y, d.X);
 			Vector2 scale = new Vector2(1, (int)d.Length());
-			SpriteBatch.Draw(TexturePixel, origin, null, color, angle, new Vector2(0.5f, 0), scale, SpriteEffects.None, 0f);
-			SpriteBatch.Draw(TexturePixel, origin + Vector2.One, null, ShadowColor, angle, new Vector2(0.5f, 0), scale, SpriteEffects.None, 0f);
+			SpriteBatch.Draw(TexturePixel, origin, null, color, angle, new Vector2(0.5f, 0), scale, SpriteEffects.None, GetDepth(2));
+			SpriteBatch.Draw(TexturePixel, origin + Vector2.One, null, ShadowColor, angle, new Vector2(0.5f, 0), scale, SpriteEffects.None, GetDepth(3));
 		}
 
 		public static void DrawPointGlobal(Vector2 pos, Color color) {
-			SpriteBatch.Draw(TexturePoint, pos, null, color, 0, new Vector2(1.5f, 1.5f), Vector2.One, SpriteEffects.None, 0);
+			SpriteBatch.Draw(TexturePoint, pos, null, color, 0, new Vector2(1.5f, 1.5f), Vector2.One, SpriteEffects.None, GetDepth(0));
+			SpriteBatch.Draw(TexturePoint, pos + Vector2.One, null, ShadowColor, 0, new Vector2(1.5f, 1.5f), Vector2.One, SpriteEffects.None, GetDepth(1));
 		}
 
 		public static void DrawPoint(Vector2 pos, Color color) {

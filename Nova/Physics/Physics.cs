@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Nova.PhysicsEngine {
 
@@ -19,6 +20,30 @@ namespace Nova.PhysicsEngine {
 		public static readonly List<Solid> AllSolids = new List<Solid>();
 
 		public static void Update() {
+
+			foreach (var actor in AllActors) {
+
+				float time = 1f;
+
+				foreach (var box in AllColliders.Cast<BoxCollider>()) {
+					// do not process self
+					if (actor.Colliders.Contains(box)) continue;
+
+					if (PhysicsMath.IntersectMovingBoxAgainstBox((BoxCollider)actor.Colliders[0], box, actor.Velocity, Vector2.Zero, out float first, out float last)) {
+						time = Math.Min(time, first);
+						//Console.WriteLine("hit " + first);
+					}
+
+				}
+
+				Console.WriteLine($"{actor.Velocity}, t={time}, {actor.Entity.Position + time * actor.Velocity}");
+
+				actor.Entity.Position += actor.Velocity * time;
+			}
+
+		}
+
+		private static void CheckOverlap() {
 
 			for (int i = 0; i < AllColliders.Count; i++) {
 

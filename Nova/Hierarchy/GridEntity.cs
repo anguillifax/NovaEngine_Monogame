@@ -13,8 +13,8 @@ namespace Nova {
 			}
 		}
 
-		public GridEntity(Scene scene, IntVector2 gridPos, bool startActive = true, bool startVisible = true) :
-			base(scene, Vector2.Zero, startActive, startVisible) {
+		public GridEntity(Scene scene, IntVector2 gridPos) :
+			base(scene, Vector2.Zero) {
 			GridPosition = gridPos;
 		}
 

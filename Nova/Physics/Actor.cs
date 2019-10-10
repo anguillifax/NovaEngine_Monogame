@@ -6,11 +6,12 @@ using System.Collections.Generic;
 
 namespace Nova.PhysicsEngine {
 
-	public class Actor : PhysicsObject {
+	public class Actor : Rigidbody {
 
+		public Actor(Entity parent, params Collider[] colliders) :
+			base(parent, colliders) {
 
-		public void Move(Vector2 amount, Action onCollision) {
-
+			Physics.AllActors.Add(this);
 		}
 
 	}

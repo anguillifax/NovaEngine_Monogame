@@ -11,7 +11,7 @@ namespace Nova.Tiles {
 		TileRenderer tileRenderer;
 
 		public Tile(Scene scene, Texture2D texture, IntVector2 gridPos) : 
-			base(scene, gridPos, true, true) {
+			base(scene, gridPos) {
 			tileRenderer = new TileRenderer(this, texture);
 		}
 

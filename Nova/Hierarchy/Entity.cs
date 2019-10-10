@@ -28,9 +28,9 @@ namespace Nova {
 		public Vector2 Scale;
 		public float Rotation { get; set; }
 
-		protected Entity(Scene scene, Vector2 position, bool startActive = true, bool startVisible = true) {
-			Active = startActive;
-			Visible = startVisible;
+		protected Entity(Scene scene, Vector2 position) {
+			Active = true;
+			Visible = true;
 			Scene = scene;
 			Position = position;
 			Scale = Vector2.One;

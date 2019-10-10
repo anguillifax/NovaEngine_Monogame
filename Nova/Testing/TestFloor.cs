@@ -10,6 +10,7 @@ namespace Nova {
 
 	public class SolidFloor : Entity {
 
+		Solid solid;
 		BoxCollider boxCollider;
 		SpriteRenderer spriteRenderer;
 
@@ -18,8 +19,11 @@ namespace Nova {
 
 			Scale = dimensions;
 			Position = pos;
+
 			spriteRenderer = new SpriteRenderer(this, texture, MDraw.DepthStartScene + 10);
+
 			boxCollider = new BoxCollider(this, Vector2.Zero, Vector2.One);
+			solid = new Solid(this, boxCollider);
 		}
 
 	}

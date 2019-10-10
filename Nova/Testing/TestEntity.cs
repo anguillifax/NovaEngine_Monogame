@@ -11,6 +11,7 @@ namespace Nova {
 
 		public float speed = 1f;
 
+		Actor actor;
 		BoxCollider boxCollider;
 		SpriteRenderer spriteRenderer;
 
@@ -20,6 +21,7 @@ namespace Nova {
 			spriteRenderer = new SpriteRenderer(this, texture, MDraw.DepthStartScene + 0);
 
 			boxCollider = new BoxCollider(this, Vector2.Zero, Vector2.One);
+			actor = new Actor(this, boxCollider);
 		}
 
 		public override void Update() {
@@ -27,9 +29,13 @@ namespace Nova {
 			Vector2 vel = new Vector2(InputManager.Any.Horizontal.Value, InputManager.Any.Vertical.Value);
 			Calc.ClampMagnitude(ref vel, 1f);
 
-			Position += vel * speed * Time.DeltaTime;
+			actor.Velocity = 8 * vel * Time.DeltaTime;
 
 			base.Update();
+		}
+
+		public override void Draw() {
+			base.Draw();
 		}
 
 	}
