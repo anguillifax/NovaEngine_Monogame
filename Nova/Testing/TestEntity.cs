@@ -1,38 +1,37 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Nova.PhysicsEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 
 namespace Nova {
 
-	//public class TestEntity : Entity {
+	public class TestEntity : Entity {
 
-	//	SpriteRenderer spriteRenderer;
-	//	BoxCollider collider;
+		public float speed = 1f;
 
-	//	public TestEntity(Scene s, Texture2D tex) :
-	//		base(s, Vector2.Zero) {
-	//		spriteRenderer = new SpriteRenderer(this, tex);
-	//		collider = new BoxCollider(this, new Vector2(0, -0.1f), new Vector2(.6f, 1.5f));
-	//	}
+		BoxCollider boxCollider;
+		SpriteRenderer spriteRenderer;
 
-	//	public override void Update() {
-	//		var inputs = new Vector2(InputManager.Any.Horizontal.Value, InputManager.Any.Vertical.Value);
-	//		Position += Calc.ClampMagnitude(.2f * inputs, .2f);
+		public TestEntity(Scene scene, Vector2 position, Texture2D texture) :
+			base(scene, position) {
 
-	//		if (InputManager.Any.Jump.JustPressed) {
-	//			Console.WriteLine(Position);
-	//			Position = Calc.Round(Position, 1);
-	//		}
+			spriteRenderer = new SpriteRenderer(this, texture, MDraw.DepthStartScene + 0);
 
-	//		base.Update();
-	//	}
+			boxCollider = new BoxCollider(this, Vector2.Zero, Vector2.One);
+		}
 
-	//	public override void Draw() {
-	//		spriteRenderer.Render();
-	//	}
+		public override void Update() {
 
-	//}
+			Vector2 vel = new Vector2(InputManager.Any.Horizontal.Value, InputManager.Any.Vertical.Value);
+			Calc.ClampMagnitude(ref vel, 1f);
+
+			Position += vel * speed * Time.DeltaTime;
+
+			base.Update();
+		}
+
+	}
 
 }

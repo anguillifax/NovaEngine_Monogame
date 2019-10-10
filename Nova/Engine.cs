@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Nova.PhysicsEngine;
 using Nova.Tiles;
 using System;
 using System.Collections.Generic;
@@ -88,6 +89,18 @@ namespace Nova {
 			var temple = Content.Load<Texture2D>("Images/Tiles/temple");
 			var player = Content.Load<Texture2D>("Images/Tiles/player");
 
+			//int offset = 2;
+			//for (int i = 0; i < 5; i++) {
+			//	CurrentScene.Add(new Tile(CurrentScene, grass, new IntVector2(i - offset, -4)));
+			//	CurrentScene.Add(new Tile(CurrentScene, dirt, new IntVector2(i - offset, -5)));
+			//	CurrentScene.Add(new Tile(CurrentScene, deepDirt, new IntVector2(i - offset, -6)));
+			//}
+
+			//CurrentScene.Add(new TestEntity(CurrentScene, player));
+
+			new TestEntity(CurrentScene, Vector2.Zero, temple);
+			new SolidFloor(CurrentScene, grass, new Vector2(0, -2), new Vector2(1, 1));
+
 		}
 
 		/// <summary>
@@ -108,6 +121,9 @@ namespace Nova {
 			Time.Update(time);
 			InputManager.Update();
 			Gui.DebugGUI_Inputs.Update();
+			DebugCameraController.Update();
+
+			Physics.Update();
 
 			if (InputManager.Quit.JustPressed) {
 				Exit();
@@ -161,7 +177,9 @@ namespace Nova {
 			Time.UpdateDraw(time);
 
 			if (CurrentScene != null) {
+				MDraw.Begin();
 				CurrentScene.Draw();
+				MDraw.End();
 			}
 
 			Gui.DebugGUI_Inputs.Draw();

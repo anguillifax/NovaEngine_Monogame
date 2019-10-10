@@ -4,7 +4,7 @@
 
 		Entity Entity { get; set; }
 
-		void Render();
+		void Draw();
 
 	}
 

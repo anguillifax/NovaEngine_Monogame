@@ -4,27 +4,29 @@ using System;
 
 namespace Nova {
 
-	public class SpriteRenderer : IRenderer {
+	public class SpriteRenderer : Component {
 
-		public Entity Entity { get; set; }
 		public Texture2D Texture { get; set; }
-
+		public Vector2 Offset { get; set; }
 		public Vector2 Origin { get; set; }
+		public int Depth { get; set; }
 
-		public SpriteRenderer(Entity parent, Texture2D texture) {
-			Entity = parent ?? throw new ArgumentNullException();
+		public SpriteRenderer(Entity parent, Texture2D texture, int depth) :
+			base(parent) {
+
 			Texture = texture;
-			Origin = new Vector2();
+			Depth = depth;
+			Offset = Vector2.Zero;
+			Origin = Vector2.Zero;
+
 			if (texture != null) {
-				Origin = new Vector2(texture.Width / 2, texture.Height / 2);
+				Origin = new Vector2(texture.Width / 2f, texture.Height / 2f);
 			}
 		}
 
-		public void Render() {
+		public override void Draw() {
 			if (Texture == null) return;
-			MDraw.Begin();
-			MDraw.Draw(Texture, Entity.Position.ToVector2(), Entity.Rotation, Origin, Entity.Scale);
-			MDraw.End();
+			MDraw.Draw(Texture, Depth, Entity.Position + Offset, Entity.Rotation, Origin, Entity.Scale);
 		}
 
 	}

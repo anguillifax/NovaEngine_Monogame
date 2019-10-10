@@ -8,89 +8,66 @@ namespace Nova {
 		public bool Active { get; set; }
 		public bool Visible { get; set; }
 
-		public Scene Scene { get; set; }
-		public readonly List<Component> ComponentList;
-		private readonly List<Component> toAdd;
-		private readonly List<Component> toRemove;
+		private Scene _scene;
+		public Scene Scene {
+			get {
+				return _scene;
+			}
+			set {
+				if (_scene != value) {
+					_scene?.Remove(this);
+					_scene = value;
+					_scene?.Add(this);
+				}
+			}
+		}
 
-		private IntVector2 m_Position;
-		public IntVector2 Position { get => m_Position; set => m_Position = value; }
-		private Vector2 m_Scale;
-		public Vector2 Scale { get => m_Scale; set => m_Scale = value; }
+		public readonly List<Component> ComponentList;
+
+		public Vector2 Position;
+		public Vector2 Scale;
 		public float Rotation { get; set; }
 
-		#region Transform Component Properties
-
-		public int PosX {
-			get => Position.X;
-			set => m_Position.X = value;
-		}
-		public int PosY {
-			get => Position.Y;
-			set => m_Position.Y = value;
-		}
-
-		public float ScaleX {
-			get => Scale.X;
-			set => m_Scale.X = value;
-		}
-		public float ScaleY {
-			get => Scale.Y;
-			set => m_Scale.Y = value;
-		}
-
-		#endregion
-
-		protected Entity(Scene scene, IntVector2 position, bool startActive = true, bool startVisible = true) {
+		protected Entity(Scene scene, Vector2 position, bool startActive = true, bool startVisible = true) {
 			Active = startActive;
 			Visible = startVisible;
 			Scene = scene;
 			Position = position;
 			Scale = Vector2.One;
 			Rotation = 0f;
+
 			ComponentList = new List<Component>();
-			toAdd = new List<Component>();
-			toRemove = new List<Component>();
 		}
 
 		public void AddComponent<T>(T c) where T : Component {
-			toAdd.Add(c);
+			ComponentList.Add(c);
 		}
 
 		public void RemoveComponent<T>(T c) where T : Component {
-			toRemove.Add(c);
+			ComponentList.Add(c);
 		}
 
 		public virtual void PreUpdate() {
 			foreach (var item in ComponentList) {
-				item.PreUpdate();
+				if (item.Active) item.PreUpdate();
 			}
 		}
 
 		public virtual void Update() {
 			foreach (var item in ComponentList) {
-				item.Update();
+				if (item.Active) item.Update();
 			}
 		}
 
 		public virtual void PostUpdate() {
-			// Add entities to scene list
-			ComponentList.AddRange(toAdd);
-			toAdd.Clear();
-			// Remove entities from scene list
-			foreach (var item in toRemove) {
-				ComponentList.Remove(item);
-			}
-			toRemove.Clear();
-
 			foreach (var item in ComponentList) {
-				item.PostUpdate();
+				if (item.Active) item.PostUpdate();
 			}
 		}
 
 		public virtual void Draw() {
 			foreach (var item in ComponentList) {
-				item.Draw();
+				if (item.Active) item.Draw();
 			}
 		}
 

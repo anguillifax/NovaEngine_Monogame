@@ -18,10 +18,14 @@ namespace Nova {
 		private static Texture2D TexturePixel;
 		private static Texture2D TexturePoint;
 
+		public const int DepthStartEngineReserved = 0;
+		public const int DepthStartGUI = 100;
+		public const int DepthStartScene = 200;
+
 		public static void Initialize() {
 			SpriteBatch = new SpriteBatch(Engine.Instance.GraphicsDevice);
 			
-			Camera = new Camera(8);
+			Camera = new Camera(Engine.TileSize);
 		}
 
 		public static void LoadContent() {
@@ -39,17 +43,21 @@ namespace Nova {
 		}
 
 		public static void Begin() {
-			SpriteBatch.Begin(SpriteSortMode.Deferred, samplerState:SamplerState.PointClamp);
+			SpriteBatch.Begin(SpriteSortMode.BackToFront, samplerState:SamplerState.PointClamp);
 		}
 
 		public static void End() {
 			SpriteBatch.End();
 		}
 
+		private static float GetDepth(int depth) {
+			return depth / 1000f;
+		}
+
 		#region Draw Methods
 
-		public static void Draw(Texture2D texture, Vector2 position, float rotation, Vector2 origin, Vector2 scale) {
-			SpriteBatch.Draw(texture, Camera.PositionToGlobal(position), null, Color.White, rotation, origin, Camera.ScaleTextureToGlobal(scale), SpriteEffects.None, 0);
+		public static void Draw(Texture2D texture, int depth, Vector2 position, float rotation, Vector2 origin, Vector2 scale) {
+			SpriteBatch.Draw(texture, Camera.PositionToGlobal(position), null, Color.White, rotation, origin, Camera.ScaleTextureToGlobal(scale), SpriteEffects.None, GetDepth(depth));
 		}
 
 		public static void DrawGlobal(Texture2D texture, Vector2 position, float rotation, Vector2 origin, Vector2 scale) {

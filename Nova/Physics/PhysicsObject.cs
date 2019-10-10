@@ -6,15 +6,14 @@ using System.Collections.Generic;
 
 namespace Nova.PhysicsEngine {
 
-	public class Rigidbody : Component {
+	public abstract class PhysicsObject {
 
+		/// <summary>
+		/// Represents the desired movement during the next physics
+		/// </summary>
 		public Vector2 Velocity { get; set; }
-		//public BoxCollider Collider { get; set; }
 
-		public bool ApplyGravity { get; set; }
-
-		public Rigidbody(Entity parent) : base(parent) {
-		}
+		public readonly List<Collider> Colliders = new List<Collider>();
 
 	}
 

@@ -18,7 +18,19 @@ namespace Nova {
 			toRemove = new List<Entity>();
 		}
 
+		public void UpdateEntityList() {
+			entities.AddRange(toAdd);
+			toAdd.Clear();
+
+			foreach (var item in toRemove) {
+				entities.Remove(item);
+			}
+			toRemove.Clear();
+		}
+
 		public void PreUpdate() {
+			UpdateEntityList();
+
 			// Call PreUpdate() on active entities
 			foreach (var item in entities) {
 				if (item.Active) item.PreUpdate();
@@ -26,6 +38,8 @@ namespace Nova {
 		}
 
 		public void Update() {
+			UpdateEntityList();
+
 			// Call Update() on active entities
 			foreach (var item in entities) {
 				if (item.Active) item.Update();
@@ -33,14 +47,7 @@ namespace Nova {
 		}
 
 		public void PostUpdate() {
-			// Add entities to scene list
-			entities.AddRange(toAdd);
-			toAdd.Clear();
-			// Remove entities from scene list
-			foreach (var item in toRemove) {
-				entities.Remove(item);
-			}
-			toRemove.Clear();
+			UpdateEntityList();
 
 			// Call PostUpdate() on active entities
 			foreach (var item in entities) {
@@ -60,14 +67,12 @@ namespace Nova {
 		public void Add(Entity entity) {
 			if (entity != null) {
 				toAdd.Add(entity);
-				entity.Scene = this;
 			}
 		}
 
 		public void Remove(Entity entity) {
 			if (entity != null) {
 				toRemove.Add(entity);
-				entity.Scene = null;
 			}
 		}
 
@@ -78,6 +83,10 @@ namespace Nova {
 			if (from == null || to == null || entity == null) throw new ArgumentNullException();
 			from.Remove(entity);
 			to.Add(entity);
+		}
+
+		public override string ToString() {
+			return string.Format("Scene '{0}'", Name);
 		}
 
 	}

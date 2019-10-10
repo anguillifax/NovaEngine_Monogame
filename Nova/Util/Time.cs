@@ -11,7 +11,7 @@ namespace Nova {
 		public static float DeltaTime { get; private set; }
 		public static float TotalTime { get; private set; }
 
-		public static float DeltaDrawTime { get; private set; }
+		public static float DrawDeltaTime { get; private set; }
 
 
 		internal static void Update(GameTime time) {
@@ -20,7 +20,7 @@ namespace Nova {
 		}
 
 		internal static void UpdateDraw(GameTime time) {
-			DeltaDrawTime = (float)time.ElapsedGameTime.TotalSeconds;
+			DrawDeltaTime = (float)time.ElapsedGameTime.TotalSeconds;
 		}
 
 	}

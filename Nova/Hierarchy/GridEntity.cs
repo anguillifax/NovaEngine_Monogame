@@ -1,13 +1,23 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 
 namespace Nova {
 
-	//public class GridEntity : Entity {
+	public class GridEntity : Entity {
 
-	//}
+		public IntVector2 GridPosition {
+			get {
+				return new IntVector2(Position);
+			}
+			set {
+				Position = value.ToVector2();
+			}
+		}
+
+		public GridEntity(Scene scene, IntVector2 gridPos, bool startActive = true, bool startVisible = true) :
+			base(scene, Vector2.Zero, startActive, startVisible) {
+			GridPosition = gridPos;
+		}
+
+	}
 
 }
