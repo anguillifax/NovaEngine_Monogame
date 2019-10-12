@@ -99,7 +99,7 @@ namespace Nova {
 			//CurrentScene.Add(new TestEntity(CurrentScene, player));
 
 			new TestEntity(CurrentScene, Vector2.Zero, temple);
-			new SolidFloor(CurrentScene, grass, new Vector2(0, -2), new Vector2(1, 1));
+			new SolidFloor(CurrentScene, grass, new Vector2(2, 0), new Vector2(1, 1));
 
 		}
 
@@ -125,6 +125,15 @@ namespace Nova {
 
 			if (InputManager.Quit.JustPressed) {
 				Exit();
+			}
+
+			if (InputManager.Any.Enter.JustPressed) {
+				IsPaused = !IsPaused;
+			}
+
+			if (IsPaused) {
+				base.Update(time);
+				return;
 			}
 
 			if (InputManager.TestLoadBindings.JustPressed) {
@@ -181,6 +190,8 @@ namespace Nova {
 				CurrentScene.Draw();
 				MDraw.End();
 			}
+
+			Physics.Draw();
 
 			Gui.DebugGUI_Inputs.Draw();
 

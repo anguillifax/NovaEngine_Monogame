@@ -8,6 +8,12 @@ namespace Nova.PhysicsEngine {
 
 	public abstract class Collider : Component {
 
+		public Vector2 LocalPosition;
+		public Vector2 Position => Entity.Position + LocalPosition;
+
+		public Rigidbody Rigidbody { get; set; }
+		public Vector2 Velocity => Rigidbody != null ? Rigidbody.Velocity : Vector2.Zero;
+
 		public Collider(Entity parent) : base(parent) {
 			Physics.AllColliders.Add(this);
 		}

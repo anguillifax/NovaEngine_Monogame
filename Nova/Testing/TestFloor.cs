@@ -24,6 +24,18 @@ namespace Nova {
 
 			boxCollider = new BoxCollider(this, Vector2.Zero, Vector2.One);
 			solid = new Solid(this, boxCollider);
+
+			Physics.ground = boxCollider;
+		}
+
+		public override void Update() {
+
+			Vector2 vel = new Vector2(InputManager.Any.Horizontal.Value, InputManager.Any.Vertical.Value);
+
+			if (InputManager.Any.Unleash.Pressed) {
+				Position += 0.1f * vel;
+			}
+			base.Update();
 		}
 
 	}

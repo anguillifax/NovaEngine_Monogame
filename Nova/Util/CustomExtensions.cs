@@ -16,6 +16,18 @@ namespace Nova {
 			return new Vector3(vec.X, vec.Y, vec.Z);
 		}
 
+		public static Vector2 GetNormalized(this Vector2 vec) {
+			var v = vec.Clone();
+			v.Normalize();
+			return v;
+		}
+
+		public static Vector3 GetNormalized(this Vector3 vec) {
+			var v = vec.Clone();
+			v.Normalize();
+			return v;
+		}
+
 		public static Point RoundToPoint(this Vector2 vec) {
 			return new Point(Calc.Round(vec.X), Calc.Round(vec.Y));
 		}

@@ -11,9 +11,6 @@ namespace Nova.PhysicsEngine {
 	/// </summary>
 	public class BoxCollider : Collider {
 
-		public Vector2 LocalPosition { get; set; }
-		public Vector2 Position => LocalPosition + Entity.Position;
-
 		public Vector2 Min => Position - Extents;
 		public Vector2 Max => Position + Extents;
 
@@ -43,6 +40,10 @@ namespace Nova.PhysicsEngine {
 
 		protected override void DrawCollider() {
 			MDraw.DrawBox(Position, Extents, Physics.ColliderDrawColor);
+		}
+
+		public override string ToString() {
+			return string.Format("BoxCollider <pos = {0}, extents = {1}>", Position, Extents);
 		}
 
 	}

@@ -8,15 +8,12 @@ namespace Nova.PhysicsEngine {
 
 	public class CircleCollider : Collider {
 
-		public Vector2 LocalPosition { get; set; }
-		public Vector2 Position => LocalPosition + Entity.Position;
-
 		public float Radius { get; set; }
 
-		public CircleCollider(Entity parent, Vector2 localPos, float radius) :
+		public CircleCollider(Entity parent, Vector2 localPosition, float radius) :
 			base(parent) {
 
-			LocalPosition = LocalPosition;
+			LocalPosition = localPosition;
 			Radius = radius;
 		}
 
