@@ -35,7 +35,7 @@ namespace Nova {
 			TexturePixel.SetData(new Color[] { Color.White });
 
 			TexturePoint = new Texture2D(Engine.Instance.GraphicsDevice, 3, 3);
-			var colors = new Color[3 * 3];
+			var colors = new Color[TexturePoint.Width * TexturePoint.Height];
 			for (int i = 0; i < colors.Length; i++) {
 				colors[i] = Color.White;
 			}
@@ -91,7 +91,7 @@ namespace Nova {
 
 		public static void DrawPointGlobal(Vector2 pos, Color color) {
 			SpriteBatch.Draw(TexturePoint, pos, null, color, 0, new Vector2(1.5f, 1.5f), Vector2.One, SpriteEffects.None, GetDepth(0));
-			SpriteBatch.Draw(TexturePoint, pos + Vector2.One, null, ShadowColor, 0, new Vector2(1.5f, 1.5f), Vector2.One, SpriteEffects.None, GetDepth(1));
+			SpriteBatch.Draw(TexturePoint, pos + Vector2.One, null, ShadowColor, 0,  new Vector2(1.5f, 1.5f), Vector2.One, SpriteEffects.None, GetDepth(1));
 		}
 
 		public static void DrawPoint(Vector2 pos, Color color) {

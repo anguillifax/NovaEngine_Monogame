@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Nova {
 
@@ -40,11 +41,40 @@ namespace Nova {
 		}
 
 		public void AddComponent<T>(T c) where T : Component {
-			ComponentList.Add(c);
+			if (c != null) {
+				ComponentList.Add(c);
+			}
 		}
 
 		public void RemoveComponent<T>(T c) where T : Component {
-			ComponentList.Add(c);
+			if (c != null) {
+				ComponentList.Add(c);
+			}
+		}
+
+		/// <summary>
+		/// Returns the first component of type T. If not found, returns null.
+		/// </summary>
+		public T GetComponent<T>() where T : Component {
+			foreach (var item in ComponentList) {
+				if (item is T) {
+					return (T)item;
+				}
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Returns all components of type T. Returns an empty collection if none are found.
+		/// </summary>
+		public IEnumerable<T> GetComponents<T>() where T : Component {
+			return ComponentList.Where(x => x is T).Cast<T>();
+		}
+
+		public virtual void Init() {
+			foreach (var item in ComponentList) {
+				item.Init();
+			}
 		}
 
 		public virtual void PreUpdate() {

@@ -9,28 +9,53 @@ namespace Nova.PhysicsEngine {
 	/// <summary>
 	/// Defines the mathematics behind all possible collisions between different types of colliders.
 	/// Adapted from Christer Ericson's Real-Time Collision Book.
+	/// <para>Function Notation: OperationName_WhatAgainst_What()</para>
 	/// </summary>
 	public static class PhysicsMath {
 
-		public static float Epsilon = 1e-15f;
+		public const float Epsilon = 1e-15f;
 
 		#region Overlap XX against XX
 
-		public static bool OverlapBoxAgainstBox(BoxCollider a, BoxCollider b) {
+		/// <summary>
+		/// Tests if A is overlapping B. If A and B are exactly aligned on edges, this function also returns true.
+		/// </summary>
+		public static bool IsOverlapping_Box_Box(BoxCollider a, BoxCollider b) {
 			if (Math.Abs(a.Position.X - b.Position.X) > a.Extents.X + b.Extents.X) return false;
 			if (Math.Abs(a.Position.Y - b.Position.Y) > a.Extents.Y + b.Extents.Y) return false;
 			return true;
 		}
 
-		public static bool OverlapCircleAgainstCircle(CircleCollider a, CircleCollider b) {
+		/// <summary>
+		/// Tests if A is inside of B. If A and B are exactly aligned on edges, this function returns false.
+		/// </summary>
+		public static bool IsInside_Box_Box(BoxCollider a, BoxCollider b) {
+			if (Math.Abs(a.Position.X - b.Position.X) >= a.Extents.X + b.Extents.X) return false;
+			if (Math.Abs(a.Position.Y - b.Position.Y) >= a.Extents.Y + b.Extents.Y) return false;
+			return true;
+		}
+
+		public static bool IsOverlapping_Circle_Circle(CircleCollider a, CircleCollider b) {
 			Vector2 d = a.Position - b.Position;
-			float distSquared = Vector2.Dot(d, d);
+			float distSquared = d.LengthSquared();
 			float radiusSum = a.Radius + b.Radius;
 			return distSquared <= radiusSum * radiusSum;
 		}
 
-		public static bool OverlapBoxAgainstCircle(BoxCollider box, CircleCollider circle) {
+		public static bool IsInside_Circle_Circle(CircleCollider a, CircleCollider b) {
+			Vector2 d = a.Position - b.Position;
+			float distSquared = d.LengthSquared();
+			float radiusSum = a.Radius + b.Radius;
+			return distSquared < radiusSum * radiusSum;
+		}
+
+		public static bool IsOverlapping_Box_Circle(BoxCollider box, CircleCollider circle) {
 			return SquareDistanceBetweenPointAndBox(circle.Position, box) <= circle.Radius * circle.Radius;
+		}
+
+
+		public static bool IsInside_Box_Circle(BoxCollider box, CircleCollider circle) {
+			return SquareDistanceBetweenPointAndBox(circle.Position, box) < circle.Radius * circle.Radius;
 		}
 
 		#endregion
@@ -74,7 +99,25 @@ namespace Nova.PhysicsEngine {
 
 		#region Normals
 
-		public static Vector2 GetClosestNormalOnBox(Vector2 point, BoxCollider box) {
+		/// <summary>
+		/// Get the normal of where 'of' touches 'against.' Do not use if 'of' is inside 'against'.
+		/// </summary>
+		public static Vector2 GetNormal_Box_Box(BoxCollider of, BoxCollider against) {
+
+			Vector2 normal = Vector2.Zero;
+
+			if (against.Max.X <= of.Min.X) normal.X = 1f;
+			if (against.Min.X >= of.Max.X) normal.X = -1f;
+
+			if (against.Max.Y <= of.Min.Y) normal.Y = 1f;
+			if (against.Min.Y >= of.Max.Y) normal.Y = -1f;
+
+			normal.Normalize();
+
+			return normal;
+		}
+
+		public static Vector2 GetNormal_Box(Vector2 point, BoxCollider box) {
 
 			Vector2 normal = Vector2.Zero;
 
@@ -87,7 +130,7 @@ namespace Nova.PhysicsEngine {
 			return normal.LengthSquared() == 0 ? Vector2.UnitX : normal.GetNormalized();
 		}
 
-		public static Vector2 GetClosestNormalOnCircle(Vector2 point, CircleCollider circle) {
+		public static Vector2 GetNormal_Circle(Vector2 point, CircleCollider circle) {
 			var normal = point - circle.Position;
 			return normal.LengthSquared() == 0 ? Vector2.UnitX : normal.GetNormalized();
 		}
@@ -99,19 +142,19 @@ namespace Nova.PhysicsEngine {
 		/// <summary>
 		/// Returns time when two moving boxes overlap. If A overlaps B, then it is considered an intersection.
 		/// </summary>
-		public static bool IntersectMovingBoxAgainstBox(BoxCollider a, BoxCollider b, Vector2 velA, Vector2 velB, out float firstTimeOfContact) {
-			if (OverlapBoxAgainstBox(a, b)) {
+		public static bool IntersectMoving_Box_Box(BoxCollider a, BoxCollider b, Vector2 velA, Vector2 velB, out float firstTimeOfContact) {
+			if (IsOverlapping_Box_Box(a, b)) {
 				firstTimeOfContact = 0f;
 				return true;
 			} else {
-				return IntersectMovingBoxAgainstBoxNoOverlap(a, b, velA, velB, out firstTimeOfContact);
+				return IntersectMoving_Box_Box_NoOverlap(a, b, velA, velB, out firstTimeOfContact);
 			}
 		}
 
 		/// <summary>
 		/// Returns time when two moving boxes overlap. If A overlaps B, then it is NOT considered an intersection.
 		/// </summary>
-		public static bool IntersectMovingBoxAgainstBoxNoOverlap(BoxCollider a, BoxCollider b, Vector2 velA, Vector2 velB, out float firstTimeOfContact) {
+		public static bool IntersectMoving_Box_Box_NoOverlap(BoxCollider a, BoxCollider b, Vector2 velA, Vector2 velB, out float firstTimeOfContact) {
 
 			// If A is stationary, v is relative velocity of B
 			Vector2 v = velB - velA;
@@ -204,24 +247,30 @@ namespace Nova.PhysicsEngine {
 		#region Overlap Resolution (Depenetration)
 
 		/// <summary>
-		/// Calculate the closest point that puts A outside of B. Do not use if A is not overlapping B.
+		/// Calculate the closest point where A is outside of B. Do not use if A is overlapping/outside B.
 		/// </summary>
-		public static Vector2 DepenetrateBoxAgainstBox(BoxCollider a, BoxCollider b) {
+		public static Vector2 Depenetrate_Box_Box(BoxCollider a, BoxCollider b) {
 
 			if (a.Position == b.Position) {
-				// Objects are on top of each other. Push A above B.
+				// Objects are exactly on top of each other. Push A above B.
 				return b.Position + new Vector2(0, b.Extents.Y + a.Extents.Y);
 			}
 
-			Vector2 delta = a.Position - b.Position;
+			float dx = 0f;
+			float dy = 0f;
 
-			if (Math.Abs(delta.X) >= Math.Abs(delta.Y)) {
-				// A is farther from center in horizontal direction
-				return b.Position + new Vector2(Math.Sign(delta.X) * (b.Extents.X + a.Extents.X), delta.Y);
+			if (a.Position.X > b.Position.X) dx = b.Max.X - a.Min.X;
+			if (a.Position.X < b.Position.X) dx = b.Min.X - a.Max.X;
+			if (a.Position.X == b.Position.X) dx = float.MaxValue;
 
+			if (a.Position.Y > b.Position.Y) dy = b.Max.Y - a.Min.Y;
+			if (a.Position.Y < b.Position.Y) dy = b.Min.Y - a.Max.Y;
+			if (a.Position.Y == b.Position.Y) dy = float.MaxValue;
+
+			if (Math.Abs(dx) < Math.Abs(dy)) {
+				return a.Position + new Vector2(dx, 0);
 			} else {
-				// A is farther from center in vertical direction
-				return b.Position + new Vector2(delta.X, Math.Sign(delta.Y) * (b.Extents.Y + a.Extents.Y));
+				return a.Position + new Vector2(0, dy);
 			}
 		}
 
@@ -237,6 +286,9 @@ namespace Nova.PhysicsEngine {
 
 		#region Specialized
 
+		/// <summary>
+		/// If vel moves into plane defined by normal, gives point on plane instead. Otherwise returns vel unchanged.
+		/// </summary>
 		public static Vector2 GetAllowedVelocity(Vector2 vel, Vector2 normal) {
 
 			normal.Normalize();

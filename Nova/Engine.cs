@@ -19,7 +19,8 @@ namespace Nova {
 
 		public QuickTest quickTest;
 
-		public static readonly int TileSize = 7;
+		public const int TileSize = 7;
+		public const float FrameRate = 60f;
 		public static readonly Point ScreenSizeInTiles = new Point(36, 20);
 		public static readonly Point ScreenSizeInPixels = new Point(TileSize * ScreenSizeInTiles.X, TileSize * ScreenSizeInTiles.Y);
 
@@ -37,6 +38,8 @@ namespace Nova {
 			Window.AllowUserResizing = true;
 			Window.Title = "Nova Engine";
 			IsMouseVisible = true;
+
+			TargetElapsedTime = TimeSpan.FromSeconds(1.0 / FrameRate);
 
 			Content.RootDirectory = "Content";
 
@@ -100,6 +103,12 @@ namespace Nova {
 
 			new TestEntity(CurrentScene, Vector2.Zero, temple);
 			new SolidFloor(CurrentScene, grass, new Vector2(2, 0), new Vector2(1, 1));
+			new SolidFloor(CurrentScene, grass, new Vector2(3, -1), new Vector2(1, 1));
+			new SolidFloor(CurrentScene, grass, new Vector2(3, -2), new Vector2(1, 1));
+			new SolidFloor(CurrentScene, grass, new Vector2(5, 0), new Vector2(1, 1));
+
+			CurrentScene.Init();
+			Time.Init();
 
 		}
 
@@ -111,11 +120,6 @@ namespace Nova {
 			// TODO: Unload any non ContentManager content here
 		}
 
-		/// <summary>
-		/// Allows the game to run logic such as updating the world,
-		/// checking for collisions, gathering input, and playing audio.
-		/// </summary>
-		/// <param name="time">Provides a snapshot of timing values.</param>
 		protected override void Update(GameTime time) {
 
 			Time.Update(time);
@@ -131,30 +135,11 @@ namespace Nova {
 				IsPaused = !IsPaused;
 			}
 
-			if (IsPaused) {
-				base.Update(time);
-				return;
-			}
-
-			if (InputManager.TestLoadBindings.JustPressed) {
-				InputManager.LoadBindings();
-			}
-			if (InputManager.TestLoadBindingsDef.JustPressed) {
-				InputManager.LoadDefaultBindings();
-			}
-			if (InputManager.TestSaveBindings.JustPressed) {
-				InputManager.SaveBindings();
-			}
-
-			//Console.WriteLine("{0} x {1}", GraphicsDeviceManager.PreferredBackBufferWidth, GraphicsDeviceManager.PreferredBackBufferHeight);
-
+			if (InputManager.TestLoadBindings.JustPressed) InputManager.LoadBindings();
+			if (InputManager.TestLoadBindingsDef.JustPressed)InputManager.LoadDefaultBindings();
+			if (InputManager.TestSaveBindings.JustPressed) InputManager.SaveBindings();
 
 			quickTest.Update();
-
-			//if (InputManager.Any.Back.JustPressed) {
-			//	IsPaused = !IsPaused;
-			//	Console.WriteLine(IsPaused ? "Paused" : "Unpaused");
-			//}
 
 			if (IsPaused) {
 				base.Update(time);
@@ -172,10 +157,8 @@ namespace Nova {
 			base.Update(time);
 		}
 
-		/// <summary>
-		/// This is called when the game should draw itself.
-		/// </summary>
-		/// <param name="time">Provides a snapshot of timing values.</param>
+		double lastTimeOfDraw;
+
 		protected override void Draw(GameTime time) {
 
 			GraphicsDevice.SetRenderTarget(null);
@@ -198,8 +181,18 @@ namespace Nova {
 			quickTest.Draw();
 
 			//DrawWindowDebugPoints()
+			//DrawFPS();
 
 			base.Draw(time);
+			lastTimeOfDraw = Time.ExactTimeSinceStartup;
+		}
+
+		void DrawFPS() {
+			double calcDeltaTime = Time.ExactTimeOfDraw - lastTimeOfDraw;
+			MDraw.SpriteBatch.Begin();
+			MDraw.SpriteBatch.DrawString(MDraw.DefaultFont, $"FPS: {1f / calcDeltaTime:f2}", new Vector2(Screen.Width - 80, 10),
+				new Color(1, 1, 1, 0.4f), 0f, Vector2.Zero, 0.5f, SpriteEffects.None, 0);
+			MDraw.End();
 		}
 
 		void DrawWindowDebugPoints() {

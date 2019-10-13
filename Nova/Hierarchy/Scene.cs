@@ -28,6 +28,12 @@ namespace Nova {
 			toRemove.Clear();
 		}
 
+		public void Init() {
+			foreach (var item in entities) {
+				item.Init();
+			}
+		}
+
 		public void PreUpdate() {
 			UpdateEntityList();
 

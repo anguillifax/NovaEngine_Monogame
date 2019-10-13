@@ -23,8 +23,7 @@ namespace Nova {
 			boxCollider = new BoxCollider(this, Vector2.Zero, Vector2.One);
 			actor = new Actor(this, boxCollider);
 
-			Physics.actor = actor;
-			Physics.player = boxCollider;
+			Physics.AllActors.Add(actor);
 
 			//b2 = new BoxCollider(this, new Vector2(4, 0), Vector2.One);
 		}
@@ -37,6 +36,7 @@ namespace Nova {
 				Position = Vector2.Zero;
 				//b2.LocalPosition = Vector2.Zero;
 				testVel = Vector2.Zero;
+				actor.Velocity = Vector2.Zero;
 			}
 
 			Vector2 vel = new Vector2(InputManager.Any.Horizontal.Value, InputManager.Any.Vertical.Value);

@@ -19,111 +19,108 @@ namespace Nova.PhysicsEngine {
 		public static readonly List<Actor> AllActors = new List<Actor>();
 		public static readonly List<Solid> AllSolids = new List<Solid>();
 
-		public static BoxCollider ground, player;
-		public static Actor actor;
-
-		static Vector2 hitpointFirst, allowedVelocity;
-
 		public static void Update() {
 
-			allowedVelocity = actor.Velocity;
-
-			if (PhysicsMath.IntersectMovingBoxAgainstBoxNoOverlap(ground, player, Vector2.Zero, allowedVelocity, out float first)) {
-				//Console.WriteLine("HIT");
-				hitpointFirst = actor.Entity.Position + allowedVelocity * first;
-				actor.Entity.Position += allowedVelocity * first;
-			} else {
-				//Console.WriteLine("MISS");
-				hitpointFirst = 1000 * Vector2.One;
-				actor.Entity.Position += allowedVelocity;
-			}
-
-			if (PhysicsMath.OverlapBoxAgainstBox(ground, player)) {
-				actor.Entity.Position = PhysicsMath.DepenetrateBoxAgainstBox(player, ground);
-				Console.WriteLine("depen");
-			}
-
-			var delta = ground.Entity.Position - actor.Entity.Position;
-			Console.WriteLine($"Actor {actor.Entity.Position}, Solid {ground.Entity.Position}, Delta {delta}, Delta Mag {delta.Length()}");
+			// Broadphase();
+			Narrowphase();
+			ResolvingPhase();
+			// GenerateContacts();
 
 		}
+
+		#region Narrowphase
+
+		private static void Narrowphase() {
+
+			foreach (var solid in AllSolids) {
+
+				// push
+
+			}
+
+			foreach (var actor in AllActors) {
+
+				Vector2 allowedVelocity = GetAllowedVelocity(actor);
+
+				float time = GetEarliestTimeOfImpact(actor, allowedVelocity);
+
+				actor.Entity.Position += allowedVelocity * time;
+
+			}
+		}
+
+		private static Vector2 GetAllowedVelocity(Actor actor) {
+
+			Vector2 allowedVelocity = actor.Velocity;
+
+			foreach (var collider in AllColliders) {
+				if (actor.Colliders.Contains(collider)) continue; // skip self
+
+				if (PhysicsMath.IsOverlapping_Box_Box((BoxCollider)actor.Colliders[0], (BoxCollider)collider)) {
+
+					allowedVelocity = PhysicsMath.GetAllowedVelocity(actor.Velocity, PhysicsMath.GetNormal_Box_Box((BoxCollider)actor.Colliders[0], (BoxCollider)collider));
+
+				}
+
+			}
+
+			return allowedVelocity;
+		}
+
+		/// <summary>
+		/// Run dynamic intersection test against all colliders. Return the earliest time of impact, or t=1f if no collisions occured.
+		/// </summary>
+		private static float GetEarliestTimeOfImpact(Actor actor, Vector2 allowedVelocity) {
+
+			float time = 1f;
+
+			foreach (var collider in AllColliders) {
+				if (actor.Colliders.Contains(collider)) continue; // skip self
+
+				if (PhysicsMath.IntersectMoving_Box_Box_NoOverlap((BoxCollider)collider, (BoxCollider)actor.Colliders[0], Vector2.Zero, allowedVelocity, out float first)) {
+
+					Console.WriteLine("HIT against {0}", collider);
+					time = Math.Min(time, first);
+				}
+
+			}
+
+			return time;
+		}
+
+		#endregion
+
+
+		#region Resolving Phase
+
+		private static void ResolvingPhase() {
+
+			foreach (var actor in AllActors) {
+
+				foreach (var collider in AllColliders) {
+					if (actor.Colliders.Contains(collider)) continue; // skip self
+
+					if (PhysicsMath.IsInside_Box_Box((BoxCollider)actor.Colliders[0], (BoxCollider)collider)) {
+						actor.Entity.Position = PhysicsMath.Depenetrate_Box_Box((BoxCollider)actor.Colliders[0], (BoxCollider)collider);
+					}
+
+				}
+
+			}
+		}
+
+		#endregion
 
 		public static void Draw() {
 			MDraw.Begin();
-			MDraw.DrawPoint(hitpointFirst, Color.Red);
-			MDraw.DrawPoint(actor.Entity.Position + allowedVelocity, Color.White);
-			MDraw.End();
-		}
 
-		static void Old1() {
 			foreach (var actor in AllActors) {
-
-				// TODO: add gravity
-
-				Vector2 allowedVelocity = actor.Velocity;
-				//foreach (var c in actor.Contacts) {
-				//	allowedVelocity = PhysicsMath.GetAllowedVelocity(allowedVelocity, c.normal);
-				//	Console.WriteLine(c.normal);
-				//}
-
-				//Console.WriteLine("Desired: {0}, Allowed {1}", actor.Velocity, allowedVelocity);
-
-				var newHits = new List<Tuple<float, Collider>>();
-
-				foreach (var toCollide in AllColliders.Cast<BoxCollider>()) {
-
-					// ignore colliders on current actor
-					if (actor.Colliders.Contains(toCollide)) continue;
-
-					// ignore colliders that are already being touched
-					//if (ContactListContainsCollider(actor.Contacts, toCollide)) continue;
-
-					Console.WriteLine("comparing with {0}", toCollide);
-
-					if (PhysicsMath.IntersectMovingBoxAgainstBoxNoOverlap((BoxCollider)actor.Colliders[0], toCollide, allowedVelocity, Vector2.Zero, out float first)) {
-						Console.WriteLine("hit at {0} moving {1}", first, allowedVelocity);
-						newHits.Add(new Tuple<float, Collider>(first, toCollide));
-
-					}
-
-				}
-
-				//Console.WriteLine($"{actor.Velocity}, t={time}, {actor.Entity.Position + time * actor.Velocity}");
-
-				float moveTime = 1f;
-
-				var newContactList = new List<ContactPoint>();
-
-				foreach (var item in newHits) {
-					moveTime = Math.Min(item.Item1, moveTime);
-					Console.WriteLine("hit of time " + item.Item1);
-
-					//var projectedPosition = actor.Entity.Position + first * allowedVelocity;
-					//var normal = PhysicsMath.GetClosestNormalOnBox(projectedPosition, toCollide);
-				}
-
-				actor.Entity.Position += allowedVelocity * moveTime;
-
-				return;
-
-				var toRecheck = newHits.Select(x => x.Item2).Concat(actor.Contacts.Select(x => x.collider));
-
-				foreach (var item in toRecheck) {
-					if (PhysicsMath.OverlapBoxAgainstBox((BoxCollider)item, (BoxCollider)actor.Colliders[0])) {
-						//Console.WriteLine("blacklist overlap");
-						newContactList.Add(new ContactPoint() {
-							collider = item,
-							normal = PhysicsMath.ClosestPointOnBox(actor.Colliders[0].Position, (BoxCollider)item)
-						});
-					}
-				}
-
-				if (actor.Colliders.Count == 0 && newContactList.Count > 0) {
-					Console.WriteLine("First hit");
-				}
-				actor.SetContacts(newContactList);
-
+				MDraw.DrawLine(actor.Entity.Position, actor.Entity.Position + actor.Velocity / Time.DeltaTime, Color.Gray);
+				MDraw.DrawPoint(actor.Entity.Position + actor.Velocity / Time.DeltaTime, Color.Gray);
+				//MDraw.DrawLine(actor.Entity.Position, actor.Entity.Position + allowedVelocity, Color.White);
+				//MDraw.DrawPoint(actor.Entity.Position + allowedVelocity, Color.White);
 			}
+			MDraw.End();
 		}
 
 		static bool ContactListContainsCollider(IEnumerable<ContactPoint> points, Collider c) {
@@ -133,26 +130,6 @@ namespace Nova.PhysicsEngine {
 				}
 			}
 			return false;
-		}
-
-		private static void CheckOverlap() {
-
-			for (int i = 0; i < AllColliders.Count; i++) {
-
-				for (int j = i + 1; j < AllColliders.Count; j++) {
-
-					if (AllColliders[i].Collide(AllColliders[j])) {
-						Console.WriteLine("Collided {0} with {1}", AllColliders[i], AllColliders[j]);
-					}
-
-				}
-
-			}
-
-		}
-
-		private static void ResolvePhase() {
-			Console.WriteLine("Resolve phase");
 		}
 
 	}

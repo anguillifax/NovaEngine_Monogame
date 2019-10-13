@@ -22,10 +22,10 @@ namespace Nova {
 
 			spriteRenderer = new SpriteRenderer(this, texture, MDraw.DepthStartScene + 10);
 
-			boxCollider = new BoxCollider(this, Vector2.Zero, Vector2.One);
+			boxCollider = new BoxCollider(this, Vector2.Zero, dimensions);
 			solid = new Solid(this, boxCollider);
 
-			Physics.ground = boxCollider;
+			Physics.AllSolids.Add(solid);
 		}
 
 		public override void Update() {
