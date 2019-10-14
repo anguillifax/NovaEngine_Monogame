@@ -8,7 +8,7 @@ namespace Nova.PhysicsEngine {
 
 	public class Actor : Rigidbody {
 
-		public Actor(Entity parent, params Collider[] colliders) :
+		public Actor(Entity parent, params BoxCollider[] colliders) :
 			base(parent, colliders) {
 
 			Physics.AllActors.Add(this);

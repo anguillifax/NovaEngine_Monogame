@@ -84,9 +84,7 @@
     <Compile Include="Nova\Input\VirtualGamepadButton.cs" />
     <Compile Include="Nova\Input\VirtualKeyboardAxis.cs" />
     <Compile Include="Nova\Input\VirtualKeyboardButton.cs" />
-    <Compile Include="Nova\Physics\Colliders\BoxCollider.cs" />
-    <Compile Include="Nova\Physics\Colliders\CircleCollider.cs" />
-    <Compile Include="Nova\Physics\Colliders\Collider.cs" />
+    <Compile Include="Nova\Physics\BoxCollider.cs" />
     <Compile Include="Nova\Physics\ContactPoint.cs" />
     <Compile Include="Nova\Physics\Physics.cs" />
     <Compile Include="Nova\Physics\PhysicsMath.cs" />

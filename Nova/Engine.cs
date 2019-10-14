@@ -103,9 +103,9 @@ namespace Nova {
 
 			new TestEntity(CurrentScene, Vector2.Zero, temple);
 			new SolidFloor(CurrentScene, grass, new Vector2(2, 0), new Vector2(1, 1));
-			new SolidFloor(CurrentScene, grass, new Vector2(3, -1), new Vector2(1, 1));
-			new SolidFloor(CurrentScene, grass, new Vector2(3, -2), new Vector2(1, 1));
-			new SolidFloor(CurrentScene, grass, new Vector2(5, 0), new Vector2(1, 1));
+			//new SolidFloor(CurrentScene, grass, new Vector2(3, -1), new Vector2(1, 1));
+			//new SolidFloor(CurrentScene, grass, new Vector2(3, -2), new Vector2(1, 1));
+			//new SolidFloor(CurrentScene, grass, new Vector2(5, 0), new Vector2(1, 1));
 
 			CurrentScene.Init();
 			Time.Init();
@@ -133,6 +133,10 @@ namespace Nova {
 
 			if (InputManager.Any.Enter.JustPressed) {
 				IsPaused = !IsPaused;
+			}
+
+			if (InputManager.ClearConsole.JustPressed) {
+				Console.Clear();
 			}
 
 			if (InputManager.TestLoadBindings.JustPressed) InputManager.LoadBindings();

@@ -12,7 +12,8 @@ namespace Nova {
 
 		Solid solid;
 		BoxCollider boxCollider;
-		SpriteRenderer spriteRenderer;
+
+		Vector2 initPos;
 
 		public SolidFloor(Scene scene, Texture2D texture, Vector2 pos, Vector2 dimensions) :
 			base(scene, pos) {
@@ -20,7 +21,9 @@ namespace Nova {
 			Scale = dimensions;
 			Position = pos;
 
-			spriteRenderer = new SpriteRenderer(this, texture, MDraw.DepthStartScene + 10);
+			initPos = Position;
+
+			new SpriteRenderer(this, texture, MDraw.DepthStartScene + 10);
 
 			boxCollider = new BoxCollider(this, Vector2.Zero, dimensions);
 			solid = new Solid(this, boxCollider);
@@ -30,11 +33,11 @@ namespace Nova {
 
 		public override void Update() {
 
-			Vector2 vel = new Vector2(InputManager.Any.Horizontal.Value, InputManager.Any.Vertical.Value);
+			float scalar = MathHelper.TwoPi / 2f;
 
-			if (InputManager.Any.Unleash.Pressed) {
-				Position += 0.1f * vel;
-			}
+			float y = 2 / (10 * scalar) * (float)Math.Cos(Time.TotalTime * scalar);
+			solid.Velocity = new Vector2(0, y);
+			
 			base.Update();
 		}
 

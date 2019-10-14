@@ -15,6 +15,8 @@ namespace Nova {
 		public static readonly SimpleButton TestLoadBindingsDef = new SimpleButton(Keys.F3);
 		public static readonly SimpleButton TestSaveBindings = new SimpleButton(Keys.F2);
 
+		public static readonly SimpleButton ClearConsole = new SimpleButton(Keys.Delete);
+
 		public static readonly SimpleButton Cycle = new SimpleButton(Keys.F8);
 		public static readonly SimpleButton TestToggle = new SimpleButton(Keys.F7);
 

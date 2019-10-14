@@ -15,10 +15,10 @@ namespace Nova.PhysicsEngine {
 		/// </summary>
 		public Vector2 Velocity;
 
-		public readonly List<Collider> Colliders;
+		public readonly List<BoxCollider> Colliders;
 
-		public Rigidbody(Entity parent, params Collider[] colliders) : base(parent) {
-			Colliders = new List<Collider>(colliders);
+		public Rigidbody(Entity parent, params BoxCollider[] colliders) : base(parent) {
+			Colliders = new List<BoxCollider>(colliders);
 			foreach (var item in Colliders) {
 				item.Rigidbody = this;
 			}

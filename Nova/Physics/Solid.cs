@@ -9,7 +9,7 @@ namespace Nova.PhysicsEngine {
 
 	public class Solid : Rigidbody {
 
-		public Solid(Entity parent, params Collider[] colliders) :
+		public Solid(Entity parent, params BoxCollider[] colliders) :
 			base(parent, colliders) {
 
 			Physics.AllSolids.Add(this);
