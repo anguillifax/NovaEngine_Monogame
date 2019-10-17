@@ -128,11 +128,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Arial.fx" />
+    <Content Include="Content\Images\arrow.png" />
+    <Content Include="Content\Images\bg1.jpg" />
+    <Content Include="Content\Images\bullet.png" />
+    <Content Include="Content\Images\cat.png" />
+    <Content Include="Content\Images\Tiles 8px\deep_dirt.png" />
+    <Content Include="Content\Images\Tiles 8px\dirt.png" />
+    <Content Include="Content\Images\Tiles 8px\grass.png" />
+    <Content Include="Content\Images\Tiles 8px\player.png" />
+    <Content Include="Content\Images\Tiles 8px\temple.png" />
+    <Content Include="Content\Images\Tiles\deep_dirt.png" />
+    <Content Include="Content\Images\Tiles\dirt.png" />
+    <Content Include="Content\Images\Tiles\grass.png" />
+    <Content Include="Content\Images\Tiles\player.png" />
+    <Content Include="Content\Images\Tiles\temple.png" />
+    <Content Include="Content\Images\walkingFigure.png" />
     <Content Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include="app.manifest" />
+    <None Include="Content\Font1.spritefont" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
