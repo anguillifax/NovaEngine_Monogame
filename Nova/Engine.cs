@@ -20,7 +20,7 @@ namespace Nova {
 		public QuickTest quickTest;
 
 		public const int TileSize = 7;
-		public const float FrameRate = 60f;
+		public const float FrameRate = 30;
 		public static readonly Point ScreenSizeInTiles = new Point(36, 20);
 		public static readonly Point ScreenSizeInPixels = new Point(TileSize * ScreenSizeInTiles.X, TileSize * ScreenSizeInTiles.Y);
 
@@ -92,20 +92,21 @@ namespace Nova {
 			var temple = Content.Load<Texture2D>("Images/Tiles/temple");
 			var player = Content.Load<Texture2D>("Images/Tiles/player");
 
-			//int offset = 2;
-			//for (int i = 0; i < 5; i++) {
-			//	CurrentScene.Add(new Tile(CurrentScene, grass, new IntVector2(i - offset, -4)));
-			//	CurrentScene.Add(new Tile(CurrentScene, dirt, new IntVector2(i - offset, -5)));
-			//	CurrentScene.Add(new Tile(CurrentScene, deepDirt, new IntVector2(i - offset, -6)));
-			//}
 
-			//CurrentScene.Add(new TestEntity(CurrentScene, player));
+			/*
+			new DebugTestPhysics(CurrentScene);
+			//*/
 
-			new TestEntity(CurrentScene, Vector2.Zero, temple);
-			new SolidFloor(CurrentScene, grass, new Vector2(2, 0), new Vector2(1, 1));
-			//new SolidFloor(CurrentScene, grass, new Vector2(3, -1), new Vector2(1, 1));
-			//new SolidFloor(CurrentScene, grass, new Vector2(3, -2), new Vector2(1, 1));
-			//new SolidFloor(CurrentScene, grass, new Vector2(5, 0), new Vector2(1, 1));
+
+			//*
+			 
+			new TestActor(CurrentScene, new Vector2(2, 1), temple);
+			new TestSolid(CurrentScene, grass, new Vector2(2, 0), new Vector2(1, 1));
+			new TestSolid(CurrentScene, grass, new Vector2(3, -1), new Vector2(1, 1));
+			new TestSolid(CurrentScene, grass, new Vector2(3, -2), new Vector2(1, 1));
+			//new TestSolid(CurrentScene, grass, new Vector2(5, 0), new Vector2(1, 1));
+
+			//*/
 
 			CurrentScene.Init();
 			Time.Init();
@@ -140,7 +141,7 @@ namespace Nova {
 			}
 
 			if (InputManager.TestLoadBindings.JustPressed) InputManager.LoadBindings();
-			if (InputManager.TestLoadBindingsDef.JustPressed)InputManager.LoadDefaultBindings();
+			if (InputManager.TestLoadBindingsDef.JustPressed) InputManager.LoadDefaultBindings();
 			if (InputManager.TestSaveBindings.JustPressed) InputManager.SaveBindings();
 
 			quickTest.Update();

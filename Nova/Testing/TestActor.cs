@@ -7,22 +7,20 @@ using System.Collections.Generic;
 
 namespace Nova {
 
-	public class TestEntity : Entity {
+	public class TestActor : Entity {
 
 		public float speed = 1f;
 
 		Actor actor;
 		BoxCollider boxCollider;
 
-		public TestEntity(Scene scene, Vector2 position, Texture2D texture) :
+		public TestActor(Scene scene, Vector2 position, Texture2D texture) :
 			base(scene, position) {
 
 			new SpriteRenderer(this, texture, MDraw.DepthStartScene + 0);
 
 			boxCollider = new BoxCollider(this, Vector2.Zero, Vector2.One);
 			actor = new Actor(this, boxCollider);
-
-			Physics.AllActors.Add(actor);
 		}
 
 		public override void Update() {

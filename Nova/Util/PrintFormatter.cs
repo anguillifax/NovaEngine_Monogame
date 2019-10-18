@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,13 @@ namespace Nova {
 	/// Pretty ToString for various types
 	/// </summary>
 	public static class PrintFormatter {
+
+		/// <summary>
+		/// Get a string representation of vector with <code>precision</code> digits after the point.
+		/// </summary>
+		public static string ToStringHighPrecision(this Vector2 v, int precision = 8) {
+			return "{" + v.X.ToString("f" + precision) + ", " + v.Y.ToString("f" + precision) + "}";
+		}
 
 		public static string JoinComma<T>(T[] arr) {
 			return "{" + string.Join(", ", arr) + "}";

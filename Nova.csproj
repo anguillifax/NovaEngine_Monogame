@@ -94,11 +94,13 @@
     <Compile Include="Nova\Testing\DebugCameraController.cs" />
     <Compile Include="Nova\Testing\QuickTest.cs" />
     <Compile Include="Nova\Graphics\Camera.cs" />
-    <Compile Include="Nova\Testing\TestEntity.cs" />
-    <Compile Include="Nova\Testing\TestFloor.cs" />
+    <Compile Include="Nova\Testing\TestActor.cs" />
+    <Compile Include="Nova\Testing\TestSolid.cs" />
+    <Compile Include="Nova\Testing\DebugTestPhysics.cs" />
     <Compile Include="Nova\Testing\Tile.cs" />
     <Compile Include="Nova\Util\CustomExtensions.cs" />
     <Compile Include="Nova\Graphics\MDraw.cs" />
+    <Compile Include="Nova\Util\CustomLinqQueries.cs" />
     <Compile Include="Nova\Util\IntVector2.cs" />
     <Compile Include="Nova\Util\PrintFormatter.cs" />
     <Compile Include="Nova\Util\SaveLoad.cs" />

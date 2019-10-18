@@ -26,6 +26,9 @@ namespace Nova.PhysicsEngine {
 			ResolvingPhase();
 			// GenerateContacts();
 
+			Console.WriteLine();
+			Console.WriteLine();
+
 		}
 
 		#region Narrowphase
@@ -36,7 +39,12 @@ namespace Nova.PhysicsEngine {
 
 				Vector2 allowedVelocity = GetAllowedVelocity(actor);
 
+				Console.WriteLine("{0} {1}", actor.Velocity, allowedVelocity);
+
+				Console.WriteLine();
+
 				float time = GetEarliestTimeOfImpact(actor, allowedVelocity);
+				//Console.WriteLine("earliest {0}", time);
 
 				actor.Entity.Position += allowedVelocity * time;
 
@@ -44,8 +52,24 @@ namespace Nova.PhysicsEngine {
 
 			foreach (var solid in AllSolids) {
 
-				foreach (var solidCollider in solid.Colliders) {
+				foreach (var actor in AllActors) {
 
+					foreach (var solidCollider in solid.Colliders) {
+
+						foreach (var actorCollider in actor.Colliders) {
+
+							//Console.WriteLine($"actor {actorCollider.Position.ToStringHighPrecision()}, solid {solidCollider.Position.ToStringHighPrecision()}");
+
+							if (PhysicsMath.IntersectPushFuzzy(solidCollider, actorCollider, solid.Velocity, out Vector2 delta)) {
+
+								//Console.WriteLine($"delta push of {delta.ToStringHighPrecision()} to {(actor.Entity.Position + delta).ToStringHighPrecision()}");
+								actor.Entity.Position += delta;
+
+							}
+
+						}
+
+					}
 				}
 
 				solid.Entity.Position += solid.Velocity;
@@ -62,9 +86,11 @@ namespace Nova.PhysicsEngine {
 
 				foreach (var actorCollider in actor.Colliders) {
 
-					if (PhysicsMath.IsOverlapping(actorCollider, collider)) {
+					if (PhysicsMath.IsOverlappingLenient(actorCollider, collider)) {
 
-						allowedVelocity = PhysicsMath.GetAllowedVelocity(actor.Velocity, PhysicsMath.GetNormal(actorCollider, collider));
+						Console.WriteLine("Touching {0}", collider);
+
+						allowedVelocity = PhysicsMath.GetAllowedVelocity(allowedVelocity, PhysicsMath.GetNormal(actorCollider, collider));
 
 					}
 
@@ -87,9 +113,9 @@ namespace Nova.PhysicsEngine {
 
 				foreach (var actorCollider in actor.Colliders) {
 
-					if (PhysicsMath.IntersectMovingNoOverlap(collider, actorCollider, collider.Velocity, allowedVelocity, out float first)) {
+					if (PhysicsMath.IntersectMovingNoOverlapFuzzy(collider, actorCollider, collider.Velocity, allowedVelocity, out float first)) {
 
-						Console.WriteLine("HIT against {0}", collider);
+						//Console.WriteLine("HIT against {0}", collider);
 						time = Math.Min(time, first);
 					}
 
@@ -113,7 +139,9 @@ namespace Nova.PhysicsEngine {
 					if (actor.Colliders.Contains(collider)) continue; // skip self
 
 					if (PhysicsMath.IsInside(actor.Colliders[0], collider)) {
-						actor.Entity.Position = PhysicsMath.Depenetrate(actor.Colliders[0], collider);
+						var newPos = PhysicsMath.Depenetrate(actor.Colliders[0], collider);
+						Console.WriteLine("Corrected by {0}", (actor.Entity.Position - newPos).ToStringHighPrecision());
+						actor.Entity.Position = newPos;
 					}
 
 				}

@@ -42,7 +42,7 @@ namespace Nova.PhysicsEngine {
 		}
 
 		public override string ToString() {
-			return string.Format("BoxCollider <pos = {0}, extents = {1}>", Position, Extents);
+			return string.Format("BoxCollider({0} {1})", Position, Extents);
 		}
 
 	}
