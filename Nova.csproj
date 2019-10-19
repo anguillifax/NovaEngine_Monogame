@@ -88,6 +88,7 @@
     <Compile Include="Nova\Physics\ContactPoint.cs" />
     <Compile Include="Nova\Physics\Physics.cs" />
     <Compile Include="Nova\Physics\PhysicsMath.cs" />
+    <Compile Include="Nova\Physics\PhysicsMathExact.cs" />
     <Compile Include="Nova\Physics\Rigidbody.cs" />
     <Compile Include="Nova\Physics\Actor.cs" />
     <Compile Include="Nova\Physics\Solid.cs" />
@@ -151,7 +152,8 @@
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include="app.manifest" />
-    <None Include="Content\Font1.spritefont" />
+    <None Include="Content\TinyArial.spritefont" />
+    <None Include="Content\LargeArial.spritefont" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">

@@ -23,7 +23,10 @@ namespace Nova {
 			base(scene, Vector2.Zero) {
 
 			b1 = new BoxCollider(this, Vector2.Zero, Vector2.One);
-			b2 = new BoxCollider(this, new Vector2(0.999999f, 0), new Vector2(1, 1));
+			b2 = new BoxCollider(this, new Vector2(0.999999f, 0.999999f), new Vector2(1, 1));
+
+			Console.WriteLine("Overlap {0}", PhysicsMath.IsOverlapping(b1, b2));
+			Console.WriteLine("Inside {0}", PhysicsMath.IsInside(b1, b2));
 
 		}
 
@@ -78,7 +81,7 @@ namespace Nova {
 			//MDraw.DrawLine(p1 + cur, p2 + cur, Color.DimGray);
 
 			MDraw.DrawBox(b1.Position + testVel, b1.Extents, Color.White);
-			MDraw.DrawLine(Vector2.Zero, pushDelta,  Color.Cyan);
+			MDraw.DrawLine(Vector2.Zero, pushDelta, Color.Cyan);
 
 			base.Draw();
 		}

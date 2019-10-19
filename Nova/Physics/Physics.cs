@@ -26,8 +26,8 @@ namespace Nova.PhysicsEngine {
 			ResolvingPhase();
 			// GenerateContacts();
 
-			Console.WriteLine();
-			Console.WriteLine();
+			//Console.WriteLine();
+			//Console.WriteLine();
 
 		}
 
@@ -60,7 +60,7 @@ namespace Nova.PhysicsEngine {
 
 							//Console.WriteLine($"actor {actorCollider.Position.ToStringHighPrecision()}, solid {solidCollider.Position.ToStringHighPrecision()}");
 
-							if (PhysicsMath.IntersectPushFuzzy(solidCollider, actorCollider, solid.Velocity, out Vector2 delta)) {
+							if (PhysicsMathExact.IntersectPushFuzzy(solidCollider, actorCollider, solid.Velocity, out Vector2 delta)) {
 
 								//Console.WriteLine($"delta push of {delta.ToStringHighPrecision()} to {(actor.Entity.Position + delta).ToStringHighPrecision()}");
 								actor.Entity.Position += delta;
@@ -86,10 +86,10 @@ namespace Nova.PhysicsEngine {
 
 				foreach (var actorCollider in actor.Colliders) {
 
-					if (PhysicsMath.IsOverlappingLenient(actorCollider, collider)) {
+					if (PhysicsMath.IsOverlapping(actorCollider, collider)) {
 
 						Console.WriteLine("Touching {0}", collider);
-
+						
 						allowedVelocity = PhysicsMath.GetAllowedVelocity(allowedVelocity, PhysicsMath.GetNormal(actorCollider, collider));
 
 					}
@@ -113,7 +113,7 @@ namespace Nova.PhysicsEngine {
 
 				foreach (var actorCollider in actor.Colliders) {
 
-					if (PhysicsMath.IntersectMovingNoOverlapFuzzy(collider, actorCollider, collider.Velocity, allowedVelocity, out float first)) {
+					if (PhysicsMathExact.IntersectMovingNoOverlapFuzzy(collider, actorCollider, collider.Velocity, allowedVelocity, out float first)) {
 
 						//Console.WriteLine("HIT against {0}", collider);
 						time = Math.Min(time, first);
@@ -138,8 +138,8 @@ namespace Nova.PhysicsEngine {
 				foreach (var collider in AllColliders) {
 					if (actor.Colliders.Contains(collider)) continue; // skip self
 
-					if (PhysicsMath.IsInside(actor.Colliders[0], collider)) {
-						var newPos = PhysicsMath.Depenetrate(actor.Colliders[0], collider);
+					if (PhysicsMathExact.IsInside(actor.Colliders[0], collider)) {
+						var newPos = PhysicsMathExact.Depenetrate(actor.Colliders[0], collider);
 						Console.WriteLine("Corrected by {0}", (actor.Entity.Position - newPos).ToStringHighPrecision());
 						actor.Entity.Position = newPos;
 					}

@@ -11,6 +11,7 @@ namespace Nova {
 
 		public static SpriteBatch SpriteBatch { get; private set; }
 		public static SpriteFont DefaultFont { get; private set; }
+		public static SpriteFont DefaultTinyFont { get; private set; }
 		public static Camera Camera { get; private set; }
 
 		private static readonly Color ShadowColor = new Color(0, 0, 0, 30);
@@ -29,7 +30,8 @@ namespace Nova {
 		}
 
 		public static void LoadContent() {
-			DefaultFont = Engine.Instance.Content.Load<SpriteFont>("Font1");
+			DefaultFont = Engine.Instance.Content.Load<SpriteFont>("LargeArial");
+			DefaultTinyFont = Engine.Instance.Content.Load<SpriteFont>("TinyArial");
 
 			TexturePixel = new Texture2D(Engine.Instance.GraphicsDevice, 1, 1);
 			TexturePixel.SetData(new Color[] { Color.White });
@@ -64,8 +66,16 @@ namespace Nova {
 			SpriteBatch.Draw(texture, position, null, Color.White, rotation, scale, origin, SpriteEffects.None, 0);
 		}
 
+		public static void Write(SpriteFont font, string text, Vector2 pos, Color color) {
+			SpriteBatch.DrawString(font, text, Camera.PositionToGlobal(pos), color, 0f, Vector2.Zero, Vector2.One, SpriteEffects.None, 0f);
+		}
+
 		public static void Write(string text, Vector2 pos, Color color) {
-			SpriteBatch.DrawString(DefaultFont, text, Camera.PositionToGlobal(pos), color, 0f, Vector2.Zero, Camera.ScaleTextureToGlobal(Vector2.One), SpriteEffects.None, 0f);
+			Write(DefaultFont, text, pos, color);
+		}
+
+		public static void WriteTiny(string text, Vector2 pos, Color color) {
+			Write(DefaultTinyFont, text, pos, color);
 		}
 
 		public static void WriteGlobal(string text, Vector2 pos, Color color) {
