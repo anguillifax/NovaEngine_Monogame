@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Nova.Input;
 using Nova.PhysicsEngine;
 using Nova.Tiles;
 using System;
@@ -10,10 +11,13 @@ namespace Nova {
 
 	public class TestSolid : Entity {
 
-		Solid solid;
+		SolidRigidbody solid;
 		BoxCollider boxCollider;
 
 		Vector2 initPos;
+
+		SimpleButton ToggleMove = new SimpleButton(Microsoft.Xna.Framework.Input.Keys.T);
+		bool move;
 
 		public TestSolid(Scene scene, Texture2D texture, Vector2 pos, Vector2 dimensions) :
 			base(scene, pos) {
@@ -26,20 +30,27 @@ namespace Nova {
 			new SpriteRenderer(this, texture, MDraw.DepthStartScene + 10);
 
 			boxCollider = new BoxCollider(this, Vector2.Zero, dimensions);
-			solid = new Solid(this, boxCollider);
+			solid = new SolidRigidbody(this, boxCollider);
 		}
 
 		public override void Update() {
 
-			float scalar = MathHelper.TwoPi / 2f;
-
-			float y = 2 / (10 * scalar) * (float)Math.Cos(Time.TotalTime * scalar);
-			//solid.Velocity = new Vector2(0, 1 * Time.DeltaTime);
-
-			if (Position.Y > 6) {
-				Position.Y = -2;
+			if (ToggleMove.JustPressed) {
+				move = !move;
 			}
-			
+
+			if (move) {
+				float scalar = MathHelper.TwoPi / 2f;
+				float y = 2 / (10 * scalar) * (float)Math.Cos(Time.TotalTime * scalar);
+
+				float speed = .3f;
+
+				solid.Velocity = new Vector2(0, speed * Time.DeltaTime);
+				Position.Y = Calc.Loop(Position.Y, -3, 3);
+			} else {
+				solid.Velocity = Vector2.Zero;
+			}
+
 			base.Update();
 		}
 

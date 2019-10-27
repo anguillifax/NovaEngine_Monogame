@@ -14,7 +14,7 @@ namespace Nova {
 		/// <summary>
 		/// Get a string representation of vector with <code>precision</code> digits after the point.
 		/// </summary>
-		public static string ToStringHighPrecision(this Vector2 v, int precision = 8) {
+		public static string ToStringFixed(this Vector2 v, int precision = 2) {
 			return "{" + v.X.ToString("f" + precision) + ", " + v.Y.ToString("f" + precision) + "}";
 		}
 

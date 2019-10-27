@@ -8,6 +8,20 @@ namespace Nova {
 
 	public static class Calc {
 
+		/// <summary>
+		/// Gets the max of A and B based on magnitude. If |A| == |B|, returns A.
+		/// </summary>
+		public static float AbsMax(float a, float b) {
+			return Math.Abs(a) >= Math.Abs(b) ? a : b;
+		}
+
+		/// <summary>
+		/// Gets the min of A and B based on magnitude. If |A| == |B|, returns A.
+		/// </summary>
+		public static float AbsMin(float a, float b) {
+			return Math.Abs(a) <= Math.Abs(b) ? a : b;
+		}
+
 		public static Vector2 ClampMagnitude(Vector2 vec, float max) {
 			if (vec.LengthSquared() == 0) return vec;
 			vec.Normalize();

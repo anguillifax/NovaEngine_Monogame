@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Nova.Input;
 using Nova.PhysicsEngine;
 using System;
 using System.Collections;
@@ -12,10 +13,13 @@ namespace Nova {
 	/// </summary>
 	public class DebugTestPhysics : Entity {
 
+		SimpleButton timeDown = new SimpleButton(Microsoft.Xna.Framework.Input.Keys.OemOpenBrackets);
+		SimpleButton timeUp = new SimpleButton(Microsoft.Xna.Framework.Input.Keys.OemCloseBrackets);
+
 		public float speed = 1f;
 
-		Actor actor;
-		Solid solid;
+		ActorRigidbody actor;
+		SolidRigidbody solid;
 		BoxCollider b1;
 		BoxCollider b2;
 
@@ -23,15 +27,13 @@ namespace Nova {
 			base(scene, Vector2.Zero) {
 
 			b1 = new BoxCollider(this, Vector2.Zero, Vector2.One);
-			b2 = new BoxCollider(this, new Vector2(0.999999f, 0.999999f), new Vector2(1, 1));
-
-			Console.WriteLine("Overlap {0}", PhysicsMath.IsOverlapping(b1, b2));
-			Console.WriteLine("Inside {0}", PhysicsMath.IsInside(b1, b2));
-
+			b2 = new BoxCollider(this, new Vector2(1, 2), new Vector2(1, 1));
+  
 		}
 
 		Vector2 pushDelta;
 		Vector2 testVel = Vector2.Zero;
+		float maxtime = 1;
 
 		public override void Update() {
 
@@ -42,26 +44,21 @@ namespace Nova {
 			Vector2 vel = new Vector2(InputManager.Any.Horizontal.Value, InputManager.Any.Vertical.Value);
 			Calc.ClampMagnitude(ref vel, 1f);
 
+			float timeSpeed = 0.03f;
+			if (timeUp.Pressed) maxtime = Math.Min(1, maxtime + timeSpeed);
+			if (timeDown.Pressed) maxtime = Math.Max(0, maxtime - timeSpeed);
+
 			if (InputManager.Any.Unleash.Released) {
 				testVel += 3f * vel * Time.DeltaTime;
 			}
 
-			b2.LocalPosition = testVel;
-			pushDelta = PhysicsMath.GetNormal(b2, b1);
 
-			//if (PhysicsMath.IntersectPushFuzzy(b1, b2, testVel, out Vector2 delta)) {
-			//	pushPos = delta;
-			//} else {
-			//	pushPos = Vector2.Zero;
-			//}
+			if (PhysicsMath.IntersectPush(b1, b2, testVel, maxtime, out pushDelta)) {
 
-			//if (PhysicsMath.IntersectMovingNoOverlapFuzzy(b1, b2, testVel, Vector2.Zero, out float t)) {
-			//	pushDelta = testVel * t;
-			//} else {
-			//	pushDelta = 1000 * Vector2.One;
-			//}
+			}
 
-
+			//Console.WriteLine(PhysicsMath.IsInMovementPath(b1, b2, Vector2.UnitY, testVel));
+			Console.WriteLine(Vector2.Dot(b1.Position - b2.Position, Vector2.UnitY - Vector2.UnitY));
 
 			base.Update();
 		}
@@ -71,17 +68,21 @@ namespace Nova {
 			var p1 = b1.Position;
 			var p2 = b1.Position + testVel;
 
-			//var cur = b1.Extents.Clone();
-			//MDraw.DrawLine(p1 + cur, p2 + cur, Color.DimGray);
-			//cur.X *= -1;
-			//MDraw.DrawLine(p1 + cur, p2 + cur, Color.DimGray);
-			//cur.Y *= -1;
-			//MDraw.DrawLine(p1 + cur, p2 + cur, Color.DimGray);
-			//cur.X *= -1;
-			//MDraw.DrawLine(p1 + cur, p2 + cur, Color.DimGray);
+			float cval = 0.2f;
+			Color sweeps = new Color(cval, cval, cval);
 
-			MDraw.DrawBox(b1.Position + testVel, b1.Extents, Color.White);
-			MDraw.DrawLine(Vector2.Zero, pushDelta, Color.Cyan);
+			var cur = b1.Extents.Clone();
+			MDraw.DrawLine(p1 + cur, p2 + cur, sweeps);
+			cur.X *= -1;
+			MDraw.DrawLine(p1 + cur, p2 + cur, sweeps);
+			cur.Y *= -1;
+			MDraw.DrawLine(p1 + cur, p2 + cur, sweeps);
+			cur.X *= -1;
+			MDraw.DrawLine(p1 + cur, p2 + cur, sweeps);
+
+			MDraw.DrawBox(b1.Position + testVel, b1.Extents, Color.Gray);
+			MDraw.DrawBox(b1.Position + testVel * maxtime, b1.Extents, Color.White);
+			MDraw.DrawBox(b2.Position + pushDelta, b2.Extents, Color.Cyan);
 
 			base.Draw();
 		}

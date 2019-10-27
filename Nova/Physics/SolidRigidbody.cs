@@ -7,9 +7,9 @@ using System.Linq;
 
 namespace Nova.PhysicsEngine {
 
-	public class Solid : Rigidbody {
+	public class SolidRigidbody : Rigidbody {
 
-		public Solid(Entity parent, params BoxCollider[] colliders) :
+		public SolidRigidbody(Entity parent, params BoxCollider[] colliders) :
 			base(parent, colliders) {
 
 			Physics.AllSolids.Add(this);

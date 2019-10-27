@@ -11,7 +11,7 @@ namespace Nova {
 
 		public float speed = 1f;
 
-		Actor actor;
+		ActorRigidbody actor;
 		BoxCollider boxCollider;
 
 		public TestActor(Scene scene, Vector2 position, Texture2D texture) :
@@ -19,8 +19,8 @@ namespace Nova {
 
 			new SpriteRenderer(this, texture, MDraw.DepthStartScene + 0);
 
-			boxCollider = new BoxCollider(this, Vector2.Zero, Vector2.One);
-			actor = new Actor(this, boxCollider);
+			boxCollider = new BoxCollider(this, Vector2.Zero, new Vector2(1f, 1f));
+			actor = new ActorRigidbody(this, boxCollider);
 		}
 
 		public override void Update() {

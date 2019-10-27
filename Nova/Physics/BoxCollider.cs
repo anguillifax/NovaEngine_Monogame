@@ -38,7 +38,7 @@ namespace Nova.PhysicsEngine {
 		public override void Draw() {
 			if (Physics.DebugDrawColliders) {
 				MDraw.DrawBox(Position, Extents, Physics.ColliderDrawColor);
-				MDraw.WriteTiny(Position.ToStringHighPrecision(2), Position, new Color(1, 1, 1, 0.3f));
+				MDraw.WriteTiny(Position.ToStringFixed(2), Position, new Color(1, 1, 1, 0.3f));
 			}
 		}
 

@@ -20,8 +20,8 @@ namespace Nova {
 		public QuickTest quickTest;
 
 		public const int TileSize = 7;
-		public const float FrameRate = 60;
-		public static readonly Point ScreenSizeInTiles = new Point(36, 20);
+		public const float FrameRate = 30;
+		public static readonly Point ScreenSizeInTiles = new Point(36 / 2, 20 / 2);
 		public static readonly Point ScreenSizeInPixels = new Point(TileSize * ScreenSizeInTiles.X, TileSize * ScreenSizeInTiles.Y);
 
 		public Engine() {
@@ -93,18 +93,29 @@ namespace Nova {
 			var player = Content.Load<Texture2D>("Images/Tiles/player");
 
 
-			/*
+			//*
 			new DebugTestPhysics(CurrentScene);
 			//*/
 
 
-			//*
-			 
-			new TestActor(CurrentScene, new Vector2(2, 1), temple);
-			new TestSolid(CurrentScene, grass, new Vector2(2, 0), new Vector2(1, 1));
-			new TestSolid(CurrentScene, grass, new Vector2(3, -1), new Vector2(1, 1));
-			new TestSolid(CurrentScene, grass, new Vector2(3, -2), new Vector2(1, 1));
-			//new TestSolid(CurrentScene, grass, new Vector2(5, 0), new Vector2(1, 1));
+			/*
+
+			new TestActor(CurrentScene, new Vector2(0, 0), temple);
+
+			new TestSolid(CurrentScene, grass, new Vector2(2, 0), new Vector2(3, 4));
+
+			//new TestSolid(CurrentScene, grass, new Vector2(1, 2), new Vector2(1, 1));
+			//new TestSolid(CurrentScene, grass, new Vector2(2, 1), new Vector2(1, 1));
+			//new TestSolid(CurrentScene, grass, new Vector2(2, 0), new Vector2(1, 1));
+			//new TestSolid(CurrentScene, grass, new Vector2(4, 2), new Vector2(1, 1));
+			//new TestSolid(CurrentScene, grass, new Vector2(4, 1), new Vector2(1, 1));
+			//new TestSolid(CurrentScene, grass, new Vector2(4, 0), new Vector2(1, 1));
+
+			for (int x = 0; x < 3; x++) {
+				for (int y = 0; y < 3; y++) {
+					//new TestSolid(CurrentScene, grass, new Vector2(-5 + x, 0 + y), new Vector2(1, 1));
+				}
+			}
 
 			//*/
 
@@ -157,7 +168,9 @@ namespace Nova {
 				CurrentScene.PostUpdate();
 			}
 
-			Physics.Update();
+			if (Time.TotalTime > 0.5f) {
+				Physics.Update();
+			}
 
 			base.Update(time);
 		}

@@ -6,9 +6,9 @@ using System.Collections.Generic;
 
 namespace Nova.PhysicsEngine {
 
-	public class Actor : Rigidbody {
+	public class ActorRigidbody : Rigidbody {
 
-		public Actor(Entity parent, params BoxCollider[] colliders) :
+		public ActorRigidbody(Entity parent, params BoxCollider[] colliders) :
 			base(parent, colliders) {
 
 			Physics.AllActors.Add(this);
