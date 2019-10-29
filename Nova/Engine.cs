@@ -93,16 +93,20 @@ namespace Nova {
 			var player = Content.Load<Texture2D>("Images/Tiles/player");
 
 
-			//*
+			/*
 			new DebugTestPhysics(CurrentScene);
 			//*/
 
 
-			/*
+			//*
 
 			new TestActor(CurrentScene, new Vector2(0, 0), temple);
 
-			new TestSolid(CurrentScene, grass, new Vector2(2, 0), new Vector2(3, 4));
+			new TestSolid(CurrentScene, grass, new Vector2(2, 0), new Vector2(2, 2));
+
+			for (int x = -9; x <= 9; x++) {
+				new TestSolidStatic(CurrentScene, deepDirt, new Vector2(x, 5), new Vector2(1, 1));
+			}
 
 			//new TestSolid(CurrentScene, grass, new Vector2(1, 2), new Vector2(1, 1));
 			//new TestSolid(CurrentScene, grass, new Vector2(2, 1), new Vector2(1, 1));

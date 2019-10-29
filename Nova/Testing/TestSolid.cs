@@ -35,20 +35,22 @@ namespace Nova {
 
 		public override void Update() {
 
-			if (ToggleMove.JustPressed) {
-				move = !move;
-			}
+			//if (ToggleMove.JustPressed) {
+			//	move = !move;
+			//}
 
-			if (move) {
-				float scalar = MathHelper.TwoPi / 2f;
-				float y = 2 / (10 * scalar) * (float)Math.Cos(Time.TotalTime * scalar);
+			move = true;
 
-				float speed = .3f;
+			if (move && InputManager.Any.Unleash.Pressed) {
 
-				solid.Velocity = new Vector2(0, speed * Time.DeltaTime);
-				Position.Y = Calc.Loop(Position.Y, -3, 3);
-			} else {
-				solid.Velocity = Vector2.Zero;
+				Vector2 inputs = new Vector2(InputManager.Any.Horizontal.Value, InputManager.Any.Vertical.Value);
+				Calc.ClampMagnitude(ref inputs, 1f);
+
+				solid.Velocity += 0.01f * inputs;
+
+				//float scalar = MathHelper.TwoPi / 2f;
+				//float y = 2 / (10 * scalar) * (float)Math.Cos(Time.TotalTime * scalar);
+
 			}
 
 			base.Update();

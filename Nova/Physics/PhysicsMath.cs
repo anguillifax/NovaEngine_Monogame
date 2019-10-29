@@ -8,8 +8,8 @@ using System.Collections.Generic;
 namespace Nova.PhysicsEngine {
 
 	/// <summary>
-	/// Defines the mathematics behind all possible collisions between different types of colliders.
-	/// Adapted from Christer Ericson's Real-Time Collision Book.
+	/// Defines the mathematics and tests underlying the Physics engine. This is where the nitty gritty logic happens.
+	/// <para>Partially adapted from Christer Ericson's Real-Time Collision Book, and partially written from scratch.</para>
 	/// </summary>
 	public static class PhysicsMath {
 
@@ -31,6 +31,7 @@ namespace Nova.PhysicsEngine {
 		 */
 
 		public const float Epsilon = 1e-5f;
+		public const float BigEpsilon = 1e-4f;
 
 		#region Overlaps
 
@@ -166,50 +167,59 @@ namespace Nova.PhysicsEngine {
 
 			actorMoveDelta = Vector2.Zero;
 
-			// diagonals are considered a horizontal push
-
 			if (solidVel.X != 0) {
 
 				if (solidVel.X < 0f && solid.Max.X <= actor.Min.X + Epsilon) {
-					// solid is moving away from actor to the left. no intersection
+					// Solid is moving away from actor to the left. No intersection
 					return false;
 
 				} else if (solidVel.X > 0f && solid.Min.X + Epsilon >= actor.Max.X) {
-					// solid is moving away from actor to the right. no intersection
+					// Solid is moving away from actor to the right. No intersection
 					return false;
 
 				} else {
-					// solid is approaching/touching actor on x axis. possible intersection
+					// Solid is approaching/touching actor on x axis. Possible intersection
 
 					float timeOfContact;
+
+					// Calculate positive time of contact
 					if (solidVel.X > 0f) {
 						timeOfContact = (actor.Min.X - solid.Max.X) / solidVel.X;
 					} else {
 						timeOfContact = (actor.Max.X - solid.Min.X) / solidVel.X;
 					}
 
-					if (IsWithinLenient(0f, timeOfContact, maxMoveTime)) {
+					// Check if contact in horizontal direction will happen during this frame
+					if (IsWithin(-BigEpsilon, timeOfContact, maxMoveTime + BigEpsilon)) {
 
+						// Find the y-position at time of contact
 						float projectionY = solidVel.Y * timeOfContact;
 
-						if (solid.Min.Y + projectionY <= actor.Max.Y && solid.Max.Y + projectionY >= actor.Min.Y) {
-							// vertical edge of solid will be touching actor at time t
+						// Push if vertical edge of solid will be touching actor at time of x-contact.
+						// Push if corners are exactly aligned in a diagonal push.
+						if ((solid.Min.Y + projectionY < actor.Max.Y && solid.Max.Y + projectionY > actor.Min.Y) ||
+							IsEqual(solid.Max.Y + projectionY, actor.Min.Y) || IsEqual(solid.Min.Y + projectionY, actor.Max.Y)) {
 
 							if (solidVel.Y == 0) {
-								// pushing horizontally only. push actor remaining distance after contact
+								// Pushing horizontally only. push actor remaining distance after contact
 								actorMoveDelta = new Vector2(solidVel.X * (maxMoveTime - timeOfContact), 0);
 								return true;
 
 							} else {
+
 								float timeOfSeparation;
+
+								// Calculate positive time of separation
 								if (solidVel.Y > 0) {
 									timeOfSeparation = (actor.Max.Y - solid.Min.Y) / solidVel.Y;
 								} else {
 									timeOfSeparation = (actor.Min.Y - solid.Max.Y) / solidVel.Y;
 								}
 
+								// Take min in case time of separation is greater than maxMoveTime.
 								actorMoveDelta = new Vector2(solidVel.X * (Math.Min(maxMoveTime, timeOfSeparation) - timeOfContact), 0);
 								return true;
+
 							}
 
 						}
@@ -218,48 +228,55 @@ namespace Nova.PhysicsEngine {
 
 				}
 
-			}
+			} // end solidVelocity.X != 0 check
 
 			if (solidVel.Y != 0) {
 
 				if (solidVel.Y < 0f && solid.Max.Y <= actor.Min.Y + Epsilon) {
-					// solid is moving away from actor downward. no intersection
+					// Solid is moving away from actor downward. No intersection
 					return false;
 
 				} else if (solidVel.Y > 0f && solid.Min.Y + Epsilon >= actor.Max.Y) {
-					// solid is moving away from actor upward. no intersection
+					// Solid is moving away from actor upward. No intersection
 					return false;
 
 				} else {
-					// solid is approaching/touching actor on y axis. possible intersection
+					// Solid is approaching/touching actor on y axis. Possible intersection
 
 					float timeOfContact;
+
+					// Calculate positive time of contact
 					if (solidVel.Y > 0f) {
 						timeOfContact = (actor.Min.Y - solid.Max.Y) / solidVel.Y;
 					} else {
 						timeOfContact = (actor.Max.Y - solid.Min.Y) / solidVel.Y;
 					}
 
-					if (IsWithinLenient(0f, timeOfContact, maxMoveTime)) {
+					// Check if contact in vertical direction will happen during this frame
+					if (IsWithin(-BigEpsilon, timeOfContact, maxMoveTime + BigEpsilon)) {
 
+						// Find the x-position at time of contact
 						float projectionX = solidVel.X * timeOfContact;
 
-						if (solid.Min.X + projectionX <= actor.Max.X && solid.Max.X + projectionX >= actor.Min.X) {
-							// horizontal edge of solid will be touching actor at time t
+						// Push if horizontal edge of solid will be touching actor at time of y-contact
+						if (solid.Min.X + projectionX < actor.Max.X && solid.Max.X + projectionX > actor.Min.X) {
 
 							if (solidVel.X == 0) {
-								// pushing vertically only. push actor remaining distance after contact
+								// Pushing vertically only. Push actor remaining distance after contact
 								actorMoveDelta = new Vector2(0, solidVel.Y * (maxMoveTime - timeOfContact));
 								return true;
 
 							} else {
 								float timeOfSeparation;
+
+								// Calculate positive time of separation
 								if (solidVel.X > 0) {
 									timeOfSeparation = (actor.Max.X - solid.Min.X) / solidVel.X;
 								} else {
 									timeOfSeparation = (actor.Min.X - solid.Max.X) / solidVel.X;
 								}
 
+								// Take min in case time of separation is greater than maxMoveTime.
 								actorMoveDelta = new Vector2(0, solidVel.Y * (Math.Min(maxMoveTime, timeOfSeparation) - timeOfContact));
 								return true;
 							}
@@ -270,12 +287,13 @@ namespace Nova.PhysicsEngine {
 
 				}
 
-			}
+			} // end solidVelocity.Y != 0 check
 
 
 			return false;
 
 		}
+
 
 		#endregion
 
@@ -342,7 +360,7 @@ namespace Nova.PhysicsEngine {
 		/// <summary>
 		/// Returns true if A is sliding against B at a corner.
 		/// </summary>
-		public static bool IsSlidingCorner(Vector2 vel, BoxCollider a, BoxCollider b) {
+		public static bool IsSlidingCorner(BoxCollider a, BoxCollider b) {
 
 			// Check horizontal
 			if (IsEqual(a.Max.X, b.Min.X) || IsEqual(a.Min.X, b.Max.X)) {
@@ -363,19 +381,34 @@ namespace Nova.PhysicsEngine {
 		}
 
 		/// <summary>
-		/// Returns true if objects are moving toward each other.
+		/// Returns true if the solid should drag the actor during movement step.
 		/// </summary>
-		public static bool IsInMovementPath(BoxCollider a, BoxCollider b, Vector2 velA, Vector2 velB) {
+		public static bool ShouldDrag(BoxCollider actor, BoxCollider solid, Vector2 actorVel, Vector2 solidVel) {
 
-			// Relative velocity of A if B was stationary.
-			Vector2 deltaVel = velA - velB;
+			if (actor.Min.Y < solid.Max.Y - Epsilon && actor.Max.Y > solid.Min.Y + Epsilon) {
+				// Actor is touching solid in y-direction
 
-			if (deltaVel.X > 0f && a.Max.X <= b.Min.X) return false;
-			if (deltaVel.X < 0f && a.Min.X >= b.Max.X) return false;
-			if (deltaVel.Y > 0f && a.Max.Y <= b.Min.Y) return false;
-			if (deltaVel.Y < 0f && a.Min.Y >= b.Max.Y) return false;
+				// Actor is left of solid and both are moving right
+				if (actorVel.X > 0 && solidVel.X > 0 && actorVel.X >= solidVel.X && IsEqual(solid.Min.X, actor.Max.X)) return true;
 
-			return true;
+				// Actor is right of solid and both are moving left
+				if (actorVel.X < 0 && solidVel.X < 0 && actorVel.X <= solidVel.X && IsEqual(solid.Max.X, actor.Min.X)) return true;
+
+			}
+
+			if (actor.Min.X < solid.Max.X - Epsilon && actor.Max.X > solid.Min.X + Epsilon) {
+				// Actor is touching solid in x-direction
+
+				// Actor is below solid and both are moving up
+				if (actorVel.Y > 0 && solidVel.Y > 0 && actorVel.Y >= solidVel.Y && IsEqual(solid.Min.Y, actor.Max.Y)) return true;
+
+				// Actor is above solid and both are moving down
+				if (actorVel.Y < 0 && solidVel.Y < 0 && actorVel.Y <= solidVel.Y && IsEqual(solid.Max.Y, actor.Min.Y)) return true;
+
+			}
+
+			return false;
+
 		}
 
 		/// <summary>
@@ -428,7 +461,14 @@ namespace Nova.PhysicsEngine {
 		/// Value &lt;&lt; Value &lt;&lt; Upper.
 		/// </summary>
 		public static bool IsWithinStrict(float lower, float value, float upper) {
-			return lower < value - Epsilon && value < value - Epsilon;
+			return lower < value - Epsilon && value < upper - Epsilon;
+		}
+
+		/// <summary>
+		/// Value in [Lower, Upper]. This function is exact.
+		/// </summary>
+		public static bool IsWithin(float lower, float value, float upper) {
+			return lower <= value && value <= upper;
 		}
 
 		#endregion

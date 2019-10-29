@@ -10,9 +10,9 @@ namespace Nova.PhysicsEngine {
 			Vector2 rightVel = right.ProcessingData.CalcVel;
 
 			// solid vs solid
-			if (left is SolidRigidbody && right is SolidRigidbody) {
-				return VelocityPair.Average(leftVel, rightVel);
-			}
+			//if (left is SolidRigidbody && right is SolidRigidbody) {
+			//	return VelocityPair.Average(leftVel, rightVel);
+			//}
 
 			// solid vs actor
 			//if (left is SolidRigidbody && right is ActorRigidbody) {
@@ -27,7 +27,7 @@ namespace Nova.PhysicsEngine {
 				return VelocityPair.Average(leftVel, rightVel);
 			}
 
-			return VelocityPair.Average(leftVel, rightVel);
+			return new VelocityPair(leftVel, rightVel);
 
 		}
 

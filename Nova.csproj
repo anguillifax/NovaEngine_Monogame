@@ -101,6 +101,7 @@
     <Compile Include="Nova\Testing\TestActor.cs" />
     <Compile Include="Nova\Testing\TestSolid.cs" />
     <Compile Include="Nova\Testing\DebugTestPhysics.cs" />
+    <Compile Include="Nova\Testing\TestSolidStatic.cs" />
     <Compile Include="Nova\Testing\Tile.cs" />
     <Compile Include="Nova\Util\CustomExtensions.cs" />
     <Compile Include="Nova\Graphics\MDraw.cs" />
@@ -154,6 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
+    <None Include=".editorconfig" />
     <None Include="app.manifest" />
     <None Include="Content\TinyArial.spritefont" />
     <None Include="Content\LargeArial.spritefont" />

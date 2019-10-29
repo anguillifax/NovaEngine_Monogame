@@ -27,11 +27,11 @@ namespace Nova {
 			base(scene, Vector2.Zero) {
 
 			b1 = new BoxCollider(this, Vector2.Zero, Vector2.One);
-			b2 = new BoxCollider(this, new Vector2(1, 2), new Vector2(1, 1));
+			b2 = new BoxCollider(this, new Vector2(-1.5f, 0.2f), new Vector2(1, 1));
   
 		}
 
-		Vector2 pushDelta;
+		Vector2 slideDelta;
 		Vector2 testVel = Vector2.Zero;
 		float maxtime = 1;
 
@@ -52,10 +52,6 @@ namespace Nova {
 				testVel += 3f * vel * Time.DeltaTime;
 			}
 
-
-			if (PhysicsMath.IntersectPush(b1, b2, testVel, maxtime, out pushDelta)) {
-
-			}
 
 			//Console.WriteLine(PhysicsMath.IsInMovementPath(b1, b2, Vector2.UnitY, testVel));
 			Console.WriteLine(Vector2.Dot(b1.Position - b2.Position, Vector2.UnitY - Vector2.UnitY));
@@ -82,7 +78,7 @@ namespace Nova {
 
 			MDraw.DrawBox(b1.Position + testVel, b1.Extents, Color.Gray);
 			MDraw.DrawBox(b1.Position + testVel * maxtime, b1.Extents, Color.White);
-			MDraw.DrawBox(b2.Position + pushDelta, b2.Extents, Color.Cyan);
+			MDraw.DrawBox(b1.Position + slideDelta, b2.Extents, Color.Cyan);
 
 			base.Draw();
 		}

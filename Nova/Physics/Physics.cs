@@ -11,10 +11,11 @@ namespace Nova.PhysicsEngine {
 	/// Used to cache data necessary for physics calculations.
 	/// </summary>
 	internal struct ProcessingData {
-		public Vector2 MoveTo;
+		public Vector2 MoveDelta;
 		public Vector2 CalcVel;
 		public List<Rigidbody> CheckedAgainst; // TODO: optimize with a HashSet
 		public float TimeOfImpact;
+		public Vector2 Normal;
 
 		public void Reset() {
 			if (CheckedAgainst == null) {
@@ -52,7 +53,7 @@ namespace Nova.PhysicsEngine {
 
 			// Broadphase();
 			Narrowphase();
-			ResolvingPhase();
+			//ResolvingPhase();
 			// GenerateContacts();
 
 			Console.WriteLine();
@@ -66,6 +67,7 @@ namespace Nova.PhysicsEngine {
 				Ruleset = new DefaultVelocityCombinationRuleset();
 			}
 
+			// TODO: Optimize by storing rigidbodies that need reset.
 			foreach (var rigidbody in AllRigidbodies) {
 				rigidbody.ProcessingData.Reset();
 			}
@@ -77,8 +79,11 @@ namespace Nova.PhysicsEngine {
 
 			// Get allowed velocity for all solids.
 			foreach (var solid in AllSolids) {
-				if (IsStationary(solid)) continue;
-				CalculateVelocity(solid);
+				if (solid.Velocity.LengthSquared() == 0f || solid.Stationary) {
+					solid.ProcessingData.CalcVel = Vector2.Zero;
+				} else {
+					CalculateVelocity(solid);
+				}
 			}
 
 			// Calculate how far the solid can move this update.
@@ -104,9 +109,9 @@ namespace Nova.PhysicsEngine {
 			foreach (var actor in AllActors) {
 				if (IsStationary(actor)) continue;
 
-				float time = GetEarliestTimeOfImpact(actor);
+				CalculateEarliestTimeOfImpact(actor);
 
-				actor.ProcessingData.MoveTo = actor.Entity.Position + actor.ProcessingData.CalcVel * time;
+				actor.ProcessingData.MoveDelta = actor.ProcessingData.CalcVel * actor.ProcessingData.TimeOfImpact;
 
 			}
 
@@ -114,7 +119,7 @@ namespace Nova.PhysicsEngine {
 			foreach (var actor in AllActors) {
 				if (IsStationary(actor)) continue;
 
-				actor.Entity.Position = actor.ProcessingData.MoveTo;
+				actor.Entity.Position += actor.ProcessingData.MoveDelta;
 			}
 
 		}
@@ -123,33 +128,39 @@ namespace Nova.PhysicsEngine {
 
 			solid.ProcessingData.CalcVel = solid.Velocity;
 
-			// TODO: Test this
 			foreach (var otherSolid in AllSolids) {
-
-				break;
 
 				// Skip self
 				if (ReferenceEquals(solid, otherSolid)) continue;
 
-				// Skip if pair has already been checked.
-				if (solid.ProcessingData.CheckedAgainst.Contains(otherSolid)) continue;
-
+				// Skip if other solid has already processed this solid
+				if (otherSolid.ProcessingData.CheckedAgainst.Contains(solid)) continue;
 
 				if (PhysicsMath.IsOverlapping(solid.MainCollider, otherSolid.MainCollider)) {
 
-					if (!PhysicsMath.IsSlidingCorner(solid.ProcessingData.CalcVel, solid.MainCollider, otherSolid.MainCollider)) {
+					// Check for ghost vertices
+					if (!PhysicsMath.IsSlidingCorner(solid.MainCollider, otherSolid.MainCollider)) {
 
-						VelocityPair result = Ruleset.Get(solid, otherSolid);
+						if (otherSolid.Stationary) {
+							solid.ProcessingData.CalcVel = PhysicsMath.GetAllowedVelocity(solid.ProcessingData.CalcVel,
+								PhysicsMath.GetNormal(solid.MainCollider, otherSolid.MainCollider));
 
-						Console.WriteLine($"[{solid}] before {solid.ProcessingData.CalcVel}, after {result.left}");
-						Console.WriteLine($"[{otherSolid}] before {otherSolid.ProcessingData.CalcVel}, after {result.right}");
+						} else {
 
-						solid.ProcessingData.CalcVel = result.left;
-						otherSolid.ProcessingData.CalcVel = result.right;
+							VelocityPair result = Ruleset.Get(solid, otherSolid);
 
-						solid.ProcessingData.CheckedAgainst.Add(otherSolid);
-						otherSolid.ProcessingData.CheckedAgainst.Add(solid);
+							Vector2 relative = solid.ProcessingData.CalcVel - result.right;
+							Vector2 relativeAllowed = PhysicsMath.GetAllowedVelocity(relative, PhysicsMath.GetNormal(solid.MainCollider, otherSolid.MainCollider));
+							solid.ProcessingData.CalcVel = relativeAllowed + result.right;
 
+							Vector2 otherRelative = otherSolid.ProcessingData.CalcVel - result.left;
+							Vector2 otherRelativeAllowed = PhysicsMath.GetAllowedVelocity(otherRelative, PhysicsMath.GetNormal(otherSolid.MainCollider, solid.MainCollider));
+							otherSolid.ProcessingData.CalcVel = otherRelativeAllowed + result.left;
+
+							solid.ProcessingData.CheckedAgainst.Add(otherSolid);
+							otherSolid.ProcessingData.CheckedAgainst.Add(solid);
+
+						}
 
 					}
 
@@ -163,10 +174,7 @@ namespace Nova.PhysicsEngine {
 
 			float earliest = 1f;
 
-			// TODO: Test this
 			foreach (var otherSolid in AllSolids) {
-
-				break;
 
 				// Skip self
 				if (ReferenceEquals(solid, otherSolid)) continue;
@@ -183,18 +191,65 @@ namespace Nova.PhysicsEngine {
 
 		private static void MoveSolid(SolidRigidbody solid) {
 
+			List<ActorRigidbody> pushList = new List<ActorRigidbody>();
+			List<ActorRigidbody> relocateList = new List<ActorRigidbody>();
+
+			// Run global check to see if any actors are attached.
 			foreach (var actor in AllActors) {
+
+				if (actor.IsAttached(solid)) {
+					pushList.Add(actor);
+				}
+
+			}
+
+			// Run regional check to find any actors that need to be moved during this movement update.
+			foreach (var actor in AllActors) {
+
+				// Skip if actor has already indicated it should be moved.
+				if (pushList.Contains(actor)) continue;
 
 				if (PhysicsMath.IntersectPush(solid.MainCollider, actor.MainCollider, solid.Velocity, solid.ProcessingData.TimeOfImpact, out Vector2 delta)) {
 
-					//Console.WriteLine($"[1] delta push of {delta.ToStringHighPrecision()} to {(actor.Entity.Position + delta).ToStringHighPrecision()}");
-					actor.Entity.Position += delta;
+					pushList.Add(actor);
+					actor.ProcessingData.MoveDelta = delta;
+
+				} else if (PhysicsMath.ShouldDrag(actor.MainCollider, solid.MainCollider, actor.Velocity, solid.ProcessingData.CalcVel)) {
+
+					relocateList.Add(actor);
 
 				}
 
 			}
 
-			solid.Entity.Position += solid.Velocity;
+			foreach (var actor in pushList) {
+
+				actor.Entity.Position += actor.ProcessingData.MoveDelta;
+
+				foreach (var otherSolid in AllSolids) {
+
+					// Skip solid that actor was pushed by
+					if (ReferenceEquals(solid, otherSolid)) continue;
+
+					// If resultant position is inside another solid, then actor has to be crushed.
+					if (PhysicsMath.IsInside(actor.MainCollider, otherSolid.MainCollider)) {
+						Console.WriteLine($"Crush {actor} against {otherSolid}");
+						actor.Crush();
+					}
+
+				}
+
+			}
+
+			Vector2 solidDelta = solid.ProcessingData.CalcVel * solid.ProcessingData.TimeOfImpact;
+			solid.Entity.Position += solidDelta;
+
+			foreach (var actor in relocateList) {
+
+				actor.Entity.Position += solidDelta;
+				Console.WriteLine($"relocated {actor} by {solidDelta}");
+
+			}
 
 		}
 
@@ -205,53 +260,46 @@ namespace Nova.PhysicsEngine {
 
 			actor.ProcessingData.CalcVel = actor.Velocity;
 
-			foreach (var rigidbody in AllRigidbodies) {
+			// TODO: Collide against other actors
+			foreach (var otherActor in AllActors) {
 
 				// Skip self
-				if (ReferenceEquals(rigidbody, actor)) continue;
+				if (ReferenceEquals(actor, otherActor)) continue;
 
 				// Don't check same pair multiple times
-				if (rigidbody.ProcessingData.CheckedAgainst.Contains(actor)) {
-					Console.WriteLine($"Skipping {actor} v {rigidbody}");
+				if (otherActor.ProcessingData.CheckedAgainst.Contains(actor)) {
+					Console.WriteLine($"Skipping {actor} v {otherActor}");
 					continue;
 				}
 
-				if (PhysicsMath.IsOverlapping(actor.MainCollider, rigidbody.MainCollider)) {
+			}
+
+
+			foreach (var solid in AllSolids) {
+
+				if (PhysicsMath.IsOverlapping(actor.MainCollider, solid.MainCollider)) {
 
 					// Prevent ghost vertices
-					if (!PhysicsMath.IsSlidingCorner(actor.ProcessingData.CalcVel, actor.MainCollider, rigidbody.MainCollider)) {
+					if (!PhysicsMath.IsSlidingCorner(actor.MainCollider, solid.MainCollider)) {
 
-						VelocityPair result = Ruleset.Get(actor, rigidbody);
+						var va = PhysicsMath.GetAllowedVelocity(actor.ProcessingData.CalcVel, PhysicsMath.GetNormal(actor.MainCollider, solid.MainCollider));
 
-						// Get relative velocity if other rigidbody was standing still
-						Vector2 relativeVel = result.left - result.right;
+						//Console.WriteLine($"[{actor}] before {actor.ProcessingData.CalcVel}, after {va}");
 
-						// Collide relative velocity against rigidbody surface
-						Vector2 relativeAllowedVel = PhysicsMath.GetAllowedVelocity(relativeVel, PhysicsMath.GetNormal(actor.MainCollider, rigidbody.MainCollider));
-
-						Console.WriteLine($"[{actor}] before {actor.ProcessingData.CalcVel}, after {relativeAllowedVel + result.right}");
-						Console.WriteLine($"[{rigidbody}] before {rigidbody.ProcessingData.CalcVel}, after {result.right}");
-
-						// Convert from relative velocity back to absolute velocity
-						actor.ProcessingData.CalcVel = relativeAllowedVel + result.right;
-
-						rigidbody.ProcessingData.CalcVel = result.right;
-
-						// Blacklist the other rigidbody to prevent repeated checks
-						rigidbody.ProcessingData.CheckedAgainst.Add(actor);
-						actor.ProcessingData.CheckedAgainst.Add(rigidbody);
+						actor.ProcessingData.CalcVel = va;
 
 					}
 
 				}
 
 			}
+
 		}
 
 		/// <summary>
-		/// Run dynamic intersection test against all colliders. Return the earliest time of impact, or <c>1.0</c> if no collisions occured.
+		/// Run dynamic intersection test against all colliders. Return the earliest time of impact, or <c>1.0f</c> if no collisions occured.
 		/// </summary>
-		private static float GetEarliestTimeOfImpact(ActorRigidbody actor) {
+		private static void CalculateEarliestTimeOfImpact(ActorRigidbody actor) {
 
 			float time = 1f;
 
@@ -270,33 +318,15 @@ namespace Nova.PhysicsEngine {
 
 			foreach (var solid in AllSolids) {
 
-				if (PhysicsMath.IsInMovementPath(actor.MainCollider, solid.MainCollider, actor.ProcessingData.CalcVel, solid.Velocity)) {
+				if (PhysicsMath.IntersectMoving(solid.MainCollider, actor.MainCollider, Vector2.Zero, actor.ProcessingData.CalcVel, out float first)) {
 
-					// The solid will overlap the actor during its movement. Use zero velocity for now and calculate delta push later.
-
-					if (PhysicsMath.IntersectMoving(solid.MainCollider, actor.MainCollider, Vector2.Zero, actor.ProcessingData.CalcVel, out float first)) {
-
-						Console.WriteLine("1");
-						time = Math.Min(time, first);
-
-					}
-
-				} else {
-
-					// The solid is moving away from actor. Include solid velocity in calculation.
-
-					if (PhysicsMath.IntersectMoving(solid.MainCollider, actor.MainCollider, solid.Velocity, actor.ProcessingData.CalcVel, out float first)) {
-
-						Console.WriteLine("2");
-						time = Math.Min(time, first);
-
-					}
+					time = Math.Min(time, first);
 
 				}
 
 			}
 
-			return time;
+			actor.ProcessingData.TimeOfImpact = time;
 		}
 
 		#endregion
@@ -314,7 +344,7 @@ namespace Nova.PhysicsEngine {
 					if (PhysicsMath.IsInsideExact(actor.MainCollider, collider)) {
 
 						var newPos = PhysicsMath.Depenetrate(actor.MainCollider, collider);
-						//Console.WriteLine("Corrected by {0}", (actor.Entity.Position - newPos).ToStringHighPrecision());
+						Console.WriteLine("Corrected by {0}", (actor.Entity.Position - newPos).ToStringFixed(8));
 						actor.Entity.Position = newPos;
 
 					}
@@ -340,9 +370,10 @@ namespace Nova.PhysicsEngine {
 
 		/// <summary>
 		/// Returns true if the rigidbody velocity or the allowed velocity is equal to 0.
+		/// <para>Do not use when calculating allowed velocity. CalcVel needs to be recalculated first.</para>
 		/// </summary>
 		private static bool IsStationary(Rigidbody rigidbody) {
-			return rigidbody.Velocity.LengthSquared() == 0f || rigidbody.ProcessingData.CalcVel.LengthSquared() == 0f;
+			return rigidbody.Stationary || rigidbody.ProcessingData.CalcVel.LengthSquared() == 0f;
 		}
 
 	}
