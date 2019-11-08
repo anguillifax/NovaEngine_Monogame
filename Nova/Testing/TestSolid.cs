@@ -12,7 +12,7 @@ namespace Nova {
 	public class TestSolid : Entity {
 
 		SolidRigidbody solid;
-		BoxCollider boxCollider;
+		BoxCollider box, box2;
 
 		Vector2 initPos;
 
@@ -29,8 +29,9 @@ namespace Nova {
 
 			new SpriteRenderer(this, texture, MDraw.DepthStartScene + 10);
 
-			boxCollider = new BoxCollider(this, Vector2.Zero, dimensions);
-			solid = new SolidRigidbody(this, boxCollider);
+			box = new BoxCollider(this, Vector2.Zero, dimensions * new Vector2(1, 1));
+			box2 = new BoxCollider(this, dimensions * new Vector2(1, 0.5f), dimensions * new Vector2(1, 2));
+			solid = new SolidRigidbody(this, box, box2);
 		}
 
 		public override void Update() {

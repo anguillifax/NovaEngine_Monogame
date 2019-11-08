@@ -29,7 +29,7 @@ namespace Nova {
 		}
 
 		public static Point RoundToPoint(this Vector2 vec) {
-			return new Point(Calc.Round(vec.X), Calc.Round(vec.Y));
+			return new Point(Calc.RoundToInt(vec.X), Calc.RoundToInt(vec.Y));
 		}
 
 		/// <summary>
@@ -65,6 +65,10 @@ namespace Nova {
 
 		public static Vector2 Center(this Texture2D texture) {
 			return new Vector2(texture.Width / 2f, texture.Height / 2f);
+		}
+
+		public static Color Multiply(this Color color, float f) {
+			return new Color(Calc.RoundToInt(f * color.R), Calc.RoundToInt(f * color.G), Calc.RoundToInt(f * color.B));
 		}
 
 	}

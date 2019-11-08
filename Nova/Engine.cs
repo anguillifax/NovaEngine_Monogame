@@ -102,11 +102,17 @@ namespace Nova {
 
 			new TestActor(CurrentScene, new Vector2(0, 0), temple);
 
-			new TestSolid(CurrentScene, grass, new Vector2(2, 0), new Vector2(2, 2));
+			new TestSolid(CurrentScene, grass, new Vector2(2, 0), new Vector2(1, 1));
+
+			//new TestSolidDrift(CurrentScene, grass, new Vector2(5, 0), new Vector2(2, 2));
 
 			for (int x = -9; x <= 9; x++) {
 				new TestSolidStatic(CurrentScene, deepDirt, new Vector2(x, 5), new Vector2(1, 1));
 			}
+
+			new TestSolidStatic(CurrentScene, deepDirt, new Vector2(6, 3), new Vector2(1, 1));
+			new TestSolidStatic(CurrentScene, deepDirt, new Vector2(6, 2), new Vector2(1, 1));
+			new TestSolidStatic(CurrentScene, deepDirt, new Vector2(6, 1), new Vector2(1, 1));
 
 			//new TestSolid(CurrentScene, grass, new Vector2(1, 2), new Vector2(1, 1));
 			//new TestSolid(CurrentScene, grass, new Vector2(2, 1), new Vector2(1, 1));

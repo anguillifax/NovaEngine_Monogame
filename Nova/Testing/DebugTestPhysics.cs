@@ -13,74 +13,110 @@ namespace Nova {
 	/// </summary>
 	public class DebugTestPhysics : Entity {
 
-		SimpleButton timeDown = new SimpleButton(Microsoft.Xna.Framework.Input.Keys.OemOpenBrackets);
-		SimpleButton timeUp = new SimpleButton(Microsoft.Xna.Framework.Input.Keys.OemCloseBrackets);
+		private readonly SimpleButton timeDown = new SimpleButton(Microsoft.Xna.Framework.Input.Keys.OemOpenBrackets);
+		private readonly SimpleButton timeUp = new SimpleButton(Microsoft.Xna.Framework.Input.Keys.OemCloseBrackets);
 
 		public float speed = 1f;
 
-		ActorRigidbody actor;
-		SolidRigidbody solid;
 		BoxCollider b1;
 		BoxCollider b2;
+
+		AABB mainA;
+		AABB altA, altB;
 
 		public DebugTestPhysics(Scene scene) :
 			base(scene, Vector2.Zero) {
 
-			b1 = new BoxCollider(this, Vector2.Zero, Vector2.One);
-			b2 = new BoxCollider(this, new Vector2(-1.5f, 0.2f), new Vector2(1, 1));
-  
+			//b1 = new BoxCollider(this, Vector2.Zero, Vector2.One);
+			//b2 = new BoxCollider(this, new Vector2(-2f, 2f), new Vector2(1, 1));
+
+			mainA = new AABB(new Vector2(1.75f, 2), 0.5f * Vector2.One);
+			vel2 = mainA.Position;
+
+			altA = new AABB(new Vector2(0, 1), new Vector2(0.5f, 0.5f));
+			altB = new AABB(new Vector2(0.5f, 0), new Vector2(1f, 0.5f));
+
 		}
 
-		Vector2 slideDelta;
-		Vector2 testVel = Vector2.Zero;
+		Vector2 Offscreen = new Vector2(float.MaxValue, float.MaxValue);
+
+		Vector2 vel1 = Vector2.Zero;
+		Vector2 vel2 = Vector2.Zero;
+		Vector2 vel3 = Vector2.Zero;
+
 		float maxtime = 1;
 
 		public override void Update() {
 
-			if (InputManager.Any.Jump.JustPressed) {
-				testVel = Vector2.Zero;
-			}
-
-			Vector2 vel = new Vector2(InputManager.Any.Horizontal.Value, InputManager.Any.Vertical.Value);
-			Calc.ClampMagnitude(ref vel, 1f);
-
-			float timeSpeed = 0.03f;
-			if (timeUp.Pressed) maxtime = Math.Min(1, maxtime + timeSpeed);
-			if (timeDown.Pressed) maxtime = Math.Max(0, maxtime - timeSpeed);
-
-			if (InputManager.Any.Unleash.Released) {
-				testVel += 3f * vel * Time.DeltaTime;
-			}
-
-
-			//Console.WriteLine(PhysicsMath.IsInMovementPath(b1, b2, Vector2.UnitY, testVel));
-			Console.WriteLine(Vector2.Dot(b1.Position - b2.Position, Vector2.UnitY - Vector2.UnitY));
+			UpdateControlVariable();
+			CustomUpdate();
 
 			base.Update();
 		}
 
+		private void UpdateControlVariable() {
+
+			Vector2 vel = new Vector2(InputManager.Any.Horizontal.Value, InputManager.Any.Vertical.Value);
+			Calc.ClampMagnitude(ref vel, 1f);
+
+			float changeTimeSpeed = 0.03f;
+			if (timeUp.Pressed) maxtime = Math.Min(1, maxtime + changeTimeSpeed);
+			if (timeDown.Pressed) maxtime = Math.Max(0, maxtime - changeTimeSpeed);
+
+			if (InputManager.Any.Unleash.Released && InputManager.Any.Attack.Released) {
+				// None pressed
+				vel1 += 2f * vel * Time.DeltaTime;
+				//vel1 += 3f * (new Vector2(-1, 1)).GetNormalized() * vel.X * Time.DeltaTime;
+			}
+			if (InputManager.Any.Unleash.Released && InputManager.Any.Attack.Pressed) {
+				// Attack pressed
+				vel2 += 3f * vel * Time.DeltaTime;
+			}
+			if (InputManager.Any.Unleash.Pressed && InputManager.Any.Attack.Released) {
+				// Unleash pressed
+				vel3 += 3f * vel * Time.DeltaTime;
+			}
+
+		}
+
+		Vector2 slideDelta;
+		Vector2 normal;
+
+		private void CustomUpdate() {
+			mainA.Position = vel2;
+
+			//slideDelta = PhysicsMath.RecursiveScoop(new AABB[] { altA, altB }, mainA, vel1, Vector2.Zero);
+			//Console.WriteLine($"||| {slideDelta}");
+		}
+
 		public override void Draw() {
 
-			var p1 = b1.Position;
-			var p2 = b1.Position + testVel;
-
 			float cval = 0.2f;
-			Color sweeps = new Color(cval, cval, cval);
+			Color sweepColor = new Color(cval, cval, cval);
+			Color endColor = Color.Yellow.Multiply(0.3f);
 
-			var cur = b1.Extents.Clone();
-			MDraw.DrawLine(p1 + cur, p2 + cur, sweeps);
-			cur.X *= -1;
-			MDraw.DrawLine(p1 + cur, p2 + cur, sweeps);
-			cur.Y *= -1;
-			MDraw.DrawLine(p1 + cur, p2 + cur, sweeps);
-			cur.X *= -1;
-			MDraw.DrawLine(p1 + cur, p2 + cur, sweeps);
+			DrawSweeps(altA.Position, altA.Position + vel1, altA.Extents, sweepColor, endColor);
+			DrawSweeps(altB.Position, altB.Position + vel1, altB.Extents, sweepColor, endColor);
 
-			MDraw.DrawBox(b1.Position + testVel, b1.Extents, Color.Gray);
-			MDraw.DrawBox(b1.Position + testVel * maxtime, b1.Extents, Color.White);
-			MDraw.DrawBox(b1.Position + slideDelta, b2.Extents, Color.Cyan);
+			mainA.Draw(Color.Orchid);
+			altA.Draw(Color.Yellow);
+			altB.Draw(Color.Yellow);
+			mainA.Draw(slideDelta, Color.Cyan);
 
 			base.Draw();
+		}
+
+		private void DrawSweeps(Vector2 p1, Vector2 p2, Vector2 extents, Color lineColor, Color endColor) {
+			var cur = extents.Clone();
+			MDraw.DrawLine(p1 + cur, p2 + cur, lineColor);
+			cur.X *= -1;
+			MDraw.DrawLine(p1 + cur, p2 + cur, lineColor);
+			cur.Y *= -1;
+			MDraw.DrawLine(p1 + cur, p2 + cur, lineColor);
+			cur.X *= -1;
+			MDraw.DrawLine(p1 + cur, p2 + cur, lineColor);
+
+			MDraw.DrawBox(p2, extents, endColor);
 		}
 
 	}

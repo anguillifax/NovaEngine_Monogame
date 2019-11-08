@@ -2,3 +2,18 @@
 
 # RCS1061: Merge if statement with nested if statement.
 dotnet_diagnostic.RCS1061.severity = none
+
+# IDE0055: Fix formatting
+dotnet_diagnostic.IDE0055.severity = none
+
+# RCS1163: Unused parameter.
+dotnet_diagnostic.RCS1163.severity = none
+
+# IDE0059: Unnecessary assignment of a value
+csharp_style_unused_value_assignment_preference = discard_variable:none
+
+# CS0219: Variable is assigned but its value is never used
+dotnet_diagnostic.CS0219.severity = none
+
+# RCS1037: Remove trailing white-space.
+dotnet_diagnostic.RCS1037.severity = none

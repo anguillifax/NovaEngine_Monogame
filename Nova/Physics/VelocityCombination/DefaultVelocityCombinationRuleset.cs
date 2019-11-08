@@ -9,22 +9,14 @@ namespace Nova.PhysicsEngine {
 			Vector2 leftVel = left.ProcessingData.CalcVel;
 			Vector2 rightVel = right.ProcessingData.CalcVel;
 
-			// solid vs solid
-			//if (left is SolidRigidbody && right is SolidRigidbody) {
-			//	return VelocityPair.Average(leftVel, rightVel);
-			//}
-
-			// solid vs actor
-			//if (left is SolidRigidbody && right is ActorRigidbody) {
-			//	return new VelocityPair(leftVel, VelocityCombinationMath.Over(rightVel, leftVel));
-			//}
-			//if (left is ActorRigidbody && right is SolidRigidbody) {
-			//	return new VelocityPair(VelocityCombinationMath.Over(leftVel, rightVel), rightVel);
-			//}
+			//solid vs solid
+			if (left is SolidRigidbody && right is SolidRigidbody) {
+				return VelocityMath.CollideSlide(left.MainCollider, right.MainCollider, leftVel, rightVel, 0.5f, 0.5f);
+			}
 
 			// actor vs actor
 			if (left is ActorRigidbody && right is ActorRigidbody) {
-				return VelocityPair.Average(leftVel, rightVel);
+				return VelocityMath.CollideSlide(left.MainCollider, right.MainCollider, leftVel, rightVel, 0.5f, 0.5f);
 			}
 
 			return new VelocityPair(leftVel, rightVel);

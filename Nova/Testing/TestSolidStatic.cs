@@ -13,10 +13,15 @@ namespace Nova {
 
 			new SpriteRenderer(this, texture, MDraw.DepthStartScene + 11);
 
-			new SolidRigidbody(this, new BoxCollider(this, Vector2.Zero, dimensions)) {
-				Stationary = true
-			};
+			new StaticRigidbody(this, new BoxCollider(this, Vector2.Zero, dimensions));
 
+			SetPosition(pos);
+
+		}
+
+		public void SetPosition(Vector2 newPos) {
+			Position = newPos;
+			// TODO: Recalculate region
 		}
 
 	}

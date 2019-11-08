@@ -11,9 +11,9 @@ namespace Nova.PhysicsEngine {
 			this.right = right;
 		}
 
-		public static VelocityPair Average(Vector2 left, Vector2 right) {
-			Vector2 avg = 0.5f * (left + right);
-			return new VelocityPair(avg, avg);
+		public VelocityPair(VelocityPair other) {
+			left = other.left;
+			right = other.right;
 		}
 
 	}

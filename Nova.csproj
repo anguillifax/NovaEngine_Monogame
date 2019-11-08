@@ -84,8 +84,10 @@
     <Compile Include="Nova\Input\VirtualGamepadButton.cs" />
     <Compile Include="Nova\Input\VirtualKeyboardAxis.cs" />
     <Compile Include="Nova\Input\VirtualKeyboardButton.cs" />
+    <Compile Include="Nova\Physics\AABB.cs" />
     <Compile Include="Nova\Physics\BoxCollider.cs" />
     <Compile Include="Nova\Physics\ContactPoint.cs" />
+    <Compile Include="Nova\Physics\StaticRigidbody.cs" />
     <Compile Include="Nova\Physics\VelocityCombination\DefaultVelocityCombinationRuleset.cs" />
     <Compile Include="Nova\Physics\Physics.cs" />
     <Compile Include="Nova\Physics\PhysicsMath.cs" />
@@ -93,7 +95,7 @@
     <Compile Include="Nova\Physics\ActorRigidbody.cs" />
     <Compile Include="Nova\Physics\SolidRigidbody.cs" />
     <Compile Include="Nova\Physics\VelocityCombination\IVelocityCombinationRuleset.cs" />
-    <Compile Include="Nova\Physics\VelocityCombination\VelocityCombinationMath.cs" />
+    <Compile Include="Nova\Physics\VelocityCombination\VelocityMath.cs" />
     <Compile Include="Nova\Physics\VelocityCombination\VelocityPair.cs" />
     <Compile Include="Nova\Testing\DebugCameraController.cs" />
     <Compile Include="Nova\Testing\QuickTest.cs" />
@@ -101,6 +103,7 @@
     <Compile Include="Nova\Testing\TestActor.cs" />
     <Compile Include="Nova\Testing\TestSolid.cs" />
     <Compile Include="Nova\Testing\DebugTestPhysics.cs" />
+    <Compile Include="Nova\Testing\TestSolidDrift.cs" />
     <Compile Include="Nova\Testing\TestSolidStatic.cs" />
     <Compile Include="Nova\Testing\Tile.cs" />
     <Compile Include="Nova\Util\CustomExtensions.cs" />

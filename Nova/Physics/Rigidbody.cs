@@ -26,8 +26,6 @@ namespace Nova.PhysicsEngine {
 
 		public int Layer { get; set; }
 
-		public bool Stationary { get; set; }
-
 
 
 		public Rigidbody(Entity parent, params BoxCollider[] colliders) : base(parent) {

@@ -10,6 +10,7 @@ namespace Nova.PhysicsEngine {
 	/// <summary>
 	/// Defines the mathematics and tests underlying the Physics engine. This is where the nitty gritty logic happens.
 	/// <para>Partially adapted from Christer Ericson's Real-Time Collision Book, and partially written from scratch.</para>
+	/// <para>This math library has no knowledge of Rigidbodies or Colliders. It operates purely on BoxColliders and Vectors.</para>
 	/// </summary>
 	public static class PhysicsMath {
 
@@ -294,6 +295,107 @@ namespace Nova.PhysicsEngine {
 
 		}
 
+		/// <summary>
+		/// Given two moving colliders, calculate when A will touch B. If A initially overlaps B, then it is <i>not</i> considered an intersection.
+		/// </summary>
+		public static bool IntersectMovingNormal(BoxCollider a, BoxCollider b, Vector2 velA, Vector2 velB, out float firstTimeOfContact, out Vector2 normalA) {
+
+			normalA = Vector2.Zero;
+
+			// Relative velocity of B if A was stationary
+			Vector2 v = velB - velA;
+
+			firstTimeOfContact = 1f;
+
+			if (v.X != 0) {
+
+				if (v.X < 0f && b.Max.X <= a.Min.X + Epsilon) {
+					// B is moving away from A to the left. no intersection
+					return false;
+
+				} else if (v.X > 0f && b.Min.X + Epsilon >= a.Max.X) {
+					// B is moving away from A to the right. no intersection
+					return false;
+
+				} else {
+					// B is approaching A on x axis. possible intersection
+
+					float t;
+					if (v.X > 0f) {
+						t = (a.Min.X - b.Max.X) / v.X;
+					} else {
+						t = (a.Max.X - b.Min.X) / v.X;
+					}
+
+					if (0f <= t && t <= 1f) {
+
+						float projectionY = v.Y * t;
+
+						bool isDiag = v.Y != 0 && (IsEqual(b.Min.Y + projectionY, a.Max.Y) || IsEqual(b.Max.Y + projectionY, a.Min.Y));
+
+						if (isDiag || b.Min.Y + projectionY < a.Max.Y && b.Max.Y + projectionY > a.Min.Y) {
+							// y component of projection will overlap if B moves to time t
+
+							firstTimeOfContact = t;
+
+							normalA = v.X < 0 ? new Vector2(-1, 0) : new Vector2(1, 0);
+
+							return true;
+
+						}
+
+					}
+
+				}
+
+			}
+
+			if (v.Y != 0) {
+
+				if (v.Y < 0f && b.Max.Y <= a.Min.Y + Epsilon) {
+					// B is moving away from A downwards. no intersection
+					return false;
+
+				} else if (v.Y > 0f && b.Min.Y + Epsilon >= a.Max.Y) {
+					// B is moving away from A upwards. no intersection
+					return false;
+
+				} else {
+					// B is approaching A on y axis. possible intersection
+
+					float t;
+
+					if (v.Y > 0f) {
+						t = (a.Min.Y - b.Max.Y) / v.Y;
+					} else {
+						t = (a.Max.Y - b.Min.Y) / v.Y;
+					}
+
+					if (0f <= t && t <= 1f) {
+
+						float projectionX = v.X * t;
+
+						if (a.Min.X < b.Max.X + projectionX && a.Max.X > b.Min.X + projectionX) {
+							// x component of projection will overlap if B moves to time t
+
+							firstTimeOfContact = t;
+
+							normalA = v.Y < 0 ? new Vector2(0, -1) : new Vector2(0, 1);
+
+							return true;
+						}
+
+					}
+
+				}
+
+			}
+
+			return false;
+
+		}
+
+		
 
 		#endregion
 
@@ -340,22 +442,6 @@ namespace Nova.PhysicsEngine {
 		#endregion
 
 		#region Miscellaneous
-
-		/// <summary>
-		/// If vel moves into plane defined by normal, gives point on plane instead. Otherwise returns vel unchanged.
-		/// </summary>
-		public static Vector2 GetAllowedVelocity(Vector2 vel, Vector2 normal) {
-
-			normal.Normalize();
-			var dot = Vector2.Dot(vel, normal);
-
-			if (dot < 0) {
-				// point is below plane. snap to plane
-				return vel - dot * normal;
-			} else {
-				return vel;
-			}
-		}
 
 		/// <summary>
 		/// Returns true if A is sliding against B at a corner.

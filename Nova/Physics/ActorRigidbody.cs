@@ -24,14 +24,14 @@ namespace Nova.PhysicsEngine {
 		/// <summary>
 		/// Returns true if solid should drag actor during its movement.
 		/// </summary>
-		public bool IsAttached(SolidRigidbody solid) {
+		internal bool IsAttached(SolidRigidbody solid) {
 			return PredicateIsAttached == null ? false : PredicateIsAttached(solid);
 		}
 
 		/// <summary>
 		/// Called when the actor is crushed between two solids.
 		/// </summary>
-		public void Crush() {
+		internal void Crush() {
 			if (ActionCrush == null) {
 				Entity.Position = Vector2.Zero;
 			} else {

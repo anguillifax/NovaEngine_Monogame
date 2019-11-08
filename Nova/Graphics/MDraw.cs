@@ -25,7 +25,7 @@ namespace Nova {
 
 		public static void Initialize() {
 			SpriteBatch = new SpriteBatch(Engine.Instance.GraphicsDevice);
-			
+
 			Camera = new Camera(Engine.TileSize);
 		}
 
@@ -45,7 +45,7 @@ namespace Nova {
 		}
 
 		public static void Begin() {
-			SpriteBatch.Begin(SpriteSortMode.BackToFront, samplerState:SamplerState.PointClamp);
+			SpriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
 		}
 
 		public static void End() {
@@ -99,9 +99,17 @@ namespace Nova {
 			SpriteBatch.Draw(TexturePixel, origin + Vector2.One, null, ShadowColor, angle, new Vector2(0.5f, 0), scale, SpriteEffects.None, GetDepth(3));
 		}
 
+		public static void DrawRay(Vector2 origin, Vector2 magnitude, Color color) {
+			DrawLine(origin, origin + magnitude, color);
+		}
+
+		public static void DrawRayGlobal(Vector2 origin, Vector2 magnitude, Color color) {
+			DrawLineGlobal(origin, origin + magnitude, color);
+		}
+
 		public static void DrawPointGlobal(Vector2 pos, Color color) {
 			SpriteBatch.Draw(TexturePoint, pos, null, color, 0, new Vector2(1.5f, 1.5f), Vector2.One, SpriteEffects.None, GetDepth(0));
-			SpriteBatch.Draw(TexturePoint, pos + Vector2.One, null, ShadowColor, 0,  new Vector2(1.5f, 1.5f), Vector2.One, SpriteEffects.None, GetDepth(1));
+			SpriteBatch.Draw(TexturePoint, pos + Vector2.One, null, ShadowColor, 0, new Vector2(1.5f, 1.5f), Vector2.One, SpriteEffects.None, GetDepth(1));
 		}
 
 		public static void DrawPoint(Vector2 pos, Color color) {

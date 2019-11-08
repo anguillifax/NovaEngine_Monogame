@@ -45,7 +45,7 @@ namespace Nova {
 		/// Round and set X and Y components
 		/// </summary>
 		public IntVector2(float x, float y) :
-			this(Calc.Round(x), Calc.Round(y)) {
+			this(Calc.RoundToInt(x), Calc.RoundToInt(y)) {
 		}
 
 		/// <summary>
