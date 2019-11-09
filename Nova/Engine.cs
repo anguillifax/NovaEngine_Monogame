@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Nova.Gui;
 using Nova.PhysicsEngine;
 using Nova.Tiles;
 using System;
@@ -61,13 +62,14 @@ namespace Nova {
 			Screen.Update();
 			MDraw.Initialize();
 			InputManager.Init();
+			GuiManager.Init();
 
 			CurrentScene = new Scene("MainScene");
 
-			Components.Add(new Gui.PanelRebindKeyboard(this));
-			Components.Add(new Gui.PanelRebindGamepad(this, PlayerIndex.One));
-			Components.Add(new Gui.PanelRebindGamepad(this, PlayerIndex.Two));
-			Components.Add(new Gui.PanelRebindInputSources(this));
+			Components.Add(new PanelRebindKeyboard(this));
+			Components.Add(new PanelRebindGamepad(this, PlayerIndex.One));
+			Components.Add(new PanelRebindGamepad(this, PlayerIndex.Two));
+			Components.Add(new PanelRebindInputSources(this));
 
 			quickTest = new QuickTest();
 			quickTest.Init();
@@ -100,9 +102,9 @@ namespace Nova {
 
 			//*
 
-			new TestActor(CurrentScene, new Vector2(0, 0), temple);
+			//new TestActor(CurrentScene, new Vector2(0, 0), temple);
 
-			new TestSolid(CurrentScene, grass, new Vector2(2, 0), new Vector2(1, 1));
+			//new TestSolid(CurrentScene, grass, new Vector2(2, 0), new Vector2(1, 1));
 
 			//new TestSolidDrift(CurrentScene, grass, new Vector2(5, 0), new Vector2(2, 2));
 
@@ -146,8 +148,10 @@ namespace Nova {
 
 			Time.Update(time);
 			InputManager.Update();
-			Gui.DebugGUI_Inputs.Update();
+			DebugGUI_Inputs.Update();
 			DebugCameraController.Update();
+
+			GuiManager.Update();
 
 			if (InputManager.Quit.JustPressed) {
 				Exit();
@@ -179,7 +183,7 @@ namespace Nova {
 			}
 
 			if (Time.TotalTime > 0.5f) {
-				Physics.Update();
+				//Physics.Update();
 			}
 
 			base.Update(time);
@@ -202,13 +206,15 @@ namespace Nova {
 				MDraw.End();
 			}
 
-			Physics.Draw();
+			//Physics.Draw();
 
-			Gui.DebugGUI_Inputs.Draw();
+			GuiManager.Draw();
+
+			DebugGUI_Inputs.Draw();
 
 			quickTest.Draw();
 
-			//DrawWindowDebugPoints()
+			DrawWindowDebugPoints();
 			//DrawFPS();
 
 			base.Draw(time);

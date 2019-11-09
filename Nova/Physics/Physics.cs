@@ -34,7 +34,7 @@ namespace Nova.PhysicsEngine {
 
 		// Debug properties
 		public static readonly Color ColliderDrawColor = Color.LimeGreen;
-		public static bool DebugDrawColliders = true;
+		public static bool DebugDrawColliders = false;
 
 		// Physic Object Lists
 		public static readonly List<BoxCollider> AllColliders = new List<BoxCollider>();
