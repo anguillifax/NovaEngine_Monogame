@@ -64,8 +64,9 @@
     <Compile Include="Nova\Graphics\SpriteRenderer.cs" />
     <Compile Include="Nova\GUI\Element.cs" />
     <Compile Include="Nova\GUI\Text\Font.cs" />
-    <Compile Include="Nova\GUI\Text\FontString.cs" />
-    <Compile Include="Nova\GUI\Text\RichFontString.cs" />
+    <Compile Include="Nova\GUI\Text\FontText.cs" />
+    <Compile Include="Nova\GUI\Text\IFontString.cs" />
+    <Compile Include="Nova\GUI\Text\RichText.cs" />
     <Compile Include="Nova\Util\FloatRect.cs" />
     <Compile Include="Nova\GUI\GuiElement.cs" />
     <Compile Include="Nova\GUI\GuiManager.cs" />

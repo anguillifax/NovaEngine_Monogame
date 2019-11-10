@@ -14,7 +14,7 @@ namespace Nova {
 
 	public class QuickTest {
 
-		FontString fontString1;
+		IDrawableText fontString1;
 
 		public void Init() {
 
@@ -22,9 +22,7 @@ namespace Nova {
 
 		public void LoadContent() {
 			Font font = new Font(@"C:\Users\Bryan\Desktop\BM Font\RobotoBold.xml");
-			Console.WriteLine("Loaded font " + font.Name);
-
-			fontString1 = new FontString(font, File.ReadAllText(@"C:\Users\Bryan\Desktop\tmp.txt"));
+			fontString1 = new RichText(font, 700, File.ReadAllText(@"C:\Users\Bryan\Desktop\tmp.txt"));
 		}
 
 		public void Update() {

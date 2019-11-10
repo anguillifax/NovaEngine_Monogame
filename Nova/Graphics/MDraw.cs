@@ -36,7 +36,7 @@ namespace Nova {
 			//SpriteBatch.Draw(TexturePixel, Screen.Size - new Vector2(1), null, Color.Cyan, 0, new Vector2(0), new Vector2(1), SpriteEffects.None, 0);
 			//SpriteBatch.Draw(TexturePixel, Screen.Size - new Vector2(0.5f), null, Color.Red, 0, new Vector2(0), new Vector2(1), SpriteEffects.None, 0);
 
-			SpriteBatch.Draw(TexturePoint, new Vector2(2), null, Color.Gray, 0 * MathHelper.PiOver2, origin: new Vector2(0), scale: new Vector2(1, 5), SpriteEffects.None, 0);
+			//SpriteBatch.Draw(TexturePoint, new Vector2(2), null, Color.Gray, 0 * MathHelper.PiOver2, origin: new Vector2(0), scale: new Vector2(1, 5), SpriteEffects.None, 0);
 
 			End();
 
