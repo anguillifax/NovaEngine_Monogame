@@ -40,7 +40,7 @@ namespace Nova {
 		}
 
 		public void CalculateScale() {
-			ScaleFactor = Screen.Height / Engine.ScreenSizeInPixels.Y;
+			ScaleFactor = (float)Screen.Height / Engine.ScreenSizeInPixels.Y;
 		}
 
 		/// <summary>

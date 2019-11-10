@@ -17,3 +17,6 @@ dotnet_diagnostic.CS0219.severity = none
 
 # RCS1037: Remove trailing white-space.
 dotnet_diagnostic.RCS1037.severity = none
+
+# RCS1146: Use conditional access.
+dotnet_diagnostic.RCS1146.severity = none

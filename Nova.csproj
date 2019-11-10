@@ -65,7 +65,11 @@
     <Compile Include="Nova\GUI\GuiBounds.cs" />
     <Compile Include="Nova\GUI\GuiElement.cs" />
     <Compile Include="Nova\GUI\GuiManager.cs" />
+    <Compile Include="Nova\GUI\GuiStack.cs" />
+    <Compile Include="Nova\GUI\GuiStateMachine.cs" />
     <Compile Include="Nova\GUI\TestGuiElement.cs" />
+    <Compile Include="Nova\GUI\TestSlowPanel.cs" />
+    <Compile Include="Nova\GUI\TestGuiElement2.cs" />
     <Compile Include="Nova\Hierarchy\Component.cs" />
     <Compile Include="Nova\GUI\DebugPanels\PanelRebindGamepad.cs" />
     <Compile Include="Nova\GUI\DebugPanels\PanelRebindInputSources.cs" />

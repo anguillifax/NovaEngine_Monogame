@@ -125,7 +125,6 @@ namespace Nova {
 		}
 
 		public static void DrawShapeGlobal(Color color, params Vector2[] points) {
-			Console.WriteLine(points.ToPrettyString());
 			DrawLineGlobal(points[0], points[points.Length - 1], color);
 			for (int i = 0; i < points.Length - 1; i++) {
 				DrawLineGlobal(points[i], points[i + 1], color);

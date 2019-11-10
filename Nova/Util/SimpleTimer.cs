@@ -82,8 +82,8 @@ namespace Nova {
 			Current = 0;
 		}
 
-		public void Update(bool draw = false) {
-			Update(draw ? Time.DrawDeltaTime : Time.DeltaTime);
+		public void Update(bool useDrawDeltaTime = false) {
+			Update(useDrawDeltaTime ? Time.DrawDeltaTime : Time.DeltaTime);
 		}
 
 		public void Update(float delta) {

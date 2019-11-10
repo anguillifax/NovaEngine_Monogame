@@ -7,13 +7,19 @@ namespace Nova.Gui {
 
 	public class TestGuiElement : GuiElement {
 
-		public override Type GetNext() {
-			return null;
+		protected override bool NextElementSelector(GuiElement element) {
+			if (InputManager.Any.Attack.JustPressed) {
+
+				return element is TestGuiElement2;
+
+			}
+
+			return false;
 		}
 
 		public override void Resize() {
 			Bounds.SetBounds(Screen.Height / 2, 0, 0, Screen.Width / 2);
-			Console.WriteLine($"resized to {Bounds}");
+			Console.WriteLine($"[1] resized to {Bounds}");
 		}
 
 		public override void Draw() {

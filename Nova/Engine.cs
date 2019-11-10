@@ -247,6 +247,8 @@ namespace Nova {
 		public static float WidescreenRatio { get { return 16f / 9; } }
 		public static Viewport Viewport { get; private set; }
 
+		public static event EventHandler<EventArgs> OnResolutionChanged;
+
 		private void UpdateViewport() {
 
 			var dimensions = GetDimensions(Window.ClientBounds);
@@ -270,6 +272,8 @@ namespace Nova {
 			}
 
 			MDraw.Camera.CalculateScale();
+
+			OnResolutionChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 	}
