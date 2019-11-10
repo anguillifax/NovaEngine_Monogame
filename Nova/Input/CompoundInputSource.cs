@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nova.Util;
+using System;
 using System.Collections.Generic;
 
 namespace Nova.Input {

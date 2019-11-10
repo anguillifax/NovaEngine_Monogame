@@ -23,6 +23,25 @@ namespace Nova {
 		public const int DepthStartGUI = 100;
 		public const int DepthStartScene = 200;
 
+		private static Texture2D TextureTest;
+
+		public static void Test() {
+
+			Begin();
+
+			//SpriteBatch.Draw(TexturePixel, new Vector2(0), null, Color.Yellow, 0, new Vector2(0), new Vector2(1), SpriteEffects.None, 0);
+			//SpriteBatch.Draw(TexturePixel, new Vector2(1), null, Color.Cyan, 0, new Vector2(0), new Vector2(1), SpriteEffects.None, 0);
+
+			//SpriteBatch.Draw(TexturePixel, Screen.Size, null, Color.Yellow, 0, new Vector2(0), new Vector2(1), SpriteEffects.None, 0);
+			//SpriteBatch.Draw(TexturePixel, Screen.Size - new Vector2(1), null, Color.Cyan, 0, new Vector2(0), new Vector2(1), SpriteEffects.None, 0);
+			//SpriteBatch.Draw(TexturePixel, Screen.Size - new Vector2(0.5f), null, Color.Red, 0, new Vector2(0), new Vector2(1), SpriteEffects.None, 0);
+
+			SpriteBatch.Draw(TexturePoint, new Vector2(2), null, Color.Gray, 0 * MathHelper.PiOver2, origin: new Vector2(0), scale: new Vector2(1, 5), SpriteEffects.None, 0);
+
+			End();
+
+		}
+
 		public static void Initialize() {
 			SpriteBatch = new SpriteBatch(Engine.Instance.GraphicsDevice);
 
@@ -42,6 +61,13 @@ namespace Nova {
 				colors[i] = Color.White;
 			}
 			TexturePoint.SetData(colors);
+
+			TextureTest = new Texture2D(Engine.Instance.GraphicsDevice, 720, 720);
+			var cols = new Color[TextureTest.Width * TextureTest.Height];
+			for (int i = 0; i < cols.Length; i++) {
+				cols[i] = Color.White;
+			}
+			TextureTest.SetData(cols);
 		}
 
 		public static void Begin() {
@@ -52,7 +78,7 @@ namespace Nova {
 			SpriteBatch.End();
 		}
 
-		private static float GetDepth(int depth) {
+		public static float GetDepth(int depth) {
 			return depth / 1000f;
 		}
 
@@ -60,6 +86,10 @@ namespace Nova {
 
 		public static void Draw(Texture2D texture, int depth, Vector2 position, float rotation, Vector2 origin, Vector2 scale) {
 			SpriteBatch.Draw(texture, Camera.PositionToGlobal(position), null, Color.White, rotation, origin, Camera.ScaleTextureToGlobal(scale), SpriteEffects.None, GetDepth(depth));
+		}
+
+		public static void DrawGlobal(Texture2D texture, Vector2 position, Rectangle? sourceRect, Color color, float rotation, Vector2 origin, Vector2 scale, int depth) {
+			SpriteBatch.Draw(texture, position, sourceRect, color, rotation, origin, scale, SpriteEffects.None, GetDepth(depth));
 		}
 
 		public static void DrawGlobal(Texture2D texture, Vector2 position, float rotation, Vector2 origin, Vector2 scale) {
@@ -95,8 +125,8 @@ namespace Nova {
 			if (d.LengthSquared() < 1) return;
 			float angle = -MathHelper.PiOver2 + (float)Math.Atan2(d.Y, d.X);
 			Vector2 scale = new Vector2(1, (int)d.Length());
-			SpriteBatch.Draw(TexturePixel, origin, null, color, angle, new Vector2(0.5f, 0), scale, SpriteEffects.None, GetDepth(2));
-			SpriteBatch.Draw(TexturePixel, origin + Vector2.One, null, ShadowColor, angle, new Vector2(0.5f, 0), scale, SpriteEffects.None, GetDepth(3));
+			SpriteBatch.Draw(TexturePixel, origin, null, color, angle, new Vector2(0, 0), scale, SpriteEffects.None, GetDepth(2));
+			SpriteBatch.Draw(TexturePixel, origin + Vector2.One, null, ShadowColor, angle, new Vector2(0, 0), scale, SpriteEffects.None, GetDepth(3));
 		}
 
 		public static void DrawRay(Vector2 origin, Vector2 magnitude, Color color) {
@@ -108,8 +138,8 @@ namespace Nova {
 		}
 
 		public static void DrawPointGlobal(Vector2 pos, Color color) {
-			SpriteBatch.Draw(TexturePoint, pos, null, color, 0, new Vector2(1.5f, 1.5f), Vector2.One, SpriteEffects.None, GetDepth(0));
-			SpriteBatch.Draw(TexturePoint, pos + Vector2.One, null, ShadowColor, 0, new Vector2(1.5f, 1.5f), Vector2.One, SpriteEffects.None, GetDepth(1));
+			SpriteBatch.Draw(TexturePoint, pos, null, color, 0, new Vector2(1, 1), Vector2.One, SpriteEffects.None, GetDepth(0));
+			SpriteBatch.Draw(TexturePoint, pos + Vector2.One, null, ShadowColor, 0, new Vector2(1, 1), Vector2.One, SpriteEffects.None, GetDepth(1));
 		}
 
 		public static void DrawPoint(Vector2 pos, Color color) {
@@ -117,7 +147,6 @@ namespace Nova {
 		}
 
 		public static void DrawShapeGlobal(Color color, params Vector2[] points) {
-			Console.WriteLine(points.ToPrettyString());
 			DrawLineGlobal(points[0], points[points.Length - 1], color);
 			for (int i = 0; i < points.Length - 1; i++) {
 				DrawLineGlobal(points[i], points[i + 1], color);
@@ -133,7 +162,7 @@ namespace Nova {
 			DrawShapeGlobal(color, tl, tr, br, bl);
 		}
 
-		public static void DrawRectGlobal(Rect rect, Color color) {
+		public static void DrawRectGlobal(FloatRect rect, Color color) {
 			DrawShapeGlobal(color, rect.TopLeft, rect.TopRight, rect.BottomRight, rect.BottomLeft);
 		}
 

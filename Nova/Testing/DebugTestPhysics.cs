@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Nova.Input;
 using Nova.PhysicsEngine;
+using Nova.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,8 +19,8 @@ namespace Nova {
 
 		public float speed = 1f;
 
-		BoxCollider b1;
-		BoxCollider b2;
+		//BoxCollider b1;
+		//BoxCollider b2;
 
 		AABB mainA;
 		AABB altA, altB;
@@ -79,8 +80,8 @@ namespace Nova {
 
 		}
 
-		Vector2 slideDelta;
-		Vector2 normal;
+		//Vector2 slideDelta;
+		//Vector2 normal;
 
 		private void CustomUpdate() {
 			mainA.Position = vel2;
@@ -101,7 +102,7 @@ namespace Nova {
 			mainA.Draw(Color.Orchid);
 			altA.Draw(Color.Yellow);
 			altB.Draw(Color.Yellow);
-			mainA.Draw(slideDelta, Color.Cyan);
+			//mainA.Draw(slideDelta, Color.Cyan);
 
 			base.Draw();
 		}

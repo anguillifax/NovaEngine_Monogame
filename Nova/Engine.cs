@@ -201,9 +201,9 @@ namespace Nova {
 			Time.UpdateDraw(time);
 
 			if (CurrentScene != null) {
-				MDraw.Begin();
-				CurrentScene.Draw();
-				MDraw.End();
+				//MDraw.Begin();
+				//CurrentScene.Draw();
+				//MDraw.End();
 			}
 
 			//Physics.Draw();
@@ -258,12 +258,12 @@ namespace Nova {
 			float ratio = (float)dimensions.X / dimensions.Y;
 
 			if (ratio > WidescreenRatio) {
-				var optimalDimensions = new Point((int)(dimensions.Y * WidescreenRatio), dimensions.Y);
+				var optimalDimensions = new Point(Calc.RoundToInt(dimensions.Y * WidescreenRatio), dimensions.Y);
 				int leftEdge = (dimensions.X - optimalDimensions.X) / 2;
 				Viewport = new Viewport(leftEdge, 0, optimalDimensions.X, optimalDimensions.Y, 0, 1);
 
 			} else if (ratio < WidescreenRatio) {
-				var optimalDimensions = new Point(dimensions.X, (int)(dimensions.X / WidescreenRatio));
+				var optimalDimensions = new Point(dimensions.X, Calc.RoundToInt(dimensions.X / WidescreenRatio));
 				int topEdge = (dimensions.Y - optimalDimensions.Y) / 2;
 				Viewport = new Viewport(0, topEdge, optimalDimensions.X, optimalDimensions.Y, 0, 1);
 

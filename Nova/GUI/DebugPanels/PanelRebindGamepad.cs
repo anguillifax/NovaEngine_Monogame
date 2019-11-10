@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Nova.Input;
+using Nova.Util;
 using System.Collections.Generic;
 
 namespace Nova.Gui {

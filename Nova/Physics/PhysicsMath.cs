@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Nova.Linq;
+using Nova.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;

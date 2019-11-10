@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.IO;
+using System.Xml;
 
 namespace Nova {
 
@@ -13,7 +14,7 @@ namespace Nova {
 			Directory.CreateDirectory(Path.GetDirectoryName(path));
 
 			using (var sw = new StreamWriter(path)) {
-				sw.Write(JsonConvert.SerializeObject(obj, Formatting.Indented));
+				sw.Write(JsonConvert.SerializeObject(obj, Newtonsoft.Json.Formatting.Indented));
 			}
 
 		}
@@ -24,6 +25,21 @@ namespace Nova {
 
 			using (var sr = new StreamReader(path)) {
 				return JsonConvert.DeserializeObject<T>(sr.ReadToEnd());
+			}
+
+		}
+
+		public static XmlDocument ReadXml(string path) {
+
+			if (File.Exists(path)) {
+
+				XmlDocument doc = new XmlDocument();
+				doc.LoadXml(File.ReadAllText(path));
+
+				return doc;
+
+			} else {
+				throw new FileNotFoundException();
 			}
 
 		}

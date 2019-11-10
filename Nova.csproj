@@ -63,7 +63,10 @@
     <Compile Include="Nova\Graphics\Screen.cs" />
     <Compile Include="Nova\Graphics\SpriteRenderer.cs" />
     <Compile Include="Nova\GUI\Element.cs" />
-    <Compile Include="Nova\Util\Rect.cs" />
+    <Compile Include="Nova\GUI\Text\Font.cs" />
+    <Compile Include="Nova\GUI\Text\FontString.cs" />
+    <Compile Include="Nova\GUI\Text\RichFontString.cs" />
+    <Compile Include="Nova\Util\FloatRect.cs" />
     <Compile Include="Nova\GUI\GuiElement.cs" />
     <Compile Include="Nova\GUI\GuiManager.cs" />
     <Compile Include="Nova\GUI\GuiStack.cs" />
@@ -133,6 +136,7 @@
     <Compile Include="Nova\Input\VirtualButton.cs" />
     <Compile Include="Nova\Program.cs" />
     <Compile Include="Nova\Testing\TestPlayer.cs" />
+    <Compile Include="Nova\Util\XmlExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -148,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Arial.fx" />
+    <Content Include="Content\Fonts\RobotoBold_0.png" />
     <Content Include="Content\Images\arrow.png" />
     <Content Include="Content\Images\bg1.jpg" />
     <Content Include="Content\Images\bullet.png" />

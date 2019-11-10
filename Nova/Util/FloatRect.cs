@@ -1,11 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
+using Nova.Util;
 
 namespace Nova {
 
 	/// <summary>
-	/// Represents a rectangle in space. Stored in Position-Size format.
+	/// Represents a rectangle in space. Stored in Position-Size format in floating point.
 	/// </summary>
-	public class Rect {
+	public class FloatRect {
 
 		public Vector2 Position { get; set; }
 		public Vector2 Size { get; set; }
@@ -33,27 +34,31 @@ namespace Nova {
 		public Vector2 CenterTop => new Vector2(HorzCenter, Top);
 		public Vector2 CenterBottom => new Vector2(HorzCenter, Bottom);
 
+		public Rectangle ToRectangle() {
+			return new Rectangle(Position.RoundToPoint(), Size.RoundToPoint());
+		}
+
 
 		/// <summary>
 		/// Creates a temporary rectangle at 0,0 with size 100,100
 		/// </summary>
-		public Rect() :
+		public FloatRect() :
 			this(0, 0, 100, 100) {
 		}
 
-		public Rect(Rect other) {
+		public FloatRect(FloatRect other) {
 			Set(other);
 		}
 
-		public Rect(float posX, float posY, float sizeX, float sizeY) :
+		public FloatRect(float posX, float posY, float sizeX, float sizeY) :
 			this(new Vector2(posX, posY), new Vector2(sizeX, sizeY)) {
 		}
 
-		public Rect(Vector2 position, Vector2 size) {
+		public FloatRect(Vector2 position, Vector2 size) {
 			Set(position, size);
 		}
 
-		public void Set(Rect other) {
+		public void Set(FloatRect other) {
 			Position = other.Position;
 			Size = other.Size;
 		}

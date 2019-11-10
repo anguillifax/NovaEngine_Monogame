@@ -11,7 +11,7 @@ namespace Nova {
 
 		public static Vector2 Center => Size / 2;
 
-		public static Rect Rect => new Rect(Vector2.Zero, Size);
+		public static FloatRect Rect => new FloatRect(Vector2.Zero, Size);
 
 		public static void Update() {
 		}

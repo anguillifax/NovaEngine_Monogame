@@ -7,6 +7,9 @@ namespace Nova.Gui {
 
 	public static class ElementUtil {
 
+		/// <summary>
+		/// Set the parent and children fields of given elements.
+		/// </summary>
 		public static void Adopt(Element parent, params Element[] children) {
 			parent.AddChildren(children);
 			foreach (var child in children) {
@@ -25,9 +28,9 @@ namespace Nova.Gui {
 			Children.AddRange(children);
 		}
 
-		public Rect Rect { get; }
+		public FloatRect Rect { get; }
 
-		public Element(Rect rect) {
+		public Element(FloatRect rect) {
 			Children = new List<Element>();
 			Rect = rect;
 		}
@@ -83,10 +86,10 @@ namespace Nova.Gui {
 		/// <summary>
 		/// Get Rect for this element given parent element rect.
 		/// </summary>
-		public Func<Rect, Rect> GetRect { get; set; }
+		public Func<FloatRect, FloatRect> GetRect { get; set; }
 
-		public RegionElement(Func<Rect, Rect> getRect) :
-			base(new Rect()) {
+		public RegionElement(Func<FloatRect, FloatRect> getRect) :
+			base(new FloatRect()) {
 			GetRect = getRect;
 		}
 
