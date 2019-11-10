@@ -78,7 +78,7 @@ namespace Nova.Gui {
 
 		private void UpdateNextElement() {
 
-			for (int i = 0; i < Stack.Count; i++) {
+			for (int i = 0; i < 1; i++) {
 
 				GuiElement current = Stack[i];
 

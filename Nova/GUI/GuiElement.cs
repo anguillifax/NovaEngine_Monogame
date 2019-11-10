@@ -7,7 +7,7 @@ namespace Nova.Gui {
 
 	public abstract class GuiElement {
 
-		public GuiBounds Bounds { get; }
+		public Rect Bounds { get; }
 		public bool IsExiting { get; protected set; }
 
 		/// <summary>
@@ -23,7 +23,7 @@ namespace Nova.Gui {
 		public abstract void Resize();
 
 		protected GuiElement() {
-			Bounds = new GuiBounds(0, 100, 0, 100);
+			Bounds = new Rect(0, 100, 0, 100);
 		}
 
 		/// <summary>

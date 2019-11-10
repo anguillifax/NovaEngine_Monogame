@@ -62,7 +62,8 @@
     <Compile Include="Nova\Graphics\IRenderer.cs" />
     <Compile Include="Nova\Graphics\Screen.cs" />
     <Compile Include="Nova\Graphics\SpriteRenderer.cs" />
-    <Compile Include="Nova\GUI\GuiBounds.cs" />
+    <Compile Include="Nova\GUI\Element.cs" />
+    <Compile Include="Nova\Util\Rect.cs" />
     <Compile Include="Nova\GUI\GuiElement.cs" />
     <Compile Include="Nova\GUI\GuiManager.cs" />
     <Compile Include="Nova\GUI\GuiStack.cs" />

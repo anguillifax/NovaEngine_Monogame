@@ -8,20 +8,38 @@ namespace Nova.Gui {
 
 	public static class GuiManager {
 
+		public static RootElement Root { get; private set; }
+
 		public static GuiStateMachine StateManager { get; private set; }
 
 		internal static void Init() {
-			StateManager = new GuiStateMachine(new TestGuiElement(), new TestGuiElement2(), new TestSlowPanel());
-			StateManager.ClearAndSetCurrent(StateManager.AllElements[0]);
+			//StateManager = new GuiStateMachine(new TestGuiElement(), new TestGuiElement2(), new TestSlowPanel());
+			//StateManager.ClearAndSetCurrent(StateManager.AllElements[0]);
+
+
+			Root = new RootElement();
+
+			var halfLeft = new RegionElement(
+				(x) => new Rect(x.Position, new Vector2(x.Size.X * 0.5f, x.Size.Y)));
+
+			var miniRight = new RegionElement(
+				(x) => new Rect(x.Position.X + x.Size.X / 2, x.Position.Y + x.Size.Y / 2, x.Size.X / 4 + 40, x.Size.Y / 4 + 40));
+
+			ElementUtil.Adopt(Root, halfLeft, miniRight);
+
 		}
 
 		internal static void Update() {
-			StateManager.Update();
+			Root.Resize();
+			Root.Update();
+			Console.WriteLine();
+			//StateManager.Update();
 		}
 
 		internal static void Draw() {
 			MDraw.Begin();
-			StateManager.Draw();
+			Root.Draw();
+			//StateManager.Draw();
 			MDraw.End();
 		}
 

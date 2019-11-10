@@ -214,7 +214,7 @@ namespace Nova {
 
 			quickTest.Draw();
 
-			DrawWindowDebugPoints();
+			//DrawWindowDebugPoints();
 			//DrawFPS();
 
 			base.Draw(time);

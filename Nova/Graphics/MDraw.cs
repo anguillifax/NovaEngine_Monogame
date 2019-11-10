@@ -56,14 +56,6 @@ namespace Nova {
 			return depth / 1000f;
 		}
 
-		#region Transforms
-
-		private static Vector2 ToScreen(Vector2 global) {
-			return new Vector2(global.X, Screen.Height - global.Y);
-		}
-
-		#endregion
-
 		#region Draw Methods
 
 		public static void Draw(Texture2D texture, int depth, Vector2 position, float rotation, Vector2 origin, Vector2 scale) {
@@ -125,6 +117,7 @@ namespace Nova {
 		}
 
 		public static void DrawShapeGlobal(Color color, params Vector2[] points) {
+			Console.WriteLine(points.ToPrettyString());
 			DrawLineGlobal(points[0], points[points.Length - 1], color);
 			for (int i = 0; i < points.Length - 1; i++) {
 				DrawLineGlobal(points[i], points[i + 1], color);
@@ -140,10 +133,8 @@ namespace Nova {
 			DrawShapeGlobal(color, tl, tr, br, bl);
 		}
 
-		public static void DrawBoxScreen(Vector2 topLeft, Vector2 bottomRight, Color color) {
-			Vector2 topRight = new Vector2(bottomRight.X, topLeft.Y);
-			Vector2 bottomLeft = new Vector2(topLeft.X, bottomRight.Y);
-			DrawShapeGlobal(color, ToScreen(topLeft), ToScreen(topRight), ToScreen(bottomRight), ToScreen(bottomLeft));
+		public static void DrawRectGlobal(Rect rect, Color color) {
+			DrawShapeGlobal(color, rect.TopLeft, rect.TopRight, rect.BottomRight, rect.BottomLeft);
 		}
 
 		public static void DrawBox(Vector2 tl, Vector2 tr, Vector2 bl, Vector2 br, Color color) {
