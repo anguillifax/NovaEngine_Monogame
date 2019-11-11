@@ -27,7 +27,22 @@ namespace Nova.Gui.Text {
 
 			for (int i = 0; i < text.Length; i++) {
 
-				if (IsSeparator(text[i])) {
+				Console.WriteLine(text[i]);
+
+				if (text[i] == ' ' || text[i] == '\t' || text[i] == '\n') {
+
+					if (curLine.Count + curWord.Count == 0) {
+
+						if (text[i] == '\n') {
+							Console.WriteLine("Added empty line");
+							lines.Add(new List<FontCharacter>());
+						}
+
+						Console.WriteLine("Skipping whitespace as first character");
+						continue;
+					}
+
+					Console.WriteLine("Split and write: " + curWord.ToPrettyString(x => x.Character.ToString()));
 
 					curLine.AddRange(curWord);
 					curLineWidth += curWordWidth;
@@ -36,12 +51,10 @@ namespace Nova.Gui.Text {
 					curWordWidth = 0;
 
 					if (text[i] == '\n') {
-
+						Console.WriteLine("Newline character");
 						lines.Add(curLine);
-
 						curLine = new List<FontCharacter>();
 						curLineWidth = 0;
-
 					}
 
 				}
@@ -56,9 +69,12 @@ namespace Nova.Gui.Text {
 					curWord.Add(fontChar);
 
 					if (curLineWidth + curWordWidth > maxPixelWidth) {
+
+						// Trim front whitespace.
+
 						Console.WriteLine();
 						Console.WriteLine($"Too long! Line would be {curLineWidth + curWordWidth} by adding {curWordWidth}");
-						Console.WriteLine($"Added {curLine.ToPrettyString((x) => x.Character.ToString())} to final lines.");
+						Console.WriteLine($"Added {curLine.ToPrettyString(x => x.Character.ToString())} to final lines.");
 						Console.WriteLine();
 
 						lines.Add(curLine);
@@ -66,16 +82,6 @@ namespace Nova.Gui.Text {
 						curLine = new List<FontCharacter>();
 						curLineWidth = 0;
 
-					}
-
-				}
-
-				if (curLineWidth == 0) {
-
-					while (curWord.Count > 1 && curWord[0].Character == ' ') {
-						curWordWidth -= curWord[0].XAdvance + Font.GetKerning(curWord[0].Character, curWord[1].Character);
-						Console.WriteLine("removing " + curWord[0]);
-						curWord.RemoveAt(0);
 					}
 
 				}
@@ -92,10 +98,6 @@ namespace Nova.Gui.Text {
 
 			FontDraw = new FontDraw(font, lines);
 
-		}
-
-		private bool IsSeparator(char c) {
-			return c == ' ' || c == ',' || c == '\n';
 		}
 
 		public void Draw(Vector2 position, Color color, int depth) {

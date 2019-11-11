@@ -20,3 +20,6 @@ dotnet_diagnostic.RCS1037.severity = none
 
 # RCS1146: Use conditional access.
 dotnet_diagnostic.RCS1146.severity = none
+
+# RCS1124: Inline local variable.
+dotnet_diagnostic.RCS1124.severity = none

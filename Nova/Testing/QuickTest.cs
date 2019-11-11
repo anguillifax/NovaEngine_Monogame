@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 
 namespace Nova {
@@ -22,7 +23,7 @@ namespace Nova {
 
 		public void LoadContent() {
 			Font font = new Font(@"C:\Users\Bryan\Desktop\BM Font\RobotoBold.xml");
-			fontString1 = new RichText(font, 700, File.ReadAllText(@"C:\Users\Bryan\Desktop\tmp.txt"));
+			string text = File.ReadAllText(@"C:\Users\Bryan\Desktop\tmp.txt");
 		}
 
 		public void Update() {
@@ -31,7 +32,7 @@ namespace Nova {
 
 		public void Draw() {
 			MDraw.Begin();
-			fontString1.Draw(new Vector2(30, Screen.Height / 3), Color.MonoGameOrange, MDraw.DepthStartGUI + 20);
+			fontString1?.Draw(new Vector2(30, Screen.Height / 3), Color.MonoGameOrange, MDraw.DepthStartGUI + 20);
 			MDraw.End();
 		}
 
