@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Nova")]
-[assembly: AssemblyProduct("Nova")]
+[assembly: AssemblyTitle("Nova Engine")]
+[assembly: AssemblyProduct("Nova Engine")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDescription("Monogame Nova Engine")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Anguillifax Studios")]
 [assembly: AssemblyCopyright("Copyright © Anguillifax 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
