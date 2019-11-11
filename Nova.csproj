@@ -70,6 +70,7 @@
     <Compile Include="Nova\GUI\Text\FontString.cs" />
     <Compile Include="Nova\GUI\Text\IDrawableText.cs" />
     <Compile Include="Nova\GUI\Text\RichText.cs" />
+    <Compile Include="Nova\GUI\Text\TextPreprocessor.cs" />
     <Compile Include="Nova\GUI\Text\TextSplitter.cs" />
     <Compile Include="Nova\Util\FloatRect.cs" />
     <Compile Include="Nova\GUI\GuiElement.cs" />

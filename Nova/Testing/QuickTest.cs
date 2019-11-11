@@ -19,11 +19,10 @@ namespace Nova {
 		Font font;
 		string text;
 
-		int width = 300;
+		float width = 300;
 		int height = 0;
 
 		public void Init() {
-
 		}
 
 		public void LoadContent() {
@@ -34,7 +33,7 @@ namespace Nova {
 
 		public void Update() {
 
-			width += (int)(10 * InputManager.Any.Horizontal.Value);
+			width += 300 * Time.DeltaTime * InputManager.Any.Horizontal.Value;
 
 			if (InputManager.Any.Horizontal.Value != 0) {
 				CreateText();
@@ -43,7 +42,7 @@ namespace Nova {
 		}
 
 		void CreateText() {
-			var lines = TextSplitter.SplitText(font, text, width);
+			var lines = TextSplitter.SplitText(font, TextPreprocessor.PreprocessBasic(text), (int)width);
 			fontText = new FontDraw(font, lines);
 			height = font.LineHeight * lines.Count;
 		}
@@ -54,9 +53,9 @@ namespace Nova {
 			if (fontText != null) {
 
 				MDraw.Begin();
-				Vector2 pos = new Vector2(30, Screen.Height / 3);
+				Vector2 pos = new Vector2(30, 50);
 
-				MDraw.DrawBoxGlobalMinMax(pos, pos + new Vector2(width, height), Color.Gray);
+				MDraw.DrawBoxGlobalMinMax(pos, pos + new Vector2((int)width, height), Color.Gray);
 				fontText.Draw(pos, Color.MonoGameOrange, MDraw.DepthStartGUI + 20);
 				MDraw.End();
 

@@ -21,7 +21,7 @@ namespace Nova {
 		public QuickTest quickTest;
 
 		public const int TileSize = 7;
-		public const float FrameRate = 30;
+		public const float FrameRate = 60;
 		public static readonly Point ScreenSizeInTiles = new Point(36 / 2, 20 / 2);
 		public static readonly Point ScreenSizeInPixels = new Point(TileSize * ScreenSizeInTiles.X, TileSize * ScreenSizeInTiles.Y);
 

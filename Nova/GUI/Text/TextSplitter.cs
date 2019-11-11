@@ -23,7 +23,7 @@ namespace Nova.Gui.Text {
 			}
 		}
 
-		public static readonly Regex RegexSplit = new Regex(@"\S+|\n|[ \t]+");
+		public static readonly Regex RegexSplit = new Regex(@"\S+|\n|[ ]+");
 
 		public static FontMultistring SplitText(Font font, string str, int maxWidth) {
 
@@ -51,58 +51,37 @@ namespace Nova.Gui.Text {
 
 			foreach (var frag in fragments) {
 
-				//System.Console.WriteLine($"Width {lineWidth}:\t{frag}");
 
 				if (frag.Literal == "\n") {
-					System.Console.WriteLine("NEWLINE");
 					output.Add(line);
 					line = new FontString();
 					lineWidth = 0;
 
 				} else if (frag.Width > maxWidth) {
 
-					//if (lineWidth != 0) {
-					//	output.Add(line);
-					//	line = new FontString();
-					//}
-
-					//for (int i = 0; i < frag.Characters.Count; i++) {
-
-					//	for (int j = 0; j < frag.Characters.Count - i; j++) {
-
-					//		var sub = frag.Characters.SubString(i, j);
-					//		if (sub.GetWidth(font) > maxWidth) {
-					//			output.Add(frag.Characters.SubString(i, j - 1));
-					//			i = j;
-					//			break;
-					//		}
-
-					//	}
-					//}
+					output.Add(line);
+					output.AddRange(SplitFragment(font, frag.Characters, maxWidth, out line));
+					lineWidth = line.GetWidth(font);
 
 				} else {
 
-					if (lineWidth == 0 && string.IsNullOrWhiteSpace(frag.Literal)) {
-
-						System.Console.WriteLine("Skipping fragment: " + frag);
-						// Don't add empty space to front of line.		
+					if (lineWidth + frag.Width <= maxWidth) {
+						// Line has space for current fragment. Add line and continue to next fragment.
+						line.Add(frag.Characters);
+						lineWidth += frag.Width;
 
 					} else {
+						// Adding fragment will make current line too long. Split line.
+						output.Add(line);
 
-						if (lineWidth + frag.Width <= maxWidth) {
-							line.Add(frag.Characters);
-							lineWidth += frag.Width;
-
-						} else {
-							output.Add(line);
-
-							System.Console.WriteLine("split line when reading " + frag);
-							System.Console.WriteLine("CONTENTS\n" + output);
-							System.Console.WriteLine();
-
+						if (!string.IsNullOrWhiteSpace(frag.Literal)) {
+							// The fragment contains actual text. Write text immediately.
 							line = new FontString(frag.Characters);
 							lineWidth = frag.Width;
-
+						} else {
+							// The fragment was whitespace. Make newline but don't write whitespace.
+							line = new FontString();
+							lineWidth = 0;
 						}
 
 					}
@@ -111,10 +90,37 @@ namespace Nova.Gui.Text {
 
 			}
 
-			// Flush current line to output
+			// Flush rest of current line to output
 			output.Add(line);
 
 			return output;
+		}
+
+		private static FontMultistring SplitFragment(Font font, FontString characters, int maxWidth, out FontString newCurrent) {
+
+			FontMultistring output = new FontMultistring();
+			FontString line = new FontString();
+
+			for (int i = 0; i < characters.Count; i++) {
+
+				int xAdvance = characters[i].XAdvance;
+				if (i < characters.Count - 1) {
+					xAdvance += font.GetKerning(characters[i].Character, characters[i + 1].Character);
+				}
+
+				if (line.GetWidth(font) + xAdvance <= maxWidth) {
+					line.Add(characters[i]);
+				} else {
+					output.Add(line);
+					line = new FontString() { characters[i] };
+				}
+
+			}
+
+			newCurrent = line;
+
+			return output;
+
 		}
 
 
