@@ -18,12 +18,12 @@ namespace Nova.Gui.Text {
 
 			maxWidth = maxPixelWidth;
 
-			var lines = new List<List<FontCharacter>>();
+			var lines = new FontMultistring();
 
 			int curLineWidth = 0;
 			int curWordWidth = 0;
-			var curLine = new List<FontCharacter>();
-			var curWord = new List<FontCharacter>();
+			var curLine = new FontString();
+			var curWord = new FontString();
 
 			for (int i = 0; i < text.Length; i++) {
 
@@ -35,7 +35,7 @@ namespace Nova.Gui.Text {
 
 						if (text[i] == '\n') {
 							Console.WriteLine("Added empty line");
-							lines.Add(new List<FontCharacter>());
+							lines.Add(new FontString());
 						}
 
 						Console.WriteLine("Skipping whitespace as first character");
@@ -47,13 +47,13 @@ namespace Nova.Gui.Text {
 					curLine.AddRange(curWord);
 					curLineWidth += curWordWidth;
 
-					curWord = new List<FontCharacter>();
+					curWord = new FontString();
 					curWordWidth = 0;
 
 					if (text[i] == '\n') {
 						Console.WriteLine("Newline character");
 						lines.Add(curLine);
-						curLine = new List<FontCharacter>();
+						curLine = new FontString();
 						curLineWidth = 0;
 					}
 
@@ -79,7 +79,7 @@ namespace Nova.Gui.Text {
 
 						lines.Add(curLine);
 
-						curLine = new List<FontCharacter>();
+						curLine = new FontString();
 						curLineWidth = 0;
 
 					}

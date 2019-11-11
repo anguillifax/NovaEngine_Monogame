@@ -158,8 +158,12 @@ namespace Nova {
 			DrawShapeGlobal(color, points);
 		}
 
-		public static void DrawBoxGlobal(Vector2 tl, Vector2 tr, Vector2 bl, Vector2 br, Color color) {
-			DrawShapeGlobal(color, tl, tr, br, bl);
+		public static void DrawBoxGlobalMinMax(Vector2 topleft, Vector2 bottomRight, Color color) {
+			DrawShapeGlobal(color,
+				topleft,
+				new Vector2(bottomRight.X, topleft.Y),
+				bottomRight,
+				new Vector2(topleft.X, bottomRight.Y));
 		}
 
 		public static void DrawRectGlobal(FloatRect rect, Color color) {
@@ -171,12 +175,7 @@ namespace Nova {
 		}
 
 		public static void DrawBoxGlobal(Vector2 center, Vector2 extents, Color color) {
-			DrawBoxGlobal(
-				center - extents,
-				new Vector2(center.X + extents.X, center.Y - extents.Y),
-				new Vector2(center.X - extents.X, center.Y + extents.Y),
-				center + extents,
-				color);
+			DrawBoxGlobalMinMax(center - extents, center + extents, color);
 		}
 
 		public static void DrawBox(Vector2 center, Vector2 extents, Color color) {
