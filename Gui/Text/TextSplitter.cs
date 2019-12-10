@@ -59,7 +59,9 @@ namespace Nova.Gui.Text {
 
 				} else if (frag.Width > maxWidth) {
 
-					output.Add(line);
+					if (line.Count > 0) {
+						output.Add(line);
+					}
 					output.AddRange(SplitFragment(font, frag.Characters, maxWidth, out line));
 					lineWidth = line.GetWidth(font);
 
