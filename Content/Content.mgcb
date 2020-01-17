@@ -13,7 +13,7 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin Fonts/RobotoBold_0.png
+#begin Fonts/Roboto/RobotoBold_0.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -23,7 +23,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Fonts/RobotoBold_0.png
+/build:Fonts/Roboto/RobotoBold_0.png
 
 #begin Images/Tiles/deep_dirt.png
 /importer:TextureImporter

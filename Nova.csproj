@@ -65,6 +65,10 @@
     <Compile Include="Graphics\Screen.cs" />
     <Compile Include="Graphics\SpriteRenderer.cs" />
     <Compile Include="Gui\Element.cs" />
+    <Compile Include="Gui\GText\Glyph.cs" />
+    <Compile Include="Gui\GText\GlyphData.cs" />
+    <Compile Include="Gui\GText\Font.cs" />
+    <Compile Include="Gui\GText\Typograph.cs" />
     <Compile Include="Gui\Text\Font.cs" />
     <Compile Include="Gui\Text\FontCharacter.cs" />
     <Compile Include="Gui\Text\FontDraw.cs" />
@@ -160,7 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Arial.fx" />
-    <Content Include="Content\Fonts\RobotoBold_0.png" />
+    <Content Include="Content\Fonts\Roboto\RobotoBold_0.png" />
     <Content Include="Content\Images\arrow.png" />
     <Content Include="Content\Images\bg1.jpg" />
     <Content Include="Content\Images\bullet.png" />
