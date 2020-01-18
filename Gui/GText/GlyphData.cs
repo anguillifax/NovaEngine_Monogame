@@ -5,15 +5,15 @@ using System.Collections.Generic;
 
 namespace Nova.Gui.GText {
 
-	public sealed class GlyphData {
+	internal sealed class GlyphData {
 
-		public char Character { get; }
-		public Texture2D TextureSheet { get; }
-		public Rectangle DrawRect { get; }
-		public Point Offset { get; }
-		public int XAdvance { get; }
+		internal char Character { get; }
+		internal Texture2D TextureSheet { get; }
+		internal Rectangle DrawRect { get; }
+		internal Point Offset { get; }
+		internal int XAdvance { get; }
 
-		public GlyphData(char character, Texture2D textureSheet, Rectangle drawRect, Point offset, int xAdvance) {
+		internal GlyphData(char character, Texture2D textureSheet, Rectangle drawRect, Point offset, int xAdvance) {
 			Character = character;
 			TextureSheet = textureSheet;
 			DrawRect = drawRect;

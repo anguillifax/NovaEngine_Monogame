@@ -24,6 +24,7 @@ namespace Nova.Gui.GText {
 			doc.Load(path);
 
 			Name = doc.SelectSingleNode("/font/info").Attributes.GetNamedItem("face").Value;
+			LineHeight = GetInt(doc.SelectSingleNode("/font/common"), "lineHeight");
 
 			texturePages = new Texture2D[doc.SelectSingleNode("/font/pages").ChildNodes.Count];
 			Log($"Found {texturePages.Length} pages");
@@ -50,8 +51,9 @@ namespace Nova.Gui.GText {
 
 			Log($"Loaded {glyphs.Count} characters");
 
-			MissingCharacterGlyph = glyphs[(char)164];
-			Log($"Assigned missing character glyph to [{MissingCharacterGlyph.Character}] ({(int)MissingCharacterGlyph.Character})");
+			// 0xFFFD is the Unicode point for the missing character symbol.
+			MissingCharacterGlyph = glyphs.ContainsKey((char)0xFFFD) ? glyphs[(char)0xFFFD] : glyphs[' '];
+			Log($"Assigned missing character glyph to {MissingCharacterGlyph.Character.GetUnicodePoint()}");
 
 			int kerningCount = GetInt(doc.SelectSingleNode("/font/kernings"), "count");
 			kerningPairs = new Dictionary<string, int>(kerningCount);
@@ -82,7 +84,7 @@ namespace Nova.Gui.GText {
 			if (glyphs.TryGetValue(c, out GlyphData data)) {
 				return new Glyph(data);
 			} else {
-				Log($"Warning: Attempted to load missing character [{c}] ({(int)c})");
+				Log($"Warning: Attempted to load missing character [{c}] {c.GetUnicodePoint()}");
 				return new Glyph(MissingCharacterGlyph);
 			}
 		}

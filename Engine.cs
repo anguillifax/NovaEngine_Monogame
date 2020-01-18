@@ -195,6 +195,7 @@ namespace Nova {
 
 			GraphicsDevice.SetRenderTarget(null);
 			GraphicsDevice.Viewport = Viewport;
+			//GraphicsDevice.Clear(new Color(30, 30, 30));
 			GraphicsDevice.Clear(new Color(5, 5, 5));
 
 			Screen.Update();

@@ -68,16 +68,15 @@
     <Compile Include="Gui\GText\Glyph.cs" />
     <Compile Include="Gui\GText\GlyphData.cs" />
     <Compile Include="Gui\GText\Font.cs" />
+    <Compile Include="Gui\GText\GTextUtil.cs" />
+    <Compile Include="Gui\GText\Span.cs" />
+    <Compile Include="Gui\GText\IToken.cs" />
+    <Compile Include="Gui\GText\Library.cs" />
+    <Compile Include="Gui\GText\Locale.cs" />
+    <Compile Include="Gui\GText\GElements.cs" />
+    <Compile Include="Gui\GText\Spans\NonBreakingSequence.cs" />
     <Compile Include="Gui\GText\Typograph.cs" />
-    <Compile Include="Gui\Text\Font.cs" />
-    <Compile Include="Gui\Text\FontCharacter.cs" />
-    <Compile Include="Gui\Text\FontDraw.cs" />
-    <Compile Include="Gui\Text\BasicText.cs" />
-    <Compile Include="Gui\Text\FontString.cs" />
-    <Compile Include="Gui\Text\IDrawableText.cs" />
-    <Compile Include="Gui\Text\RichText.cs" />
-    <Compile Include="Gui\Text\TextPreprocessor.cs" />
-    <Compile Include="Gui\Text\TextSplitter.cs" />
+    <Compile Include="Gui\GText\TypographData.cs" />
     <Compile Include="Util\FloatRect.cs" />
     <Compile Include="Gui\GuiElement.cs" />
     <Compile Include="Gui\GuiManager.cs" />
@@ -163,31 +162,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\Arial.fx" />
-    <Content Include="Content\Fonts\Roboto\RobotoBold_0.png" />
-    <Content Include="Content\Images\arrow.png" />
-    <Content Include="Content\Images\bg1.jpg" />
-    <Content Include="Content\Images\bullet.png" />
-    <Content Include="Content\Images\cat.png" />
-    <Content Include="Content\Images\Tiles 8px\deep_dirt.png" />
-    <Content Include="Content\Images\Tiles 8px\dirt.png" />
-    <Content Include="Content\Images\Tiles 8px\grass.png" />
-    <Content Include="Content\Images\Tiles 8px\player.png" />
-    <Content Include="Content\Images\Tiles 8px\temple.png" />
-    <Content Include="Content\Images\Tiles\deep_dirt.png" />
-    <Content Include="Content\Images\Tiles\dirt.png" />
-    <Content Include="Content\Images\Tiles\grass.png" />
-    <Content Include="Content\Images\Tiles\player.png" />
-    <Content Include="Content\Images\Tiles\temple.png" />
-    <Content Include="Content\Images\walkingFigure.png" />
     <Content Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <MonoGameContentReference Include="Content\Content.mgcb" />
     <None Include=".editorconfig" />
     <None Include="app.manifest" />
-    <None Include="Content\TinyArial.spritefont" />
-    <None Include="Content\LargeArial.spritefont" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
@@ -196,7 +176,9 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Gui\GText\Tokens\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
