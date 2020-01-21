@@ -53,7 +53,7 @@ namespace Nova.Input {
 		}
 
 		public void RetrieveNewVirtualInputs() {
-			Console.WriteLine("Retrieving new virtual buttons and axes... {0}", Sources.ToPrettyString());
+			//Console.WriteLine("Retrieving new virtual buttons and axes... {0}", Sources.ToPrettyString());
 			foreach (var item in AllButtons) {
 				item.UpdateButtons(Sources);
 			}

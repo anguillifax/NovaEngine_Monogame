@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
-namespace Nova.Gui.GText {
+namespace Nova.Gui.Typography {
 
 	public class Font {
 
@@ -17,6 +17,8 @@ namespace Nova.Gui.GText {
 		private readonly Dictionary<char, GlyphData> glyphs;
 		private readonly Dictionary<string, int> kerningPairs;
 		private readonly GlyphData MissingCharacterGlyph;
+
+		public float ScaleFactor { get; set; }
 
 		public Font(string path) {
 
@@ -67,6 +69,8 @@ namespace Nova.Gui.GText {
 			Log($"Loaded {kerningPairs.Count} kerning pairs");
 
 			Log("Load complete.");
+
+			ScaleFactor = 1f;
 		}
 
 		private int GetInt(XmlNode node, string attributeName) {
@@ -74,7 +78,7 @@ namespace Nova.Gui.GText {
 		}
 
 		private void Log(string s) {
-			Console.WriteLine($"[{Name}] {s}");
+			//Console.WriteLine($"[{Name}] {s}");
 		}
 
 		/// <summary>

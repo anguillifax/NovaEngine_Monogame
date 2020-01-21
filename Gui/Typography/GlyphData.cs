@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 
-namespace Nova.Gui.GText {
+namespace Nova.Gui.Typography {
 
 	internal sealed class GlyphData {
 

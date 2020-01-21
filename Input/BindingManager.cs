@@ -8,7 +8,7 @@ namespace Nova.Input {
 	public static class BindingManager {
 
 		public static readonly string SavePath = Path.Combine(
-			Environment.GetFolderPath(Environment.SpecialFolder.Desktop), @"controls.json");
+			Environment.GetFolderPath(Environment.SpecialFolder.Desktop), @"Nova Engine\controls.json");
 
 		public static CombinedBindingData CurrentBindings;
 		public readonly static KeyboardBindingData DefaultKeyboardBindings;

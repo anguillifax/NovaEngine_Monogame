@@ -65,18 +65,30 @@
     <Compile Include="Graphics\Screen.cs" />
     <Compile Include="Graphics\SpriteRenderer.cs" />
     <Compile Include="Gui\Element.cs" />
-    <Compile Include="Gui\GText\Glyph.cs" />
-    <Compile Include="Gui\GText\GlyphData.cs" />
-    <Compile Include="Gui\GText\Font.cs" />
-    <Compile Include="Gui\GText\GTextUtil.cs" />
-    <Compile Include="Gui\GText\Span.cs" />
-    <Compile Include="Gui\GText\IToken.cs" />
-    <Compile Include="Gui\GText\Library.cs" />
-    <Compile Include="Gui\GText\Locale.cs" />
-    <Compile Include="Gui\GText\GElements.cs" />
-    <Compile Include="Gui\GText\Spans\NonBreakingSequence.cs" />
-    <Compile Include="Gui\GText\Typograph.cs" />
-    <Compile Include="Gui\GText\TypographData.cs" />
+    <Compile Include="Gui\Typography\ElementCollection.cs" />
+    <Compile Include="Gui\Typography\Glyph.cs" />
+    <Compile Include="Gui\Typography\GlyphData.cs" />
+    <Compile Include="Gui\Typography\Font.cs" />
+    <Compile Include="Gui\Typography\GlyphSequence.cs" />
+    <Compile Include="Gui\Typography\GTextUtilExtensions.cs" />
+    <Compile Include="Gui\Typography\Span.cs" />
+    <Compile Include="Gui\Typography\Spans\DebugSpan.cs" />
+    <Compile Include="Gui\Typography\Spans\StyleSpan.cs" />
+    <Compile Include="Gui\Typography\Token.cs" />
+    <Compile Include="Gui\Typography\Library.cs" />
+    <Compile Include="Gui\Typography\Localization.cs" />
+    <Compile Include="Gui\Typography\SpanCollection.cs" />
+    <Compile Include="Gui\Typography\Spans\JitterSpan.cs" />
+    <Compile Include="Gui\Typography\Spans\RainbowColorSpan.cs" />
+    <Compile Include="Gui\Typography\Spans\ColorSpan.cs" />
+    <Compile Include="Gui\Typography\Spans\NonBreakingSequenceSpan.cs" />
+    <Compile Include="Gui\Typography\TokenCollection.cs" />
+    <Compile Include="Gui\Typography\LoadFromMarkup.cs" />
+    <Compile Include="Gui\Typography\Tokens\ExternalSymbolToken.cs" />
+    <Compile Include="Gui\Typography\Tokens\InsertionToken.cs" />
+    <Compile Include="Gui\Typography\Typograph.cs" />
+    <Compile Include="Gui\Typography\TypographData.cs" />
+    <Compile Include="Util\ColorUtil.cs" />
     <Compile Include="Util\FloatRect.cs" />
     <Compile Include="Gui\GuiElement.cs" />
     <Compile Include="Gui\GuiManager.cs" />
@@ -176,9 +188,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Gui\GText\Tokens\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\MonoGame\v3.0\MonoGame.Content.Builder.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

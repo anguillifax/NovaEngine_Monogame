@@ -117,6 +117,14 @@ namespace Nova {
 			return new Vector2(RoundToInt(value.X), RoundToInt(value.Y));
 		}
 
+		/// <summary>
+		/// Remap a value in range [fromMin, fromMax] to its relative position in [toMin, toMax].
+		/// </summary>
+		public static float Remap(float value, float fromMin, float fromMax, float toMin, float toMax) {
+			if (fromMin == fromMax) throw new ArgumentOutOfRangeException("Cannot remap from zero length range.");
+			return (value - fromMin) / (fromMax - fromMin) * (toMax - toMin) + toMin;
+		}
+
 	}
 
 }
