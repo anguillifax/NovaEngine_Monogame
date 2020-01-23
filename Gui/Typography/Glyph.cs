@@ -26,8 +26,8 @@ namespace Nova.Gui.Typography {
 			Data = glyphData;
 		}
 
-		internal void Render(Vector2 typographTopLeft) {
-			MDraw.SpriteBatch.Draw(Data.TextureSheet, typographTopLeft + CharacterPosition + Offset + Data.Offset.ToVector2(), Data.DrawRect,
+		internal void Render() {
+			MDraw.SpriteBatch.Draw(Data.TextureSheet, CharacterPosition + Offset + Data.Offset.ToVector2(), Data.DrawRect,
 				Color, 0, Vector2.Zero, Vector2.One, SpriteEffects.None, 0);
 		}
 	}

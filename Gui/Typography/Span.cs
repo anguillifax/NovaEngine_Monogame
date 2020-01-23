@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Nova.Gui.Typography {
 
-	public abstract class Span {
+	public abstract class Span : ICloneable {
 
 		private int startIndex_;
 		public int StartIndex {
@@ -30,10 +30,13 @@ namespace Nova.Gui.Typography {
 			Length = length;
 		}
 
+		public abstract Span CloneSpan();
+		public object Clone() => CloneSpan();
+
 		internal abstract void Initialize(Typograph typograph, GlyphSequence glyphs);
 
 		public override string ToString() {
-			return $"Span: {BaseToString()} [{StartIndex}, {Length}]";
+			return $"Span ({BaseToString()} [{StartIndex}, {Length}])";
 		}
 
 		protected abstract string BaseToString();

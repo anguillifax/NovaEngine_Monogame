@@ -72,8 +72,9 @@
     <Compile Include="Gui\Typography\GlyphSequence.cs" />
     <Compile Include="Gui\Typography\GTextUtilExtensions.cs" />
     <Compile Include="Gui\Typography\Span.cs" />
-    <Compile Include="Gui\Typography\Spans\DebugSpan.cs" />
+    <Compile Include="Gui\Typography\Spans\OffsetSpan.cs" />
     <Compile Include="Gui\Typography\Spans\StyleSpan.cs" />
+    <Compile Include="Gui\Typography\Spans\FontSpan.cs" />
     <Compile Include="Gui\Typography\Token.cs" />
     <Compile Include="Gui\Typography\Library.cs" />
     <Compile Include="Gui\Typography\Localization.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="Gui\Typography\Tokens\InsertionToken.cs" />
     <Compile Include="Gui\Typography\Typograph.cs" />
     <Compile Include="Gui\Typography\TypographData.cs" />
+    <Compile Include="Gui\Typography\TypographDisplayProperties.cs" />
     <Compile Include="Util\ColorUtil.cs" />
     <Compile Include="Util\FloatRect.cs" />
     <Compile Include="Gui\GuiElement.cs" />
@@ -174,6 +176,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Gui\Typography\ElementTemplates.txt" />
     <Content Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>

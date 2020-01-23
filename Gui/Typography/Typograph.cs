@@ -3,24 +3,10 @@ using Nova.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Nova.Gui.Typography {
-
-	public enum OverflowBehavior {
-		Extend, Wrap
-	}
-
-	public class TypographDisplayProperties {
-		public OverflowBehavior OverflowBehavior { get; set; }
-		public float MaxWidth { get; set; }
-
-		public TypographDisplayProperties(OverflowBehavior overflowBehavior, float maxWidth = float.MaxValue) {
-			OverflowBehavior = overflowBehavior;
-			MaxWidth = maxWidth;
-		}
-
-	}
 
 	/// <summary>
 	/// Typographs are formatted text. They are the fundamental unit of displayed text, managing line wrapping, text effects, typographic insertions, and more.
@@ -54,34 +40,49 @@ namespace Nova.Gui.Typography {
 		/// </summary>
 		public Localization Localization { get; }
 
+		/// <summary>
+		/// The font used if a font span cannot be resolved.
+		/// </summary>
+		public Font FallbackFont => AttachedToLibrary ? Library.DefaultFont : localFont;
 		private readonly Font localFont;
-		public Font Font => AttachedToLibrary ? Localization.GetFont() : localFont;
 
 		private readonly Color localColor;
 		private Color BaseColor => AttachedToLibrary ? Library.DefaultTextColor : localColor;
 
-		private TypographData Data { get; }
+		private List<Span> spans;
+		private List<Token> tokens;
+		private readonly IEnumerable<UpdateSpan> updateSpans;
 
 		/// <summary>
 		/// The unformatted text displayed by this typograph.
 		/// </summary>
 		public string PlainText { get; private set; }
 
-		public Vector2 TopLeft { get; set; }
+		private Vector2 topLeft_;
+		public Vector2 TopLeft {
+			get => topLeft_;
+			set {
+				topLeft_ = value;
+				translationMatrix.Translation = new Vector3(topLeft_, 0);
+			}
+		}
+
+		private Matrix translationMatrix;
+
 		private TypographDisplayProperties displayProperties;
 
-		private readonly IEnumerable<UpdateSpan> updateSpans;
+
 
 		/// <summary>
 		/// Create an unmanaged typograph. Unmanaged typographs cannot contain referential elements, such as typographic insertions, external symbols, or style spans.
 		/// </summary>
 		public Typograph(TypographData data, Font font, Color baseColor, Vector2 topLeft, TypographDisplayProperties displayProperties = null) {
 
-			Data = data ?? throw new ArgumentNullException("Typograph data cannot be null");
+			if (data == null) throw new ArgumentNullException("Typograph data cannot be null");
 			localFont = font ?? throw new ArgumentNullException("Font cannot be null");
 
-			PlainText = data.PlainText;
 			localColor = baseColor;
+			translationMatrix = Matrix.Identity;
 			TopLeft = topLeft;
 
 			AttachedToLibrary = false;
@@ -89,9 +90,13 @@ namespace Nova.Gui.Typography {
 			Library = null;
 
 			this.displayProperties = displayProperties ?? new TypographDisplayProperties(OverflowBehavior.Extend);
-			updateSpans = data.Spans.GetByType<UpdateSpan>();
 
-			ResolveInsertions();
+			spans = new List<Span>();
+			tokens = new List<Token>();
+
+			ResolveReferences(data);
+
+			updateSpans = spans.OfType<UpdateSpan>();
 			Glyphs = new Glyph[PlainText.Length];
 			PositionGlyphs(true);
 			InitializeSpans();
@@ -102,19 +107,24 @@ namespace Nova.Gui.Typography {
 		/// Create a managed typograph. Managed typographs have full access to all features of the typographic toolkit.
 		/// </summary>
 		public Typograph(TypographData data, Vector2 topLeft, TypographDisplayProperties displayProperties = null) {
-			Data = data ?? throw new ArgumentNullException("Typograph data cannot be null");
 
-			PlainText = data.PlainText;
+			if (data == null) throw new ArgumentNullException("Typograph data cannot be null");
+
+			translationMatrix = Matrix.Identity;
 			TopLeft = topLeft;
 
 			AttachedToLibrary = true;
-			Localization = Data.Localization;
-			Library = Data.Localization.Library;
+			Localization = data.Localization;
+			Library = data.Localization.Library;
 
 			this.displayProperties = displayProperties ?? new TypographDisplayProperties(OverflowBehavior.Extend);
-			updateSpans = data.Spans.GetByType<UpdateSpan>();
 
-			ResolveInsertions();
+			spans = new List<Span>();
+			tokens = new List<Token>();
+
+			ResolveReferences(data);
+
+			updateSpans = spans.OfType<UpdateSpan>();
 			Glyphs = new Glyph[PlainText.Length];
 			PositionGlyphs(true);
 			InitializeSpans();
@@ -128,42 +138,97 @@ namespace Nova.Gui.Typography {
 			PositionGlyphs(false);
 		}
 
-		private void ResolveInsertions() {
+		private void ResolveReferences(TypographData original) {
+			StringBuilder combinedText = new StringBuilder();
+			RecursiveResolve(0, original, ref combinedText);
+			PlainText = combinedText.ToString();
 
-			for (int i = 0; i < Data.Tokens.Count; ++i) {
+			Console.WriteLine(PlainText);
+			Console.WriteLine($"Finished with spans\n{string.Join("\n", spans)}");
+			Console.WriteLine($"Finished with tokens\n{string.Join("\n", tokens)}");
+		}
 
-				if (Data.Tokens[i] is ExternalSymbolToken symbol) {
+		private void RecursiveResolve(int offset, TypographData data, ref StringBuilder combinedText) {
 
-					if (AttachedToLibrary) {
-						string text = Localization.GetExternalSymbol(symbol.Key);
-						PlainText = PlainText.Insert(symbol.Index, text);
-						Console.WriteLine($"{symbol.Index} : {symbol.Key}");
-						CorrectIndicesAfterInsertion(symbol.Index, text.Length, i);
+			Console.WriteLine($"\nResolving {data}");
+
+			StringBuilder localPlainText = new StringBuilder(data.PlainText);
+			Console.WriteLine($"  Local base text: {localPlainText}");
+
+			var localSpans = new List<Span>(data.Spans.SortedCopy());
+			var localTokens = new List<Token>(data.Tokens.SortedCopy());
+
+			// Resolve style spans
+
+			int spanOffset = 0;
+			for (int i = 0; i < data.Spans.Count; ++i) {
+
+				if (data.Spans[i] is StyleSpan style) {
+
+					if (data.AttachedToLibrary) {
+
+						SpanCollection sc = data.Localization.GetStyle(style.Key);
+						Console.WriteLine($"  Found style: {style} -> {sc}");
+
+						var elements = new List<Span>(sc.SortedCopy());
+						elements.ForEach(x => x.StartIndex = style.StartIndex);
+						elements.ForEach(x => x.Length = style.Length);
+
+						localSpans.RemoveAt(i + spanOffset);
+						localSpans.InsertRange(i + spanOffset, elements);
+						spanOffset += elements.Count - 1;
 
 					} else {
-						Console.WriteLine("[Warning] Unmanaged typograph cannot have external symbol tokens. Using external symbol key as symbol value.");
-						PlainText = PlainText.Insert(symbol.Index, symbol.Key);
-						CorrectIndicesAfterInsertion(symbol.Index, symbol.Key.Length, i);
-					}
 
-				} else if (Data.Tokens[i] is InsertionToken insertion) {
+						Console.WriteLine("[Warning] Unmanaged typograph cannot have style spans. Ignoring style span.");
 
-					if (AttachedToLibrary) {
-						//TODO
-					} else {
-						Console.WriteLine("[Warning] Unmanaged typograph cannot have insertion tokens. Using insertion name as value.");
-						string s = "{" + insertion.Key + "}";
 					}
 
 				}
 
 			}
 
+			int tokenOffset = 0;
+			for (int i = 0; i < data.Tokens.Count; ++i) {
+
+				if (localTokens[i + tokenOffset] is ExternalSymbolToken symbol) {
+
+					string text;
+
+					if (data.AttachedToLibrary) {
+						text = data.Localization.GetExternalSymbol(symbol.Key);
+					} else {
+						Console.WriteLine("[Warning] Unmanaged typograph cannot have external tokens. Using symbol name as value.");
+						text = symbol.Key;
+					}
+
+					Console.WriteLine($"  esym {symbol}");
+					localPlainText.Insert(symbol.Index, text);
+					localTokens.RemoveAt(i + tokenOffset);
+					--tokenOffset;
+					CorrectIndices(ref localSpans, ref localTokens, symbol.Index, text.Length, i);
+				}
+
+			}
+
+			// Convert elements to global indices and merge into global shared lists
+
+			localSpans.ForEach(x => x.StartIndex += offset);
+			localTokens.ForEach(x => x.Index += offset);
+
+			CorrectIndices(ref spans, ref tokens, offset, localPlainText.Length, 0);
+			combinedText.Insert(offset, localPlainText.ToString());
+
+			spans.InsertRange(offset, localSpans);
+			localTokens.InsertRange(offset, localTokens);
+
+			Console.WriteLine("Finished Resolving\n");
+
 		}
 
-		private void CorrectIndicesAfterInsertion(int index, int length, int curTokenIndex) {
+		private void CorrectIndices(ref List<Span> spans, ref List<Token> tokens, int index, int length, int curTokenIndex) {
 
-			foreach (var span in Data.Spans) {
+			foreach (var span in spans) {
 
 				if (span.StartIndex < index && span.StopIndex > index) {
 					// Resolution: Span includes.
@@ -176,17 +241,14 @@ namespace Nova.Gui.Typography {
 				} else if (span.StartIndex >= index) {
 					// Resolution: Non targeted span.
 					span.StartIndex += length;
-					Console.WriteLine($"{span}: +start {length} -> {span.StopIndex}");
 				}
 
 			}
 
-			for (int i = curTokenIndex + 1; i < Data.Tokens.Count; ++i) {
-				if (Data.Tokens[i].Index >= index) {
-					Data.Tokens[i].Index += length;
-					Console.WriteLine($"{Data.Tokens[i]}: +length {length} -> {Data.Tokens[i].Index}");
+			for (int i = curTokenIndex; i < tokens.Count; ++i) {
+				if (tokens[i].Index >= index) {
+					tokens[i].Index += length;
 				}
-				Console.WriteLine("--");
 			}
 
 		}
@@ -205,7 +267,7 @@ namespace Nova.Gui.Typography {
 			} else {
 				// Wrap Mode
 
-				IEnumerable<NonBreakingSequenceSpan> nbsSpans = Data.Spans.GetByType<NonBreakingSequenceSpan>();
+				IEnumerable<NonBreakingSequenceSpan> nbsSpans = spans.OfType<NonBreakingSequenceSpan>();
 
 				MatchCollection matches = RegexWord.Matches(PlainText);
 				for (int i = 0; i < matches.Count; ++i) {
@@ -264,8 +326,8 @@ namespace Nova.Gui.Typography {
 
 			if (text == "\n") {
 				pos.X = 0;
-				pos.Y += Font.LineHeight;
-				if (createNew) Glyphs[startIndex] = Font.GetGlyph('\n');
+				pos.Y += FallbackFont.LineHeight;
+				if (createNew) Glyphs[startIndex] = FallbackFont.GetGlyph('\n');
 				afterNewLine = true;
 				return;
 			}
@@ -276,14 +338,14 @@ namespace Nova.Gui.Typography {
 
 			for (int i = 0; i < text.Length; ++i) {
 
-				Glyph g = createNew ? Font.GetGlyph(text[i]) : Glyphs[startIndex + i];
+				Glyph g = createNew ? FallbackFont.GetGlyph(text[i]) : Glyphs[startIndex + i];
 
 				g.CharacterPosition = wordPos;
 				word.Add(g);
 
 				wordPos.X += g.Data.XAdvance;
 				if (startIndex + i > 0) {
-					wordPos.X += Font.GetKerning(PlainText[startIndex + i - 1], PlainText[startIndex + i]);
+					wordPos.X += FallbackFont.GetKerning(PlainText[startIndex + i - 1], PlainText[startIndex + i]);
 				}
 
 			}
@@ -328,14 +390,14 @@ namespace Nova.Gui.Typography {
 
 		private void InsertNewLine(ref Vector2 pos) {
 			pos.X = 0;
-			pos.Y += Font.LineHeight;
+			pos.Y += FallbackFont.LineHeight;
 		}
 
 		private void InitializeSpans() {
 
 			Array.ForEach(Glyphs, (x) => x.Color = BaseColor);
 
-			foreach (var span in Data.Spans) {
+			foreach (var span in spans) {
 				span.Initialize(this, GetSliceFromSpan(span));
 			}
 
@@ -354,12 +416,12 @@ namespace Nova.Gui.Typography {
 		private GlyphSequence GetSliceFromSpan(Span span) => new GlyphSequence(Glyphs.Skip(span.StartIndex).Take(span.Length));
 
 		public void Render() {
-			MDraw.Begin();
+			MDraw.Begin(translationMatrix * displayProperties.TransformMatrix);
 			foreach (var g in Glyphs) {
-				g.Render(TopLeft);
+				g.Render();
 			}
 			if (displayProperties.OverflowBehavior == OverflowBehavior.Wrap) {
-				MDraw.DrawRayGlobal(TopLeft + new Vector2(displayProperties.MaxWidth, 0), new Vector2(0, 1000), Color.DimGray);
+				MDraw.DrawRayGlobal(new Vector2(displayProperties.MaxWidth, 0), new Vector2(0, 1000), Color.DimGray);
 			}
 			MDraw.End();
 		}

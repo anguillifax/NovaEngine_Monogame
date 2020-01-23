@@ -6,16 +6,22 @@ namespace Nova.Gui.Typography {
 
 	public class StyleSpan : Span {
 
-		public StyleSpan(int startIndex, int length) : base(startIndex, length) {
+		public string Key { get; }
+
+		public StyleSpan(string key) : this(0, 0, key) { }
+
+		public StyleSpan(int startIndex, int length, string key) : 
+			base(startIndex, length) {
+			Key = key;
 		}
 
-		protected override string BaseToString() {
-			throw new NotImplementedException();
-		}
+		public override Span CloneSpan() => new StyleSpan(StartIndex, Length, Key);
 
 		internal override void Initialize(Typograph typograph, GlyphSequence glyphs) {
-			throw new NotImplementedException();
 		}
+
+		protected override string BaseToString() => $"Style '{Key}'";
+
 	}
 
 }

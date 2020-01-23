@@ -12,6 +12,9 @@ namespace Nova.Gui.Typography {
 			Elements = elements == null ? new List<T>() : new List<T>(elements);
 		}
 
+		protected ElementCollection(params T[] elements) : this(elements.AsEnumerable()) {
+		}
+
 		public int Count => Elements.Count;
 
 
@@ -22,10 +25,16 @@ namespace Nova.Gui.Typography {
 		public IEnumerable<TResult> GetByType<TResult>() => Elements.OfType<TResult>();
 
 		/// <summary>
-		/// Returns elements sorted by their indices. Order of elements with same initial indices is preserved.
+		/// Returns references to elements sorted by their indices. Order of elements with same initial indices is preserved.
 		/// <para>Does not mutate the internal collection.</para>
 		/// </summary>
-		public abstract IEnumerable<T> Sorted();
+		public abstract IOrderedEnumerable<T> Sorted();
+
+		/// <summary>
+		/// Returns copies of elements sorted by their indices. Order of elements with same initial indices is preserved.
+		/// <para>Does not mutate the internal collection.</para>
+		/// </summary>
+		public abstract IOrderedEnumerable<T> SortedCopy();
 
 		public IEnumerator<T> GetEnumerator() {
 			return Elements.GetEnumerator();

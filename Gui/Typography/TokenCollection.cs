@@ -11,7 +11,13 @@ namespace Nova.Gui.Typography {
 			base(tokens) {
 		}
 
-		public override IEnumerable<Token> Sorted() => Elements.OrderBy((x) => x.Index);
+		public TokenCollection(params Token[] tokens) : 
+			base(tokens) {
+		}
+
+		public override IOrderedEnumerable<Token> Sorted() => Elements.OrderBy((x) => x.Index);
+		public override IOrderedEnumerable<Token> SortedCopy() => Elements.Select(x => x.CloneToken()).OrderBy(x => x.Index);
+
 
 		public override string ToString() => $"Token Collection\n{string.Join("\n", Elements.Select(x => $"  {x}"))}";
 	

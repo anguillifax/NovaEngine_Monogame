@@ -13,11 +13,15 @@ namespace Nova.Gui.Typography {
 		/// </summary>
 		public float CycleTime { get; set; }
 
-		public RainbowColorSpan(int startIndex, int length, float startHue = 0, float cycleTime = 3f) :
+		public RainbowColorSpan(float cycleTime = 3f) : this(0, 0, cycleTime) { }
+
+		public RainbowColorSpan(int startIndex, int length, float cycleTime = 3f) :
 			base(startIndex, length) {
-			curHue = startHue;
+			curHue = 0;
 			CycleTime = cycleTime;
 		}
+
+		public override Span CloneSpan() => new RainbowColorSpan(StartIndex, Length, CycleTime);
 
 		internal override void Initialize(Typograph typograph, GlyphSequence glyphs) {
 		}

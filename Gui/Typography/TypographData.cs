@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Nova.Gui.Typography {
 
+	/// <summary>
+	/// Contains configuration data to create a typograph.
+	/// </summary>
 	public class TypographData {
 
 		/// <summary>
@@ -12,6 +15,7 @@ namespace Nova.Gui.Typography {
 
 		public string PlainText { get; }
 
+		public bool AttachedToLibrary => Localization != null;
 		public Localization Localization { get; }
 
 		internal TokenCollection Tokens { get; }
@@ -30,10 +34,8 @@ namespace Nova.Gui.Typography {
 		public void Add(Span span) => Spans.Add(span);
 		public void Add(Token token) => Tokens.Add(token);
 
-		private const int MaxVisibleCharacters = 40;
 		public override string ToString() {
-			return $"TypographData (Spans: {Spans.Count}, Tokens: {Tokens.Count}, " +
-				$"'{(PlainText.Length < MaxVisibleCharacters ? PlainText.Substring(0, PlainText.Length) : (PlainText.Substring(0, MaxVisibleCharacters - 3) + "..."))}')";
+			return $"TypographData (Spans: {Spans.Count}, Tokens: {Tokens.Count}, {PlainText})";
 		}
 
 		public string ToStringDebug() => $"\n=== TypographData Printout ===\n\n{PlainText}\n\n{Spans}\n\n{Tokens}\n\n=== End Printout ===\n";

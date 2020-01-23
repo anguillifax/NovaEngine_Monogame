@@ -13,6 +13,8 @@ namespace Nova.Gui.Typography {
 			Key = key;
 		}
 
+		public override Token CloneToken() => new InsertionToken(Index, Key);
+
 		public override void Consume(Typograph typograph) {
 		}
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Nova.Util;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -7,20 +8,38 @@ namespace Nova.Gui.Typography {
 
 	public static class LoadFromMarkup {
 
+		/// <summary>
+		/// Matches parameterized and unparameterized spans.
+		/// </summary>
 		private static readonly Regex MatchSpan = new Regex(@"(?<open><(?<name>\w+) ?(?:'(?<parameter>.*?)')?>)(?=(?<contents>.*?)(?<close><\/\2>))");
+
+		/// <summary>
+		/// Matches only spans with parameterized matching start and close tags.
+		/// </summary>
+		private static readonly Regex MatchSpanMirrored = new Regex(@"(?<open><(?<name>\w+) '(?<parameter>.*?)'>)(?=(?<contents>.*?)(?<close><\/\2 '\3'>))");
+
+		/// <summary>
+		/// Matches parameterized and unparameterized tokens.
+		/// </summary>
 		private static readonly Regex MatchToken = new Regex(@"\{(?<name>\w+) ?(?:'(?<parameter>.*?)')?\}");
+
+		/// <summary>
+		/// Matches any tag-like object.
+		/// </summary>
 		private static readonly Regex MatchAny = new Regex(@"<.*?>|\{.*?\}");
 
 		private static Span GetSpan(string name, int startIndex, int length, string parameter) {
 			switch (name) {
 				case "color":
-					return new ColorSpan(startIndex, length, parameter);
+					return new ColorSpan(startIndex, length, ColorUtil.FromHex(parameter));
 				case "jitter":
 					return new JitterSpan(startIndex, length, float.Parse(parameter));
 				case "nobreak":
 					return new NonBreakingSequenceSpan(startIndex, length);
 				case "rainbow":
 					return string.IsNullOrEmpty(parameter) ? new RainbowColorSpan(startIndex, length) : new RainbowColorSpan(startIndex, length, cycleTime: float.Parse(parameter));
+				case "style":
+					return new StyleSpan(startIndex, length, parameter);
 
 				default:
 					return null;

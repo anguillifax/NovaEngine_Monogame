@@ -7,13 +7,18 @@ namespace Nova.Gui.Typography {
 
 	public sealed class SpanCollection : ElementCollection<Span> {
 
-		public SpanCollection(IEnumerable<Span> spans = null) :
-			base(spans) {
+		public static readonly SpanCollection Empty = new SpanCollection();
+
+		public SpanCollection(IEnumerable<Span> spans) : base(spans) {
 		}
 
-		public override IEnumerable<Span> Sorted() => Elements.OrderBy((x) => x.StartIndex);
+		public SpanCollection(params Span[] spans) : base(spans) {
+		}
 
-		public override string ToString() => $"Span Collection\n{string.Join("\n", Elements.Select(x => $"  {x}"))}";
+		public override IOrderedEnumerable<Span> Sorted() => Elements.OrderBy(x => x.StartIndex);
+		public override IOrderedEnumerable<Span> SortedCopy() => Elements.Select(x => x.CloneSpan()).OrderBy(x => x.StartIndex);
+
+		public override string ToString() => $"Span Collection ({Elements.Count})";
 
 	}
 

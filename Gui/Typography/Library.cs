@@ -9,14 +9,22 @@ namespace Nova.Gui.Typography {
 	/// </summary>
 	public sealed class Library {
 
-		internal const string GlobalLocalizationName = "global";
-
 		private readonly Dictionary<string, Localization> localizations;
+
+		/// <summary>
+		/// The name of the library.
+		/// </summary>
+		public string Name { get; set; }
 
 		/// <summary>
 		/// The color assigned when no color spans are applied.
 		/// </summary>
 		public Color DefaultTextColor { get; set; }
+
+		/// <summary>
+		/// The font used when no font spans are applied.
+		/// </summary>
+		public Font DefaultFont { get; set; }
 
 		/// <summary>
 		/// The root/builtin localization. Elements defined here are accessible by any localization.
@@ -26,7 +34,10 @@ namespace Nova.Gui.Typography {
 		/// <summary>
 		/// Create a new library, initializing the global localization in the process.
 		/// </summary>
-		public Library() {
+		public Library(string name, Color defaultTextColor, Font defaultFont) {
+			Name = name;
+			DefaultTextColor = defaultTextColor;
+			DefaultFont = defaultFont;
 			localizations = new Dictionary<string, Localization>();
 			RegisterLocalization(GlobalLocalization = Localization.CreateGlobalLocalization(this));
 		}
@@ -51,11 +62,11 @@ namespace Nova.Gui.Typography {
 		// DEBUG: Test printout
 		public void Test() {
 			foreach (var item in localizations) {
-				Console.WriteLine($"{item.Key}: {item.Value} parent '{item.Value.Parent}', isglobal {item.Value.IsGlobalLocalization}, font '{item.Value.Font}'");
+				Console.WriteLine($"{item.Key}: {item.Value} parent '{item.Value.Parent}', isglobal {item.Value.IsGlobalLocalization}");
 			}
 		}
 
-		public override string ToString() => $"Typograph Library ({GetHashCode()})";
+		public override string ToString() => $"Typograph Library '{Name}'";
 
 	}
 

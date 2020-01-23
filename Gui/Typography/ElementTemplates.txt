@@ -1,0 +1,29 @@
+﻿public class _TemplateSpan : Span {
+
+	public _TemplateSpan(int startIndex, int length) :
+		base(startIndex, length) {
+	}
+
+	public override Span CloneSpan() => new _TemplateSpan(StartIndex, Length);
+
+	internal override void Initialize(Typograph typograph, GlyphSequence glyphs) {
+	}
+
+	protected override string BaseToString() => "TMPL";
+
+}
+
+public class _TemplateToken : Token {
+
+	public _TemplateToken(int index) :
+		base(index) {
+	}
+
+	public override Token CloneToken() => new _TemplateToken(Index);
+
+	public override void Consume(Typograph typograph) {
+	}
+
+	protected override string BaseToString() => "TMPL";
+
+}

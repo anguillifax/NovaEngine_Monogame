@@ -5,9 +5,14 @@ using System.Collections.Generic;
 namespace Nova.Gui.Typography {
 
 	/// <summary>
-	/// Localizations are collections of typographs and elements. All typographs are contained within a localization. Localizations include definitions in their parent localization.
+	/// Localizations are collections of typographs and elements. All typographs are contained within a localization. Localizations inherit definitions in their parent localization.
 	/// </summary>
 	public sealed class Localization {
+
+		/// <summary>
+		/// The name of the global localization.
+		/// </summary>
+		public const string GlobalLocalizationName = "__global";
 
 		/// <summary>
 		/// Name of this localization.
@@ -29,21 +34,16 @@ namespace Nova.Gui.Typography {
 		/// </summary>
 		public bool IsGlobalLocalization { get; }
 
-		/// <summary>
-		/// The specific font specified for this localization. Defaults to global localization font if unspecified.
-		/// </summary>
-		public Font Font { get; set; }
-
 		// TODO: Control access?
 		public Dictionary<string, Func<string>> ExternalSymbols { get; }
 		public Dictionary<string, TypographData> Insertions { get; }
-		public Dictionary<string, StyleSpan> Styles { get; }
+		public Dictionary<string, SpanCollection> Styles { get; }
 		public Dictionary<string, TypographData> Typographs { get; }
 
 		private Localization() {
 			ExternalSymbols = new Dictionary<string, Func<string>>();
 			Insertions = new Dictionary<string, TypographData>();
-			Styles = new Dictionary<string, StyleSpan>();
+			Styles = new Dictionary<string, SpanCollection>();
 			Typographs = new Dictionary<string, TypographData>();
 		}
 
@@ -65,7 +65,7 @@ namespace Nova.Gui.Typography {
 			this() {
 			Library = library;
 			Parent = null;
-			Name = Library.GlobalLocalizationName;
+			Name = GlobalLocalizationName;
 			IsGlobalLocalization = true;
 		}
 
@@ -91,20 +91,7 @@ namespace Nova.Gui.Typography {
 		}
 
 		/// <summary>
-		/// Retrieve the font associated with this localization, or font used by parent if font is unspecified.
-		/// </summary>
-		/// <exception cref="NullReferenceException" />
-		public Font GetFont() {
-			if (Font != null) {
-				return Font;
-			} else {
-				if (Parent == null) throw new NullReferenceException("Could not load font.");
-				return Parent.GetFont();
-			}
-		}
-
-		/// <summary>
-		/// Retrieve the value of an external symbol. Returns key name as the value of the external symbol value if symbol cannot be resolved.
+		/// Retrieve the value of an external symbol. Returns key as value if symbol cannot be resolved.
 		/// </summary>
 		public string GetExternalSymbol(string key) {
 			if (ExternalSymbols.TryGetValue(key, out var symbolFunc)) {
@@ -133,12 +120,15 @@ namespace Nova.Gui.Typography {
 			}
 		}
 
-		// TODO: This should return a StyleSet, not StyleSpan
-		internal StyleSpan GetStyle(string key) {
-			if (Styles.TryGetValue(key, out StyleSpan data)) {
+		public SpanCollection GetStyle(string key) {
+			if (Styles.TryGetValue(key, out SpanCollection data)) {
 				return data;
 			} else {
-				return Library.GlobalLocalization.Styles[key];
+				if (Parent == null) {
+					LogWarning($"Failed to resolve style span '{key}'. Returning empty style collection instead.");
+					return SpanCollection.Empty;
+				}
+				return Parent.GetStyle(key);
 			}
 		}
 

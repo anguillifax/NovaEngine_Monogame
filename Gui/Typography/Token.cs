@@ -1,6 +1,8 @@
-﻿namespace Nova.Gui.Typography {
+﻿using System;
 
-	public abstract class Token {
+namespace Nova.Gui.Typography {
+
+	public abstract class Token : ICloneable {
 
 		public int Index { get; set; }
 
@@ -8,10 +10,13 @@
 			Index = index;
 		}
 
+		public abstract Token CloneToken();
+		public object Clone() => CloneToken();
+
 		public abstract void Consume(Typograph typograph);
 
 		public override string ToString() {
-			return $"Token: {BaseToString()} [{Index}]";
+			return $"Token ({BaseToString()} [{Index}])";
 		}
 
 		protected abstract string BaseToString();

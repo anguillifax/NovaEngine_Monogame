@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Nova.Gui.Typography;
+using Nova.Util;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,10 +17,15 @@ namespace Nova {
 
 		public void Init() {
 
-			library = new Library();
-			library.DefaultTextColor = Color.White;
-			library.GlobalLocalization.Font = new Font(@"C:\Users\Bryan\Desktop\BM Font\Exports\RobotoBold.fnt");
+			library = new Library("Testing", Color.White, new Font(@"C:\Users\Bryan\Desktop\BM Font\Exports\RobotoBold.fnt"));
 			library.GlobalLocalization.ExternalSymbols.Add("PlayerNameGlobal", () => "Anguillifax(Global)");
+			library.GlobalLocalization.Styles.Add("player", new SpanCollection(
+					new ColorSpan(ColorUtil.FromHex("FF2222")),
+					new JitterSpan(.7f)
+				));
+			library.GlobalLocalization.Styles.Add("fancy", new SpanCollection(
+					new RainbowColorSpan(0, 0)
+				));
 
 			english = library.CreateLocalization("en-BASE");
 			english.ExternalSymbols.Add("PlayerNameEnglish", () => "Anguillifax(en-BASE)");
@@ -32,7 +38,7 @@ namespace Nova {
 		}
 
 		public void LoadContent() {
-			string text = GTextUtil.NormalizeLineEnding(File.ReadAllText(@"C:\Users\Bryan\Desktop\tmp.txt"));
+			string text = GTextUtil.NormalizeLineEnding(File.ReadAllText(@"C:\Users\Bryan\Desktop\text.gtxt"));
 			displayProperties = new TypographDisplayProperties(OverflowBehavior.Wrap, 500);
 
 			var td = LoadFromMarkup.Load(text, english);

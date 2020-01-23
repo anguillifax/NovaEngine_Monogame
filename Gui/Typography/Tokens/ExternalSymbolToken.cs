@@ -11,10 +11,13 @@ namespace Nova.Gui.Typography {
 			Key = key ?? throw new ArgumentNullException("External symbol key cannot be null");
 		}
 
+		public override Token CloneToken() => new ExternalSymbolToken(Index, Key);
+
 		public override void Consume(Typograph typograph) {
 		}
 
 		protected override string BaseToString() => $"ExternalSymbol ({Key})";
+
 	}
 
 }

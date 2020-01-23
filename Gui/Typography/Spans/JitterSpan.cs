@@ -12,12 +12,16 @@ namespace Nova.Gui.Typography {
 		private float coolDown;
 		private readonly Random random;
 
+		public JitterSpan(float strength) : this(0, 0, strength) { }
+
 		public JitterSpan(int startIndex, int length, float strength) :
 			base(startIndex, length) {
 			Strength = strength;
 			coolDown = 0;
 			random = new Random();
 		}
+
+		public override Span CloneSpan() => new JitterSpan(StartIndex, Length, Strength);
 
 		internal override void Initialize(Typograph typograph, GlyphSequence glyphs) {
 			offsets = new Vector2[glyphs.Count];
@@ -43,7 +47,10 @@ namespace Nova.Gui.Typography {
 			return new Vector2(Get(), Get());
 		}
 
-		private float Get() => Strength * Calc.Remap((float)random.NextDouble(), 0, 1, 0.3f, 1f);
+		private float Get() {
+			return Strength * (random.Next(0, 2) == 0 ? -1f : 1f) * 
+				Calc.Remap((float)random.NextDouble(), 0, 1, -.3f, 1f);
+		}
 
 		protected override string BaseToString() => $"Jitter ({Strength:f2})";
 

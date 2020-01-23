@@ -70,8 +70,8 @@ namespace Nova {
 			TextureTest.SetData(cols);
 		}
 
-		public static void Begin() {
-			SpriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp);
+		public static void Begin(Matrix? matrix = null) {
+			SpriteBatch.Begin(SpriteSortMode.BackToFront, samplerState: SamplerState.PointClamp, transformMatrix: matrix);
 		}
 
 		public static void End() {
