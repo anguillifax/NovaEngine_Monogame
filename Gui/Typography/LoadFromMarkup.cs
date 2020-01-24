@@ -9,14 +9,9 @@ namespace Nova.Gui.Typography {
 	public static class LoadFromMarkup {
 
 		/// <summary>
-		/// Matches parameterized and unparameterized spans.
-		/// </summary>
-		private static readonly Regex MatchSpan = new Regex(@"(?<open><(?<name>\w+) ?(?:'(?<parameter>.*?)')?>)(?=(?<contents>.*?)(?<close><\/\2>))");
-
-		/// <summary>
 		/// Matches only spans with parameterized matching start and close tags.
 		/// </summary>
-		private static readonly Regex MatchSpanMirrored = new Regex(@"(?<open><(?<name>\w+) '(?<parameter>.*?)'>)(?=(?<contents>.*?)(?<close><\/\2 '\3'>))");
+		private static readonly Regex MatchSpan = new Regex(@"(?<open><(?<name>\w+)(?: '(?<parameter>.*?)')? (?<id>\S*?)>)(?=(?<contents>.*?)(?<close><[/]\4>))");
 
 		/// <summary>
 		/// Matches parameterized and unparameterized tokens.
@@ -63,27 +58,30 @@ namespace Nova.Gui.Typography {
 			TypographData d = new TypographData(MatchAny.Replace(text, ""), localization);
 
 			if (showLog) {
-				Console.WriteLine("Loading from markup...");
-				Console.WriteLine($"| {d.PlainText}");
-				Console.WriteLine("| Span Matches");
+				Console.WriteLine("\nParsing from Markup\n");
+				StringF.PrintIndented(1, $"Text: {d.PlainText}");
+				Console.WriteLine();
+				StringF.PrintIndented(1, "Span Matches");
 			}
 
 			foreach (Match m in MatchSpan.Matches(text)) {
 				Span span = GetSpan(m.Groups["name"].Value, MatchAny.Replace(text.Substring(0, m.Index), "").Length, MatchAny.Replace(m.Groups["contents"].Value, "").Length, m.Groups["parameter"].Value);
 				if (span != null) {
-					if (showLog) Console.WriteLine($"|  [{m.Index}] {m.Groups["name"]}: {m.Groups["open"]} (...) {m.Groups["close"]}");
+					if (showLog) StringF.PrintIndented(2, $"[{m.Index}] {m.Groups["name"]}: {m.Groups["open"]} (...) {m.Groups["close"]}");
 					d.Add(span);
 				}
 			}
 
-			if (showLog) Console.WriteLine("| Token Matches");
+			Console.WriteLine();
+			if (showLog) Console.WriteLine("  Token Matches");
 			foreach (Match m in MatchToken.Matches(text)) {
 				Token token = GetToken(m.Groups["name"].Value, MatchAny.Replace(text.Substring(0, m.Index), "").Length, m.Groups["parameter"].Value);
 				if (token != null) {
-					if (showLog) Console.WriteLine($"|  [{m.Index}] {m.Groups["name"]}: {m.Value}");
+					if (showLog) StringF.PrintIndented(2, $"[{m.Index}] {m.Groups["name"]}: {m.Value}");
 					d.Add(token);
 				}
 			}
+			Console.WriteLine();
 			if (showLog) Console.WriteLine("Finished Load.\n");
 
 			return d;

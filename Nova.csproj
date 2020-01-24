@@ -147,7 +147,7 @@
     <Compile Include="Graphics\MDraw.cs" />
     <Compile Include="Util\CustomLinqQueries.cs" />
     <Compile Include="Util\IntVector2.cs" />
-    <Compile Include="Util\PrintFormatter.cs" />
+    <Compile Include="Util\StringF.cs" />
     <Compile Include="Util\SaveLoad.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Hierarchy\Entity.cs" />

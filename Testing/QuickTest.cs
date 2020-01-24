@@ -24,8 +24,9 @@ namespace Nova {
 					new JitterSpan(.7f)
 				));
 			library.GlobalLocalization.Styles.Add("fancy", new SpanCollection(
-					new RainbowColorSpan(0, 0)
+					new RainbowColorSpan()
 				));
+			library.GlobalLocalization.Insertions.Add("one", new TypographData("One", library.GlobalLocalization));
 
 			english = library.CreateLocalization("en-BASE");
 			english.ExternalSymbols.Add("PlayerNameEnglish", () => "Anguillifax(en-BASE)");
@@ -41,8 +42,8 @@ namespace Nova {
 			string text = GTextUtil.NormalizeLineEnding(File.ReadAllText(@"C:\Users\Bryan\Desktop\text.gtxt"));
 			displayProperties = new TypographDisplayProperties(OverflowBehavior.Wrap, 500);
 
-			var td = LoadFromMarkup.Load(text, english);
-			System.Console.WriteLine(td.ToStringDebug());
+			var td = LoadFromMarkup.Load(text, english, true);
+			//System.Console.WriteLine(td.ToStringDebug());
 
 
 			typograph = new Typograph(td, new Vector2(100, 100), displayProperties);

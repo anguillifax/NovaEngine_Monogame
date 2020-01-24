@@ -140,20 +140,35 @@ namespace Nova.Gui.Typography {
 
 		private void ResolveReferences(TypographData original) {
 			StringBuilder combinedText = new StringBuilder();
-			RecursiveResolve(0, original, ref combinedText);
+			combinedText.Append(original.PlainText);
+			spans.AddRange(original.Spans);
+			tokens.AddRange(original.Tokens);
+			//RecursiveResolve(original, 0, ref combinedText, ref spans, ref tokens, 0);
 			PlainText = combinedText.ToString();
 
 			Console.WriteLine(PlainText);
-			Console.WriteLine($"Finished with spans\n{string.Join("\n", spans)}");
-			Console.WriteLine($"Finished with tokens\n{string.Join("\n", tokens)}");
+			Console.WriteLine();
+			Console.WriteLine(spans.ToIndentString("Final Spans"));
+			Console.WriteLine();
+			Console.WriteLine(tokens.ToIndentString("Final Tokens"));
+			Console.WriteLine();
 		}
 
-		private void RecursiveResolve(int offset, TypographData data, ref StringBuilder combinedText) {
+		private void WriteIndent(int level, string text) {
+			for (int i = 0; i < level; ++i) {
+				Console.Write("     ");
+			}
+			Console.WriteLine($"{level}| {text}");
+		}
 
-			Console.WriteLine($"\nResolving {data}");
+		private void RecursiveResolve(TypographData data, int textOffsetToEnclosing, ref StringBuilder enclosingText, ref List<Span> enclosingSpans, ref List<Token> enclosingTokens, int depth) {
+
+			WriteIndent(depth, "=== Resolving ===");
+			WriteIndent(depth, $"Depth: {depth}");
+			WriteIndent(depth, data.ToString());
 
 			StringBuilder localPlainText = new StringBuilder(data.PlainText);
-			Console.WriteLine($"  Local base text: {localPlainText}");
+			WriteIndent(depth, $"Local base text: {localPlainText}");
 
 			var localSpans = new List<Span>(data.Spans.SortedCopy());
 			var localTokens = new List<Token>(data.Tokens.SortedCopy());
@@ -167,8 +182,8 @@ namespace Nova.Gui.Typography {
 
 					if (data.AttachedToLibrary) {
 
-						SpanCollection sc = data.Localization.GetStyle(style.Key);
-						Console.WriteLine($"  Found style: {style} -> {sc}");
+						SpanCollection sc = Localization.GetStyle(style.Key);
+						WriteIndent(depth, $"  Found style: {style} -> {sc}");
 
 						var elements = new List<Span>(sc.SortedCopy());
 						elements.ForEach(x => x.StartIndex = style.StartIndex);
@@ -180,7 +195,7 @@ namespace Nova.Gui.Typography {
 
 					} else {
 
-						Console.WriteLine("[Warning] Unmanaged typograph cannot have style spans. Ignoring style span.");
+						WriteIndent(depth, "[Warning] Unmanaged typograph cannot have style spans. Ignoring style span.");
 
 					}
 
@@ -196,37 +211,66 @@ namespace Nova.Gui.Typography {
 					string text;
 
 					if (data.AttachedToLibrary) {
-						text = data.Localization.GetExternalSymbol(symbol.Key);
+						text = Localization.GetExternalSymbol(symbol.Key);
 					} else {
-						Console.WriteLine("[Warning] Unmanaged typograph cannot have external tokens. Using symbol name as value.");
+						WriteIndent(depth, "[Warning] Unmanaged typograph cannot have external tokens. Using symbol name as value.");
 						text = symbol.Key;
 					}
 
-					Console.WriteLine($"  esym {symbol}");
 					localPlainText.Insert(symbol.Index, text);
 					localTokens.RemoveAt(i + tokenOffset);
 					--tokenOffset;
 					CorrectIndices(ref localSpans, ref localTokens, symbol.Index, text.Length, i);
+					WriteIndent(depth, $"  esym {symbol}");
+
+				} else if (localTokens[i + tokenOffset] is InsertionToken insertion) {
+
+					if (data.AttachedToLibrary) {
+						TypographData td = Localization.GetInsertion(insertion.Key);
+						localTokens.RemoveAt(i + tokenOffset);
+
+						if (td != null) {
+
+							WriteIndent(depth, $"Preparing to recurse '{insertion.Key}'...");
+
+							RecursiveResolve(td, insertion.Index, ref localPlainText, ref localSpans, ref localTokens, depth + 1);
+
+						} else {
+							WriteIndent(depth, $"[Warning] Failed to resolve insertion '{insertion.Key}'. Ignoring Insertion token.");
+						}
+
+						--tokenOffset;
+
+					} else {
+						WriteIndent(depth, "[Warning] Unmanaged typograph cannot have insertion tokens. Ignoring insertion token.");
+						localTokens.RemoveAt(i + tokenOffset);
+						--tokenOffset;
+					}
+
 				}
 
 			}
 
-			// Convert elements to global indices and merge into global shared lists
+			// Convert elements to enclosing indices and merge into enclosing shared lists
 
-			localSpans.ForEach(x => x.StartIndex += offset);
-			localTokens.ForEach(x => x.Index += offset);
+			localSpans.ForEach(x => x.StartIndex += tokenOffset);
+			localTokens.ForEach(x => x.Index += tokenOffset);
 
-			CorrectIndices(ref spans, ref tokens, offset, localPlainText.Length, 0);
-			combinedText.Insert(offset, localPlainText.ToString());
+			CorrectIndices(ref enclosingSpans, ref enclosingTokens, tokenOffset, localPlainText.Length, 0);
 
-			spans.InsertRange(offset, localSpans);
-			localTokens.InsertRange(offset, localTokens);
+			WriteIndent(depth, $"Offset to enclosing text: {textOffsetToEnclosing}");
+			enclosingText.Insert(textOffsetToEnclosing, localPlainText.ToString());
 
-			Console.WriteLine("Finished Resolving\n");
+			WriteIndent(depth, $"Offset to enclosing elements: {tokenOffset}");
+			var spanPos = enclosingSpans.FindLastIndex(x => x.StartIndex < textOffsetToEnclosing);
+			enclosingSpans.InsertRange(tokenOffset, localSpans);
+			enclosingTokens.InsertRange(tokenOffset, localTokens);
+
+			WriteIndent(depth, "=== Finished Resolving ===\n");
 
 		}
 
-		private void CorrectIndices(ref List<Span> spans, ref List<Token> tokens, int index, int length, int curTokenIndex) {
+		private void CorrectIndices(ref List<Span> spans, ref List<Token> tokens, int index, int length, int curTokenIndex = 0) {
 
 			foreach (var span in spans) {
 

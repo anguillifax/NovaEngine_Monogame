@@ -106,15 +106,15 @@ namespace Nova.Gui.Typography {
 		}
 
 		/// <summary>
-		/// Retrieve a typographic insertion. Returns an empty typograph if key cannot be resolved.
+		/// Retrieve a typographic insertion. Returns null if cannot be resolved.
 		/// </summary>
 		public TypographData GetInsertion(string key) {
 			if (Insertions.TryGetValue(key, out TypographData insertion)) {
 				return insertion;
 			} else {
 				if (Parent == null) {
-					LogWarning($"Failed to resolve insertion '{key}'. Replacing with empty typograph instead.");
-					return TypographData.Empty;
+					LogWarning($"Failed to resolve insertion '{key}'.");
+					return null;
 				}
 				return Parent.GetInsertion(key);
 			}

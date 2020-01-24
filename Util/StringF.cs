@@ -3,13 +3,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Nova.Util {
 
 	/// <summary>
 	/// Pretty ToString for various types
 	/// </summary>
-	public static class PrintFormatter {
+	public static class StringF {
 
 		/// <summary>
 		/// Get a string representation of vector with <code>precision</code> digits after the point.
@@ -74,6 +75,38 @@ namespace Nova.Util {
 			if (keyFormatter == null) keyFormatter = (x) => x.ToString();
 			if (valueFormatter == null) valueFormatter = (x) => x.ToString();
 			return JoinComma(dict.Select((k) => string.Format("[{0}, {1}]", keyFormatter(k.Key), valueFormatter(k.Value))), newline);
+		}
+
+		public static string ToIndentString<T>(this IEnumerable<T> o, string header) {
+			return $"{header}\n" + string.Join("\n", o.Select(x => $"  {x}"));
+		}
+
+		private const int IndentAmount = 2;
+		public static string ToIndented<T>(int level, string header, IEnumerable<T> objects, Func<T, string> conversion = null) {
+			StringBuilder sb = new StringBuilder();
+			sb.Append(' ', IndentAmount * level);
+			sb.AppendLine(header);
+			foreach (var item in objects) {
+				sb.Append(' ', IndentAmount * (level + 1));
+				sb.AppendLine(conversion != null ? conversion(item) : conversion.ToString());
+			}
+			return sb.ToString();
+		}
+
+		public static void PrintIndented<T>(int level, string header, IEnumerable<T> objects, Func<T, string> conversion = null) {
+			Console.WriteLine(ToIndented(level, header, objects, conversion));
+		}
+
+		public static string ToIndented(int level, string text) {
+			return new string(' ', IndentAmount * level) + text;
+		}
+
+		public static void PrintIndented(int level, string text) {
+			Console.WriteLine(ToIndented(level, text));
+		}
+
+		public static string ToHex(this Color color) {
+			return $"#{color.R:X}{color.G:X}{color.B:X}{(color.A != 255 ? color.A.ToString("X") : string.Empty)}";
 		}
 
 	}

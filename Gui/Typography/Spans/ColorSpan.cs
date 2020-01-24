@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Nova.Util;
 
 namespace Nova.Gui.Typography {
 
@@ -22,7 +23,7 @@ namespace Nova.Gui.Typography {
 		public override Span CloneSpan() => new ColorSpan(StartIndex, Length, Color);
 
 		protected override string BaseToString() {
-			return $"Color ({Color})";
+			return $"Color ({Color.ToHex()})";
 		}
 
 	}
