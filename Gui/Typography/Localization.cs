@@ -98,7 +98,7 @@ namespace Nova.Gui.Typography {
 				return symbolFunc();
 			} else {
 				if (Parent == null) {
-					LogWarning($"Failed to resolve external symbol {key}. Replacing with symbol name instead.");
+					LogWarning($"Failed to resolve external symbol '{key}'. Replacing with symbol name instead.");
 					return key;
 				}
 				return Parent.GetExternalSymbol(key);
@@ -106,7 +106,7 @@ namespace Nova.Gui.Typography {
 		}
 
 		/// <summary>
-		/// Retrieve a typographic insertion. Returns null if cannot be resolved.
+		/// Retrieve a typographic insertion. Returns null if key cannot be resolved.
 		/// </summary>
 		public TypographData GetInsertion(string key) {
 			if (Insertions.TryGetValue(key, out TypographData insertion)) {
@@ -120,6 +120,9 @@ namespace Nova.Gui.Typography {
 			}
 		}
 
+		/// <summary>
+		/// Retrieve a span collection. Returns empty span if key cannot be resolved.
+		/// </summary>
 		public SpanCollection GetStyle(string key) {
 			if (Styles.TryGetValue(key, out SpanCollection data)) {
 				return data;

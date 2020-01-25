@@ -55,7 +55,7 @@ namespace Nova.Gui.Typography {
 
 			// 0xFFFD is the Unicode point for the missing character symbol.
 			MissingCharacterGlyph = glyphs.ContainsKey((char)0xFFFD) ? glyphs[(char)0xFFFD] : glyphs[' '];
-			Log($"Assigned missing character glyph to {MissingCharacterGlyph.Character.GetUnicodePoint()}");
+			Log($"Assigned missing character glyph to {TextUtil.GetUnicodePoint(MissingCharacterGlyph.Character)}");
 
 			int kerningCount = GetInt(doc.SelectSingleNode("/font/kernings"), "count");
 			kerningPairs = new Dictionary<string, int>(kerningCount);
@@ -88,7 +88,7 @@ namespace Nova.Gui.Typography {
 			if (glyphs.TryGetValue(c, out GlyphData data)) {
 				return new Glyph(data);
 			} else {
-				Log($"Warning: Attempted to load missing character [{c}] {c.GetUnicodePoint()}");
+				Log($"Warning: Attempted to load missing character [{c}] {TextUtil.GetUnicodePoint(c)}");
 				return new Glyph(MissingCharacterGlyph);
 			}
 		}

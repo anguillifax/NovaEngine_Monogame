@@ -1,48 +1,67 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Nova.Gui.Typography {
 
-	public abstract class ElementCollection<T> : IEnumerable<T> {
+	/// <summary>
+	/// Represents a collection of spans and tokens ordered by universal indices.
+	/// </summary>
+	public class ElementCollection : IEnumerable<IElement>, ICloneable {
 
-		protected List<T> Elements { get; }
+		private List<IElement> Elements { get; }
 
-		protected ElementCollection(IEnumerable<T> elements = null) {
-			Elements = elements == null ? new List<T>() : new List<T>(elements);
+		public ElementCollection() {
+			Elements = new List<IElement>();
 		}
 
-		protected ElementCollection(params T[] elements) : this(elements.AsEnumerable()) {
+		public ElementCollection(IEnumerable<IElement> elements) {
+			Elements = new List<IElement>(elements);
 		}
+
+		public ElementCollection(params IElement[] elements) : 
+			this(elements.AsEnumerable()) {
+		}
+
+		/// <summary>
+		/// Returns a deep copy of element collection.
+		/// </summary>
+		public ElementCollection(ElementCollection o) :
+			this(o.GetElementsCloned()) {
+		}
+
+		public object Clone() => new ElementCollection(this);
+		/// <summary>
+		/// Returns a deep clone of all elements.
+		/// </summary>
+		public IEnumerable<IElement> GetElementsCloned() => Elements.Select(x => x.CloneElement());
 
 		public int Count => Elements.Count;
+		public int SpanCount => GetSpans().Count();
+		public int TokenCount => GetTokens().Count();
 
+		public IElement this[int index] => Elements[index];
 
-		public T this[int index] => Elements[index];
+		public void Append(IElement element) => Elements.Add(element);
+		public void AppendRange(IEnumerable<IElement> elements) => Elements.AddRange(elements);
 
-		public void Add(T element) => Elements.Add(element);
+		public void Insert(int index, IElement element) => Elements.Insert(index, element);
+		public void InsertRange(int index, IEnumerable<IElement> elements) => Elements.InsertRange(index, elements);
 
 		public IEnumerable<TResult> GetByType<TResult>() => Elements.OfType<TResult>();
+		public IEnumerable<Span> GetSpans() => Elements.OfType<Span>();
+		public IEnumerable<Token> GetTokens() => Elements.OfType<Token>();
 
-		/// <summary>
-		/// Returns references to elements sorted by their indices. Order of elements with same initial indices is preserved.
-		/// <para>Does not mutate the internal collection.</para>
-		/// </summary>
-		public abstract IOrderedEnumerable<T> Sorted();
-
-		/// <summary>
-		/// Returns copies of elements sorted by their indices. Order of elements with same initial indices is preserved.
-		/// <para>Does not mutate the internal collection.</para>
-		/// </summary>
-		public abstract IOrderedEnumerable<T> SortedCopy();
-
-		public IEnumerator<T> GetEnumerator() {
+		public IEnumerator<IElement> GetEnumerator() {
 			return Elements.GetEnumerator();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() {
 			return Elements.GetEnumerator();
 		}
+
+		public override string ToString() => $"Element Collection ({Count})";
 
 	}
 

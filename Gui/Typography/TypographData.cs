@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Nova.Util;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Nova.Gui.Typography {
 
@@ -18,27 +20,26 @@ namespace Nova.Gui.Typography {
 		public bool AttachedToLibrary => Localization != null;
 		public Localization Localization { get; }
 
-		internal TokenCollection Tokens { get; }
-		internal SpanCollection Spans { get; }
+		public ElementCollection Elements { get; }
 
-		public TypographData(string plaintext, Localization localization, IEnumerable<Token> tokens = null, IEnumerable<Span> spans = null) {
+		public TypographData(string plaintext, Localization localization, IEnumerable<IElement> elements = null) {
 
 			PlainText = plaintext ?? throw new ArgumentNullException("PlainText argument cannot be null");
 			Localization = localization;
 
-			Tokens = tokens == null ? new TokenCollection() : new TokenCollection(tokens);
-			Spans = spans == null ? new SpanCollection() : new SpanCollection(spans);
+			Elements = elements == null ? new ElementCollection() : new ElementCollection(elements);
 
 		}
 
-		public void Add(Span span) => Spans.Add(span);
-		public void Add(Token token) => Tokens.Add(token);
+		public TypographData(string plaintext, Localization localization, params IElement[] elements) :
+			this(plaintext, localization, elements.AsEnumerable()) {
+		}
 
 		public override string ToString() {
-			return $"TypographData (Spans: {Spans.Count}, Tokens: {Tokens.Count}, {PlainText})";
+			return $"TypographData (Spans: {Elements.SpanCount}, Tokens: {Elements.TokenCount}, {PlainText})";
 		}
 
-		public string ToStringDebug() => $"\n=== TypographData Printout ===\n\n{PlainText}\n\n{Spans}\n\n{Tokens}\n\n=== End Printout ===\n";
+		public string ToStringDebug(int indent = 0) => MFormat.ToIndented(indent, "Typograph Data", Elements);
 
 
 	}

@@ -17,9 +17,6 @@ namespace Nova.Gui.Typography {
 
 		public override Span CloneSpan() => new StyleSpan(StartIndex, Length, Key);
 
-		internal override void Initialize(Typograph typograph, GlyphSequence glyphs) {
-		}
-
 		protected override string BaseToString() => $"Style '{Key}'";
 
 	}

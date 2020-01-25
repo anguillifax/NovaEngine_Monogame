@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Nova.Util;
 using System;
 using System.Collections.Generic;
 
@@ -59,11 +60,8 @@ namespace Nova.Gui.Typography {
 			return loc;
 		}
 
-		// DEBUG: Test printout
-		public void Test() {
-			foreach (var item in localizations) {
-				Console.WriteLine($"{item.Key}: {item.Value} parent '{item.Value.Parent}', isglobal {item.Value.IsGlobalLocalization}");
-			}
+		public string ListAllLocalizations() {
+			return MFormat.ToIndented(0, $"Library '{Name}' Localizations", localizations, x => $"{x.Value.Name.PadRight(12)}: parent -> '{x.Value.Parent}'");
 		}
 
 		public override string ToString() => $"Typograph Library '{Name}'";

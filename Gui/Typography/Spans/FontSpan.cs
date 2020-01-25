@@ -13,9 +13,6 @@
 
 		public override Span CloneSpan() => new FontSpan(StartIndex, Length, Font);
 
-		internal override void Initialize(Typograph typograph, GlyphSequence glyphs) {
-		}
-
 		protected override string BaseToString() => $"Font '{Font}'";
 
 	}

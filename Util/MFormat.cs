@@ -10,7 +10,7 @@ namespace Nova.Util {
 	/// <summary>
 	/// Pretty ToString for various types
 	/// </summary>
-	public static class StringF {
+	public static class MFormat {
 
 		/// <summary>
 		/// Get a string representation of vector with <code>precision</code> digits after the point.
@@ -77,18 +77,20 @@ namespace Nova.Util {
 			return JoinComma(dict.Select((k) => string.Format("[{0}, {1}]", keyFormatter(k.Key), valueFormatter(k.Value))), newline);
 		}
 
-		public static string ToIndentString<T>(this IEnumerable<T> o, string header) {
-			return $"{header}\n" + string.Join("\n", o.Select(x => $"  {x}"));
-		}
-
 		private const int IndentAmount = 2;
 		public static string ToIndented<T>(int level, string header, IEnumerable<T> objects, Func<T, string> conversion = null) {
 			StringBuilder sb = new StringBuilder();
 			sb.Append(' ', IndentAmount * level);
 			sb.AppendLine(header);
-			foreach (var item in objects) {
+			if (objects.Any()) {
+				foreach (var item in objects) {
+					if (item == null) continue;
+					sb.Append(' ', IndentAmount * (level + 1));
+					sb.AppendLine(conversion != null ? conversion(item) : item.ToString());
+				}
+			} else {
 				sb.Append(' ', IndentAmount * (level + 1));
-				sb.AppendLine(conversion != null ? conversion(item) : conversion.ToString());
+				sb.AppendLine("(Empty)");
 			}
 			return sb.ToString();
 		}

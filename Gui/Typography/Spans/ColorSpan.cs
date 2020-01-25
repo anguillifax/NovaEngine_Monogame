@@ -14,10 +14,8 @@ namespace Nova.Gui.Typography {
 			Color = color;
 		}
 
-		internal override void Initialize(Typograph typograph, GlyphSequence glyphs) {
-			foreach (var g in glyphs) {
-				g.Color = Color;
-			}
+		internal override void Initialize(Typograph typograph, int glyphIndex, Glyph glyph) {
+			glyph.Color = Color;
 		}
 
 		public override Span CloneSpan() => new ColorSpan(StartIndex, Length, Color);

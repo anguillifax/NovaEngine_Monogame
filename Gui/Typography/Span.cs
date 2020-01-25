@@ -3,7 +3,9 @@ using System.Collections.Generic;
 
 namespace Nova.Gui.Typography {
 
-	public abstract class Span : ICloneable {
+	public abstract class Span : IElement {
+
+		public bool AllowStackingEffect { get; protected set; }
 
 		private int startIndex_;
 		public int StartIndex {
@@ -31,9 +33,15 @@ namespace Nova.Gui.Typography {
 		}
 
 		public abstract Span CloneSpan();
+		public IElement CloneElement() => CloneSpan();
 		public object Clone() => CloneSpan();
 
-		internal abstract void Initialize(Typograph typograph, GlyphSequence glyphs);
+		public void ShiftIndex(int shift) => StartIndex += shift;
+
+		internal virtual void Initialize(Typograph typograph, int glyphIndex, Glyph glyph) {
+		}
+
+		public bool Active(int index) => StartIndex <= index && index < StopIndex;
 
 		public override string ToString() {
 			return $"Span ({BaseToString()} [{StartIndex}, {Length}])";
@@ -48,7 +56,11 @@ namespace Nova.Gui.Typography {
 		protected UpdateSpan(int startIndex, int length) : base(startIndex, length) {
 		}
 
-		internal abstract void Update(Typograph typograph, GlyphSequence glyphs);
+		internal virtual void Apply(Typograph typograph, int glyphIndex, Glyph glyph) {
+		}
+
+		internal virtual void Update() {
+		}
 
 	}
 

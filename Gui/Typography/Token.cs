@@ -2,7 +2,7 @@
 
 namespace Nova.Gui.Typography {
 
-	public abstract class Token : ICloneable {
+	public abstract class Token : IElement {
 
 		public int Index { get; set; }
 
@@ -11,7 +11,10 @@ namespace Nova.Gui.Typography {
 		}
 
 		public abstract Token CloneToken();
+		public IElement CloneElement() => CloneToken();
 		public object Clone() => CloneToken();
+
+		public void ShiftIndex(int shift) => Index += shift;
 
 		public abstract void Consume(Typograph typograph);
 
