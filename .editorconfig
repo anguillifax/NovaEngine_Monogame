@@ -26,3 +26,6 @@ dotnet_diagnostic.RCS1124.severity = none
 
 # RCS1057: Add empty line between declarations.
 dotnet_diagnostic.RCS1057.severity = none
+
+# RCS1129: Remove redundant field initalization.
+dotnet_diagnostic.RCS1129.severity = none

@@ -10,6 +10,7 @@ namespace Nova.Gui.Typography {
 
 	public static class LoadFromMarkup {
 
+		[Serializable]
 		public class MarkupSyntaxError : Exception {
 			public MarkupSyntaxError() {
 			}
@@ -59,6 +60,8 @@ namespace Nova.Gui.Typography {
 				case "offset":
 					Match m = MatchVector2.Match(parameter);
 					return new OffsetSpan(startIndex, length, new Vector2(float.Parse(m.Groups["x"].Value), float.Parse(m.Groups["y"].Value)));
+				case "font":
+					return new FontSpan(startIndex, length, parameter);
 
 				default:
 					return null;

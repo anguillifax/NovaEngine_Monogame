@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 namespace Nova.Gui.Typography {
 
+	/// <summary>
+	/// GlyphData holds all common rendering data for a glyph. At any time, there is only one instance of a GlyphData for each character in a font.
+	/// </summary>
 	internal sealed class GlyphData {
 
 		internal char Character { get; }

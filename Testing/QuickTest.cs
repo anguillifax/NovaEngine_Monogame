@@ -17,7 +17,8 @@ namespace Nova {
 
 		public void Init() {
 
-			library = new Library("Testing", Color.White, new Font(@"C:\Users\Bryan\Desktop\BM Font\Exports\RobotoBold.fnt"));
+
+			library = new Library("Testing", Color.MonoGameOrange, new Font(@"C:\Users\Bryan\Desktop\BM Font\Exports\RobotoBold.fnt"));
 			library.GlobalLocalization.ExternalSymbols.Add("player", () => "Anguillifax(Global)");
 			library.GlobalLocalization.Styles.Add("player", new SpanCollection(
 					new ColorSpan(ColorUtil.FromHex("FF2222")),
@@ -28,6 +29,8 @@ namespace Nova {
 				));
 			library.GlobalLocalization.Insertions.Add("one", new TypographData("One", library.GlobalLocalization));
 			library.GlobalLocalization.Insertions.Add("two", new TypographData("[Two ]", library.GlobalLocalization, new InsertionToken(5, "one")));
+			library.AddFont(new Font(@"C:\Users\Bryan\Desktop\BM Font\Exports\RobotoBoldItalic.fnt"));
+			library.AddFont(new Font(@"C:\Users\Bryan\Desktop\BM Font\Exports\RobotoBig.fnt"));
 
 			english = library.CreateLocalization("en-BASE");
 			english.ExternalSymbols.Add("player", () => "Anguillifax(en-BASE)");
@@ -41,13 +44,14 @@ namespace Nova {
 
 		public void LoadContent() {
 			string text = TextUtil.NormalizeLineEnding(File.ReadAllText(@"C:\Users\Bryan\Desktop\text.gtxt"));
-			displayProperties = new TypographDisplayProperties(OverflowBehavior.Wrap, 500);
+			displayProperties = new TypographDisplayProperties(OverflowBehavior.Extend, 500);
 
 			var td = LoadFromMarkup.Load(text, english);
 			System.Console.WriteLine(td.ToStringDebug());
 
 
 			typograph = new Typograph(td, new Vector2(100, 100), displayProperties);
+			//typograph = new Typograph(td, library.DefaultFont, library.DefaultTextColor, new Vector2(100, 100), displayProperties);
 
 		}
 
@@ -67,7 +71,7 @@ namespace Nova {
 		}
 
 		public void Draw() {
-			//typograph?.Render();
+			typograph?.Render();
 		}
 
 	}

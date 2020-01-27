@@ -1,19 +1,19 @@
-﻿namespace Nova.Gui.Typography.Spans {
+﻿namespace Nova.Gui.Typography {
 
 	public class FontSpan : Span {
 
-		public Font Font { get; set; }
+		public string FontKey { get; set; }
 
-		public FontSpan(Font font) : this(0, 0, font) { }
+		public FontSpan(string font) : this(0, 0, font) { }
 
-		public FontSpan(int startIndex, int length, Font font) :
+		public FontSpan(int startIndex, int length, string fontKey) :
 			base(startIndex, length) {
-			Font = font;
+			FontKey = fontKey;
 		}
 
-		public override Span CloneSpan() => new FontSpan(StartIndex, Length, Font);
+		public override Span CloneSpan() => new FontSpan(StartIndex, Length, FontKey);
 
-		protected override string BaseToString() => $"Font '{Font}'";
+		protected override string BaseToString() => $"Font '{FontKey}'";
 
 	}
 

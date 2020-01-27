@@ -18,6 +18,10 @@ namespace Nova.Gui.Typography {
 			return $"U+{(int)c:X4}";
 		}
 
+		public static string GetRepresentation(char c) {
+			return c == '\n' ? @"\n" : c.ToString();
+		}
+
 		/// <summary>
 		/// Replaces \n new line characters with a literal "\n".
 		/// </summary>

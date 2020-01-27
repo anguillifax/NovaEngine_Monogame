@@ -28,6 +28,16 @@ namespace Nova.Gui.Typography {
 		public Font DefaultFont { get; set; }
 
 		/// <summary>
+		/// Mapping between font name and font definition.
+		/// </summary>
+		public Dictionary<string, Font> FontTable { get; }
+
+		/// <summary>
+		/// Add a new font to the font table.
+		/// </summary>
+		public void AddFont(Font font) => FontTable.Add(font.Name, font);
+
+		/// <summary>
 		/// The root/builtin localization. Elements defined here are accessible by any localization.
 		/// </summary>
 		public Localization GlobalLocalization { get; }
@@ -38,7 +48,8 @@ namespace Nova.Gui.Typography {
 		public Library(string name, Color defaultTextColor, Font defaultFont) {
 			Name = name;
 			DefaultTextColor = defaultTextColor;
-			DefaultFont = defaultFont;
+			DefaultFont = defaultFont ?? throw new ArgumentNullException("Default font cannot be null");
+			FontTable = new Dictionary<string, Font>();
 			localizations = new Dictionary<string, Localization>();
 			RegisterLocalization(GlobalLocalization = Localization.CreateGlobalLocalization(this));
 		}
@@ -62,6 +73,18 @@ namespace Nova.Gui.Typography {
 
 		public string ListAllLocalizations() {
 			return MFormat.ToIndented(0, $"Library '{Name}' Localizations", localizations, x => $"{x.Value.Name.PadRight(12)}: parent -> '{x.Value.Parent}'");
+		}
+
+		/// <summary>
+		/// Retrieve font by key. Returns default font if key not found.
+		/// </summary>
+		public Font GetFont(string key) {
+			if (FontTable.TryGetValue(key, out Font font)) {
+				return font;
+			} else {
+				Console.WriteLine($"[Warning] Could not find font '{key}'. Returning default font.");
+				return DefaultFont;
+			}
 		}
 
 		public override string ToString() => $"Typograph Library '{Name}'";

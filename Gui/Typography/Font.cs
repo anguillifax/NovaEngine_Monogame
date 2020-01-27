@@ -86,10 +86,10 @@ namespace Nova.Gui.Typography {
 		/// </summary>
 		public Glyph GetGlyph(char c) {
 			if (glyphs.TryGetValue(c, out GlyphData data)) {
-				return new Glyph(data);
+				return new Glyph(this, data);
 			} else {
 				Log($"Warning: Attempted to load missing character [{c}] {TextUtil.GetUnicodePoint(c)}");
-				return new Glyph(MissingCharacterGlyph);
+				return new Glyph(this, MissingCharacterGlyph);
 			}
 		}
 

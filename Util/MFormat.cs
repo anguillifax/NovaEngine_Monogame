@@ -78,7 +78,7 @@ namespace Nova.Util {
 		}
 
 		private const int IndentAmount = 2;
-		public static string ToIndented<T>(int level, string header, IEnumerable<T> objects, Func<T, string> conversion = null) {
+		public static string ToIndented<T>(int level, string header, IEnumerable<T> objects, Func<T, object> conversion = null) {
 			StringBuilder sb = new StringBuilder();
 			sb.Append(' ', IndentAmount * level);
 			sb.AppendLine(header);
@@ -86,7 +86,7 @@ namespace Nova.Util {
 				foreach (var item in objects) {
 					if (item == null) continue;
 					sb.Append(' ', IndentAmount * (level + 1));
-					sb.AppendLine(conversion != null ? conversion(item) : item.ToString());
+					sb.AppendLine(conversion != null ? conversion(item).ToString() : item.ToString());
 				}
 			} else {
 				sb.Append(' ', IndentAmount * (level + 1));
@@ -95,8 +95,12 @@ namespace Nova.Util {
 			return sb.ToString();
 		}
 
-		public static void PrintIndented<T>(int level, string header, IEnumerable<T> objects, Func<T, string> conversion = null) {
-			Console.WriteLine(ToIndented(level, header, objects, conversion));
+		public static void PrintIndented<T>(int level, string header, IEnumerable<T> objects, Func<T, object> conversion = null) {
+			Console.Write(ToIndented(level, header, objects, conversion));
+		}
+
+		public static void PrintIndented<T>(string header, IEnumerable<T> objects, Func<T, object> conversion = null) {
+			PrintIndented(0, header, objects, conversion);
 		}
 
 		public static string ToIndented(int level, string text) {
@@ -104,7 +108,7 @@ namespace Nova.Util {
 		}
 
 		public static void PrintIndented(int level, string text) {
-			Console.WriteLine(ToIndented(level, text));
+			Console.Write(ToIndented(level, text));
 		}
 
 		public static string ToHex(this Color color) {

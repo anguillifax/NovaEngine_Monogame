@@ -41,7 +41,7 @@ namespace Nova.Gui.Typography {
 		internal virtual void Initialize(Typograph typograph, int glyphIndex, Glyph glyph) {
 		}
 
-		public bool Active(int index) => StartIndex <= index && index < StopIndex;
+		public bool IsInside(int index) => StartIndex <= index && index < StopIndex;
 
 		public override string ToString() {
 			return $"Span ({BaseToString()} [{StartIndex}, {Length}])";
