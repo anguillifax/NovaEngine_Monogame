@@ -28,6 +28,11 @@ namespace Nova.Gui.Typography {
 		public Font DefaultFont { get; set; }
 
 		/// <summary>
+		/// The font size to use when no font size spans are applied.
+		/// </summary>
+		public float DefaultFontSize { get; set; }
+
+		/// <summary>
 		/// Mapping between font name and font definition.
 		/// </summary>
 		public Dictionary<string, Font> FontTable { get; }
@@ -45,10 +50,11 @@ namespace Nova.Gui.Typography {
 		/// <summary>
 		/// Create a new library, initializing the global localization in the process.
 		/// </summary>
-		public Library(string name, Color defaultTextColor, Font defaultFont) {
+		public Library(string name, Color defaultTextColor, Font defaultFont, float defaultFontSize) {
 			Name = name;
 			DefaultTextColor = defaultTextColor;
 			DefaultFont = defaultFont ?? throw new ArgumentNullException("Default font cannot be null");
+			DefaultFontSize = defaultFontSize;
 			FontTable = new Dictionary<string, Font>();
 			localizations = new Dictionary<string, Localization>();
 			RegisterLocalization(GlobalLocalization = Localization.CreateGlobalLocalization(this));

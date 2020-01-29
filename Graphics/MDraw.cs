@@ -108,6 +108,10 @@ namespace Nova {
 			Write(DefaultTinyFont, text, pos, color);
 		}
 
+		public static void WriteTinyGlobal(string text, Vector2 pos, Color color) {
+			SpriteBatch.DrawString(DefaultTinyFont, text, pos, color);
+		}
+
 		public static void WriteGlobal(string text, Vector2 pos, Color color) {
 			SpriteBatch.DrawString(DefaultFont, text, pos, color);
 		}

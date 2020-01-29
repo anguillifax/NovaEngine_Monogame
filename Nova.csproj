@@ -71,6 +71,7 @@
     <Compile Include="Gui\Typography\GlyphData.cs" />
     <Compile Include="Gui\Typography\Font.cs" />
     <Compile Include="Gui\Typography\GlyphSequence.cs" />
+    <Compile Include="Gui\Typography\Spans\FontSizeSpan.cs" />
     <Compile Include="Gui\Typography\TextUtil.cs" />
     <Compile Include="Gui\Typography\Span.cs" />
     <Compile Include="Gui\Typography\SpanCollection.cs" />

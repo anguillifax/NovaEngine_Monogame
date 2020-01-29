@@ -108,7 +108,7 @@ namespace Nova.Util {
 		}
 
 		public static void PrintIndented(int level, string text) {
-			Console.Write(ToIndented(level, text));
+			Console.WriteLine(ToIndented(level, text));
 		}
 
 		public static string ToHex(this Color color) {

@@ -37,8 +37,8 @@ namespace Nova.Gui.Typography {
 		public bool AttachedToLibrary { get; }
 
 		private readonly Font localFont;
-
 		private readonly Color localColor;
+		private readonly float localFontSize;
 
 		private readonly List<IElement> elements;
 
@@ -63,11 +63,12 @@ namespace Nova.Gui.Typography {
 		/// <summary>
 		/// Create an unmanaged typograph. Unmanaged typographs cannot contain referential elements, such as typographic insertions, external symbols, or style spans.
 		/// </summary>
-		public Typograph(TypographData data, Font font, Color baseColor, Vector2 topLeft, TypographDisplayProperties displayProperties = null) {
+		public Typograph(TypographData data, Font font, Color defaultColor, float defaultFontSize, Vector2 topLeft, TypographDisplayProperties displayProperties = null) {
 
 			if (data == null) throw new ArgumentNullException("Typograph data cannot be null");
 			localFont = font ?? throw new ArgumentNullException("Font cannot be null");
-			localColor = baseColor;
+			localColor = defaultColor;
+			localFontSize = defaultFontSize;
 
 			translationMatrix = Matrix.Identity;
 			TopLeft = topLeft;
@@ -135,10 +136,23 @@ namespace Nova.Gui.Typography {
 			Console.WriteLine("=== End Reference Resolution Printout ===\n");
 		}
 
-		internal static bool traceResolve = false;
+		internal static bool traceResolve = true;
 
 		private void CWI(int depth, string text) {
 			MFormat.PrintIndented(depth * 2, text);
+		}
+
+		private void CorrectIndicesCurrent(ref List<IElement> curElements, int uindex, int textIndex, int length, int depth) {
+			for (int i = 0; i < uindex + 1; ++i) {
+				if (curElements[i] is Span s && (s.StopIndex > textIndex || (s.StartIndex == textIndex && s.Length == 0))) {
+					s.Length += length;
+					if (traceResolve) CWI(depth, $">> extending {s} by {length}");
+				}
+			}
+			for (int i = uindex + 1; i < curElements.Count; ++i) {
+				curElements[i].ShiftIndex(length);
+				if (traceResolve) CWI(depth, $">> shifting {curElements[i]} by {length}");
+			}
 		}
 
 		private void ResolveRecursive(TypographData data, int textIndex, ref StringBuilder textBuilder, out int insertionLength, int depth) {
@@ -168,7 +182,7 @@ namespace Nova.Gui.Typography {
 						sc.Spans.ForEach(x => x.Length = style.Length);
 						elements.AddRange(sc);
 					} else {
-						CWI(depth, "[Warning] Unmanaged typograph cannot have style spans. Ignoring style span.");
+						CWI(depth, $"[Warning] Unmanaged typograph cannot have style spans. Ignoring style span '{style}'.");
 					}
 
 				} else if (curElements[i] is ExternalSymbolToken symbol) {
@@ -178,16 +192,14 @@ namespace Nova.Gui.Typography {
 					if (AttachedToLibrary) {
 						text = Localization.GetExternalSymbol(symbol.Key);
 					} else {
-						CWI(depth, "[Warning] Unmanaged typograph cannot have external tokens. Using symbol name as value.");
+						CWI(depth, $"[Warning] Unmanaged typograph cannot have external tokens. Replacing '{symbol}' with name as value.");
 						text = symbol.Key;
 					}
 
 					textBuilder.Insert(symbol.Index, text);
 
-					for (int j = i + 1; j < curElements.Count; ++j) {
-						curElements[j].ShiftIndex(text.Length);
-						if (traceResolve) CWI(depth, $">> shifting {curElements[j]} by {text.Length}");
-					}
+					CorrectIndicesCurrent(ref curElements, i, symbol.Index, text.Length, depth);
+
 					cumulativeInsertLength += text.Length;
 
 				} else if (curElements[i] is InsertionToken insertion) {
@@ -199,10 +211,7 @@ namespace Nova.Gui.Typography {
 							if (traceResolve) CWI(depth, $"!! Preparing to recurse '{insertion.Key}'...");
 							ResolveRecursive(td, insertion.Index, ref textBuilder, out int shift, depth + 1);
 
-							for (int j = i + 1; j < curElements.Count; ++j) {
-								curElements[j].ShiftIndex(shift);
-								if (traceResolve) CWI(depth, $">> shifting {curElements[j]} by {shift}");
-							}
+							CorrectIndicesCurrent(ref curElements, i, insertion.Index, shift, depth);
 
 							cumulativeInsertLength += shift;
 
@@ -211,7 +220,7 @@ namespace Nova.Gui.Typography {
 						}
 
 					} else {
-						CWI(depth, "[Warning] Unmanaged typograph cannot have insertion tokens. Ignoring insertion token.");
+						CWI(depth, $"[Warning] Unmanaged typograph cannot have insertion tokens. Ignoring insertion token '{insertion}'.");
 					}
 
 				} else {
@@ -247,17 +256,17 @@ namespace Nova.Gui.Typography {
 
 		private void CreateGlyphs() {
 
+			List<FontSizeSpan> fontSizeSpans = new List<FontSizeSpan>(elements.OfType<FontSizeSpan>());
+
 			if (AttachedToLibrary) {
 
 				List<FontSpan> fontSpans = new List<FontSpan>(elements.OfType<FontSpan>());
 
 				for (int i = 0; i < PlainText.Length; ++i) {
-					int fsIndex = fontSpans.FindLastIndex(x => x.IsInside(i));
-					if (fsIndex != -1) {
-						Glyphs[i] = Library.GetFont(fontSpans[fsIndex].FontKey).GetGlyph(PlainText[i]);
-					} else {
-						Glyphs[i] = Library.DefaultFont.GetGlyph(PlainText[i]);
-					}
+					int fontIdx = fontSpans.FindLastIndex(x => x.IsInside(i));
+					Glyphs[i] = fontIdx != -1 ? Library.GetFont(fontSpans[fontIdx].FontKey).GetGlyph(PlainText[i]) : Library.DefaultFont.GetGlyph(PlainText[i]);
+					int sizeIdx = fontSizeSpans.FindLastIndex(x => x.IsInside(i));
+					Glyphs[i].Size = sizeIdx != -1 ? fontSizeSpans[sizeIdx].Size : Library.DefaultFontSize;
 				}
 
 			} else {
@@ -267,9 +276,13 @@ namespace Nova.Gui.Typography {
 				}
 				for (int i = 0; i < PlainText.Length; ++i) {
 					Glyphs[i] = localFont.GetGlyph(PlainText[i]);
+					int idx = fontSizeSpans.FindLastIndex(x => x.IsInside(i));
+					Glyphs[i].Size = idx != -1 ? fontSizeSpans[idx].Size : localFontSize;
 				}
 
 			}
+
+			//MFormat.PrintIndented("Fonts", Glyphs, x => $"{x.Character}\t{x.Font}");
 
 		}
 
@@ -339,8 +352,7 @@ namespace Nova.Gui.Typography {
 
 			private void ExtendMode() {
 
-				int curXPos = 0;
-				bool isNewLine = true;
+				float curXPos = 0;
 				int lineStart = 0;
 				int lineLength = 0;
 
@@ -348,19 +360,17 @@ namespace Nova.Gui.Typography {
 
 					++lineLength;
 
-					Glyph g = glyphs[i];
+					Glyph cur = glyphs[i];
 
-					g.Position = new Vector2(curXPos, 0);
-					curXPos += g.XAdvance;
+					cur.Position = new Vector2(curXPos, 0);
+					curXPos += cur.XAdvance;
 
-					if (!isNewLine) {
-						Glyph prev = glyphs[i - 1];
-						curXPos += prev.Font.GetKerning(prev.Character, g.Character);
+					if (i < glyphs.Length - 1) {
+						Glyph next = glyphs[i + 1];
+						curXPos += next.Font.GetKerning(cur.Character, next.Character) * Math.Min(cur.Factor, next.Factor);
 					}
-					isNewLine = false;
 
-					if (g.Character == '\n' || i == glyphs.Length - 1) {
-						isNewLine = true;
+					if (cur.Character == '\n' || i == glyphs.Length - 1) {
 						glyphLines.Add(new List<Glyph>(glyphs.Skip(lineStart).Take(lineLength)));
 						lineStart = i + 1;
 						lineLength = 0;
@@ -410,7 +420,7 @@ namespace Nova.Gui.Typography {
 					}
 
 					unique.Add(new NonBreakingSequenceSpan(cur.StartIndex, length));
-					
+
 				}
 
 				return unique;
@@ -422,11 +432,13 @@ namespace Nova.Gui.Typography {
 			/// </summary>
 			private void ShiftNewLines() {
 
-				int yPos = 0;
+				float yPos = 0;
 
 				for (int i = 0; i < glyphLines.Count; ++i) {
 					if (i > 0) {
-						yPos += glyphLines[i].Max(x => x.Font.LineHeight);
+						float m = glyphLines[i - 1].Take(glyphLines.Count - 1).Max(x => x.LineHeight);
+						Console.WriteLine($"yadvance to {string.Concat(glyphLines[i].Select(x => TextUtil.GetRepresentation(x.Character)))} by {m}");
+						yPos += m;
 					}
 					glyphLines[i].ForEach(x => x.Position += new Vector2(0, yPos));
 				}
@@ -439,19 +451,36 @@ namespace Nova.Gui.Typography {
 
 		private void InitializeElements() {
 			Array.ForEach(Glyphs, x => x.Color = AttachedToLibrary ? Library.DefaultTextColor : localColor);
+
+			var colorSpans = new List<ColorSpan>(elements.OfType<ColorSpan>());
+
+			for (int i = 0; i < Glyphs.Length; ++i) {
+
+				int idx = colorSpans.FindLastIndex(x => x.IsInside(i));
+				if (idx != -1) Glyphs[i].Color = colorSpans[idx].Color;
+
+			}
+
+			//MFormat.PrintIndented("Colors", Glyphs, x => $"{x.Character}\t{x.Color.ToHex()}\t{x.Position}");
 		}
 
 		public void Update() {
 
 		}
 
+		private static readonly Color DebugGraphicsColor = ColorUtil.FromHex("666");
+
 		public void Render() {
-			MDraw.Begin(translationMatrix * displayProperties.TransformMatrix);
-			foreach (var g in Glyphs) {
-				g.Render();
-			}
+			MDraw.Begin();
+			MDraw.DrawPointGlobal(TopLeft, DebugGraphicsColor);
+			MDraw.WriteTinyGlobal($"Top Left: {TopLeft}", TopLeft + new Vector2(5, -8), DebugGraphicsColor);
+			MDraw.End();
+
+			MDraw.SpriteBatch.Begin(transformMatrix: translationMatrix * displayProperties.TransformMatrix,
+				samplerState: Microsoft.Xna.Framework.Graphics.SamplerState.PointClamp);
+			Array.ForEach(Glyphs, x => x.Render());
 			if (displayProperties.OverflowBehavior == OverflowBehavior.Wrap) {
-				MDraw.DrawRayGlobal(new Vector2(displayProperties.MaxWidth, 0), new Vector2(0, 1000), Color.DimGray);
+				MDraw.DrawRayGlobal(new Vector2(displayProperties.MaxWidth, 0), new Vector2(0, 1000), DebugGraphicsColor);
 			}
 			MDraw.End();
 		}

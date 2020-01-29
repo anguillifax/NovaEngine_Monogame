@@ -18,7 +18,10 @@ namespace Nova.Gui.Typography {
 		private readonly Dictionary<string, int> kerningPairs;
 		private readonly GlyphData MissingCharacterGlyph;
 
-		public float ScaleFactor { get; set; }
+		/// <summary>
+		/// Maximum size this font can be displayed at before upscaling occurs.
+		/// </summary>
+		public int MaxSize { get; }
 
 		public Font(string path) {
 
@@ -26,6 +29,7 @@ namespace Nova.Gui.Typography {
 			doc.Load(path);
 
 			Name = doc.SelectSingleNode("/font/info").Attributes.GetNamedItem("face").Value;
+			MaxSize = GetInt(doc.SelectSingleNode("/font/info"), "size");
 			LineHeight = GetInt(doc.SelectSingleNode("/font/common"), "lineHeight");
 
 			texturePages = new Texture2D[doc.SelectSingleNode("/font/pages").ChildNodes.Count];
@@ -41,6 +45,8 @@ namespace Nova.Gui.Typography {
 			int charCount = GetInt(doc.SelectSingleNode("/font/chars"), "count");
 			glyphs = new Dictionary<char, GlyphData>(charCount);
 
+
+
 			foreach (XmlNode node in doc.SelectNodes("/font/chars/char")) {
 				char c = (char)GetInt(node, "id");
 				Rectangle rect = new Rectangle(GetInt(node, "x"), GetInt(node, "y"), GetInt(node, "width"), GetInt(node, "height"));
@@ -50,6 +56,9 @@ namespace Nova.Gui.Typography {
 
 				glyphs.Add(c, new GlyphData(c, page, rect, offset, xadvance));
 			}
+			if (glyphs.ContainsKey('\r') && !glyphs.ContainsKey('\n')) {
+				glyphs.Add('\n', glyphs['\r']);
+			}
 
 			Log($"Loaded {glyphs.Count} characters");
 
@@ -57,20 +66,25 @@ namespace Nova.Gui.Typography {
 			MissingCharacterGlyph = glyphs.ContainsKey((char)0xFFFD) ? glyphs[(char)0xFFFD] : glyphs[' '];
 			Log($"Assigned missing character glyph to {TextUtil.GetUnicodePoint(MissingCharacterGlyph.Character)}");
 
-			int kerningCount = GetInt(doc.SelectSingleNode("/font/kernings"), "count");
-			kerningPairs = new Dictionary<string, int>(kerningCount);
+			if (doc.SelectSingleNode("/font/kernings") != null) {
 
-			foreach (XmlNode node in doc.SelectNodes("/font/kernings/kerning")) {
-				string pair = $"{(char)GetInt(node, "first")}{(char)GetInt(node, "second")}";
-				int kerning = GetInt(node, "amount");
-				kerningPairs.Add(pair, kerning);
+				int kerningCount = GetInt(doc.SelectSingleNode("/font/kernings"), "count");
+				kerningPairs = new Dictionary<string, int>(kerningCount);
+
+				foreach (XmlNode node in doc.SelectNodes("/font/kernings/kerning")) {
+					string pair = $"{(char)GetInt(node, "first")}{(char)GetInt(node, "second")}";
+					int kerning = GetInt(node, "amount");
+					kerningPairs.Add(pair, kerning);
+				}
+
+				Log($"Loaded {kerningPairs.Count} kerning pairs");
+			} else {
+				kerningPairs = null;
+				Log($"Font contained no kerning pairs.");
 			}
-
-			Log($"Loaded {kerningPairs.Count} kerning pairs");
 
 			Log("Load complete.");
 
-			ScaleFactor = 1f;
 		}
 
 		private int GetInt(XmlNode node, string attributeName) {
@@ -94,6 +108,7 @@ namespace Nova.Gui.Typography {
 		}
 
 		internal int GetKerning(char left, char right) {
+			if (kerningPairs == null) return 0;
 			if (kerningPairs.TryGetValue($"{left}{right}", out int amount)) {
 				return amount;
 			} else {

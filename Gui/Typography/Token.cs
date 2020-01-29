@@ -16,7 +16,7 @@ namespace Nova.Gui.Typography {
 
 		public void ShiftIndex(int shift) => Index += shift;
 
-		public abstract void Consume(Typograph typograph);
+		public virtual void Consume(Typograph typograph) { }
 
 		public override string ToString() {
 			return $"Token ({BaseToString()} [{Index}])";

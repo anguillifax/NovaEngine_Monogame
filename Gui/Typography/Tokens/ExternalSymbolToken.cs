@@ -13,9 +13,6 @@ namespace Nova.Gui.Typography {
 
 		public override Token CloneToken() => new ExternalSymbolToken(Index, Key);
 
-		public override void Consume(Typograph typograph) {
-		}
-
 		protected override string BaseToString() => $"ExternalSymbol ({Key})";
 
 	}
